@@ -1,0 +1,10 @@
+{
+  "name": "lupus-in-tabula-online",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lupus In Tabula real-time multiplayer web game MVP",
+  "main": "server.js",
+  "scripts": {"start": "node server.js"},
+  "engines": {"node": ">=18" },
+  "dependencies": {"express": "^4.21.2", "socket.io": "^4.8.1"}
+}
