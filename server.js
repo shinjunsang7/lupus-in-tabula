@@ -6,12 +6,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 3000;
-const DAY_MS=120_000, NIGHT_MS=60_000, POST_VOTE_MS=10_000;
+const DAY_MS=120_000, DAY_EXTENSION_MS=60_000, NIGHT_MS=60_000, POST_VOTE_MS=10_000;
 app.use(express.static('public'));
 app.get('/health', (_, res) => res.json({ ok: true, game: 'Lupus In Tabula' }));
 const rooms = new Map();
 const ROLE = {
- wolf:{name:'늑대',team:'wolf'}, hench:{name:'똘마니',team:'wolf'}, seer:{name:'예언자',team:'town'}, guard:{name:'보디가드',team:'town'}, medium:{name:'영매',team:'town'}, tracker:{name:'추격자',team:'town'}, watcher:{name:'감시자',team:'town'}, heir:{name:'후계자',team:'town'}, veteran:{name:'퇴역군인',team:'town'}, fanatic:{name:'광신도',team:'town'}, citizen:{name:'시민',team:'town'}
+ wolf:{name:'늑대',team:'wolf'}, hench:{name:'똘마니',team:'wolf'}, seer:{name:'예언자',team:'town'}, guard:{name:'보디가드',team:'town'}, medium:{name:'영매',team:'town'}, tracker:{name:'추격자',team:'town'}, watcher:{name:'감시자',team:'town'}, heir:{name:'후계자',team:'town'}, veteran:{name:'퇴역군인',team:'town'}, fanatic:{name:'마녀',team:'town'}, citizen:{name:'시민',team:'town'}
 };
 const COLORS=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -74,7 +74,7 @@ function stateFor(room, viewer){
   if(m.channel==='whisper')return m.to===viewer.id||m.from===viewer.id;
   return false;
  }).map(m=>({id:m.id||`${m.at}-${m.channel}-${m.text}`,channel:m.channel,text:m.text,at:m.at,from:m.fromName|| (m.from ? `${m.from}번 ${room.players.find(p=>p.id===m.from)?.name||''}`.trim() : 'SYSTEM')}));
- return {code:room.code,hostId:room.hostId,phase:room.phase,day:room.day,night:room.night,rule:room.rule,deadline:room.deadline,players:room.players.map(p=>pubPlayer(p,viewer,room)),self:{id:viewer.id,name:viewer.name,role:activeRole(viewer),baseRole:viewer.role,roleName:viewer.role ? (viewer.inheritedRole?'후계자 - '+ROLE[viewer.inheritedRole].name:ROLE[viewer.role].name) : null,team:viewer.team,alive:viewer.alive,usedRip:viewer.usedRip,foundWolves,intel:viewer.intel||[],nightDone:!!room.nightActions[viewer.id]?.done,henchJoined:viewer.role==='hench'&&!!viewer.foundWolves?.length,canWolfAttack:viewer.role==='wolf'&&isAttackingWolf(room,viewer)},knownWolves:wolves,logs,votesCast:Object.keys(room.votes).length,voteTally: tally(room),voteClosed:room.voteClosed,closeRequests:room.closeRequests?.length||0,closeRequested:room.closeRequests?.includes(viewer.id)||false,extendedToday:room.extendedToday?.includes(viewer.id)||false,public:room.public,winner:room.winner,notice:room.notice};
+ return {code:room.code,hostId:room.hostId,phase:room.phase,day:room.day,night:room.night,rule:room.rule,deadline:room.deadline,players:room.players.map(p=>pubPlayer(p,viewer,room)),self:{id:viewer.id,name:viewer.name,role:activeRole(viewer),baseRole:viewer.role,roleName:viewer.role ? (viewer.inheritedRole?'후계자 - '+ROLE[viewer.inheritedRole].name:ROLE[viewer.role].name) : null,team:viewer.team,alive:viewer.alive,usedRip:viewer.usedRip,foundWolves,intel:viewer.intel||[],nightDone:!!room.nightActions[viewer.id]?.done,henchJoined:viewer.role==='hench'&&!!viewer.foundWolves?.length,canWolfAttack:viewer.role==='wolf'&&isAttackingWolf(room,viewer)},knownWolves:wolves,logs,votesCast:Object.keys(room.votes).length,voteTally: tally(room),voteClosed:room.voteClosed,closeRequests:living(room).filter(x=>room.closeRequests?.includes(x.id)).length,closeRequested:room.closeRequests?.includes(viewer.id)||false,closeConsentAvailableAt:room.closeConsentAvailableAt?.[viewer.id]||0,abstainCount:Object.values(room.votes).filter(v=>v===0).length,extendedToday:room.extendedToday?.includes(viewer.id)||false,public:room.public,winner:room.winner,notice:room.notice};
 }
 function tally(room){const counts={};for(const p of living(room))counts[p.id]=0;for(const [v,t] of Object.entries(room.votes)){if(t>0&&counts[t]!==undefined)counts[t]++;}return counts;}
 function emitRoom(room){for(const p of room.players){const s=io.sockets.sockets.get(p.socketId);if(s)s.emit('state',stateFor(room,p));}}
@@ -98,7 +98,7 @@ function getPlayer(room,socket){return room?.players.find(p=>p.socketId===socket
 function clearRoomTimers(room){cancelTimer(room);}
 function enterDay(room){
  cancelTimer(room);room.phase='day';room.day=Math.max(1,room.day+1);
- room.voteClosed=false;room.votes={};room.closeRequests=[];room.extendedToday=[];
+ room.voteClosed=false;room.votes={};room.closeRequests=[];room.closeConsentAvailableAt={};room.extendedToday=[];
  room.deadline=Date.now()+DAY_MS;
  room.notice=`${room.day}일차 낮입니다. 기본 토론 시간은 2분입니다.`;
  room.nightActions={};emitRoom(room);playForRoom(room,'day');scheduleDayEnd(room);
@@ -134,13 +134,13 @@ function closeVote(room,timeout=false){
  emitRoom(room);
  room.timer=setTimeout(()=>{if(room.phase==='day'&&room.voteClosed)enterNight(room)},POST_VOTE_MS);
 }
-function kill(room,p,how,firstVoter){if(!p||!p.alive)return;p.alive=false;room.deaths ||= [];room.deaths.push({id:p.id,role:p.role,team:p.team});log(room,'all',`${p.id}번 ${p.name}이(가) ${how==='vote'?'투표로 처형되었습니다.':'밤에 사망했습니다.'}`);if(how==='vote'&&p.role==='fanatic'&&firstVoter){const v=room.players.find(x=>x.id===firstVoter);if(v&&v.alive){v.alive=false;room.deaths.push({id:v.id,role:v.role,team:v.team});log(room,'all',`광신도의 저주! 최초 투표자 ${v.id}번 ${v.name}도 함께 사망했습니다.`)}}attemptInheritance(room);}
+function kill(room,p,how,firstVoter){if(!p||!p.alive)return;p.alive=false;room.deaths ||= [];room.deaths.push({id:p.id,role:p.role,team:p.team});log(room,'all',`${p.id}번 ${p.name}이(가) ${how==='vote'?'투표로 처형되었습니다.':'밤에 사망했습니다.'}`);if(how==='vote'&&activeRole(p)==='fanatic'&&firstVoter){const v=room.players.find(x=>x.id===firstVoter);if(v&&v.alive){v.alive=false;room.deaths.push({id:v.id,role:v.role,team:v.team});log(room,'all',`마녀의 저주! 최초 투표자 ${v.id}번 ${v.name}도 함께 사망했습니다.`)}}attemptInheritance(room);}
 function checkWin(room){if(room.phase==='ended')return;const alive= living(room);const wolves=alive.filter(p=>p.role==='wolf').length;const wolfTeam=alive.filter(p=>p.team==='wolf').length;const town=alive.filter(p=>p.team==='town').length;if(wolves===0){finish(room,'시민팀')}else if(wolfTeam>=town){finish(room,'늑대팀')}}
 function finish(room,winner){cancelTimer(room);room.phase='ended';room.logs=[];room.winner=winner;room.deadline=null;room.notice=`${winner} 승리! 모든 플레이어의 직업이 공개되었습니다.`;log(room,'all',room.notice);emitRoom(room);}
 function allNightDone(room){const livingPlayers=living(room);const actionable=livingPlayers.filter(p=>['wolf','seer','guard','medium','tracker','watcher','hench'].includes(activeRole(p))&&!(p.role==='hench'&&p.foundWolves?.length));return actionable.every(p=>room.nightActions[p.id]?.done);}
 function resolveNight(room){if(room.phase!=='night')return;cancelTimer(room);let wolves=living(room).filter(p=>p.role==='wolf');let attacker=null;if(wolves.length===1)attacker=wolves[0];else if(wolves.length>1){const turn=room.night%2===1?1:2;attacker=wolves.find(p=>p.wolfNo===turn)||wolves[0];}
  let targetId=null,rip=false;if(attacker){const action=room.nightActions[attacker.id];if(action?.target) {targetId=action.target;rip=!!action.rip}}
- let attackedVictim=null,attackSucceeded=false;if(targetId){const target=room.players.find(p=>p.id===targetId&&p.alive);if(target){attackedVictim=target.id;if(target.protected&&!rip){if(room.rule!=='chaos'){playForRoom(room,'saved');log(room,'all','보디가드의 보호로 누군가 늑대의 공격에서 살아남았습니다.')}}else if(target.role==='veteran'&&target.veteranSave&&!rip){target.veteranSave=false;if(room.rule!=='chaos'){playForRoom(room,'honor');log(room,'all','퇴역군인이 늑대의 공격을 버텼습니다.')}}else {kill(room,target,'night');attackSucceeded=true;playForRoom(room,rip?'rip':'scratch')}}}
+ let attackedVictim=null,attackSucceeded=false;if(targetId){const target=room.players.find(p=>p.id===targetId&&p.alive);if(target){attackedVictim=target.id;if(target.protected&&!rip){if(room.rule!=='chaos'){playForRoom(room,'saved');log(room,'all','보디가드의 보호로 누군가 늑대의 공격에서 살아남았습니다.')}}else if(activeRole(target)==='veteran'&&target.veteranSave&&!rip){target.veteranSave=false;if(room.rule!=='chaos'){playForRoom(room,'honor');log(room,'all','퇴역군인이 늑대의 공격을 버텼습니다.')}}else {kill(room,target,'night');attackSucceeded=true;playForRoom(room,rip?'rip':'scratch')}}}
  if(room.rule==='chaos'&&!attackSucceeded)log(room,'all','오늘 밤에는 아무도 죽지 않았습니다.');
  for(const tracker of room.players.filter(x=>activeRole(x)==='tracker'&&x.alive)){
  const action=room.nightActions[tracker.id];
@@ -184,7 +184,7 @@ io.on('connection',socket=>{
  if(!room||!p||room.phase!=='ended'||room.hostId!==socket.id)return;
  cancelTimer(room);
  room.phase='lobby';room.day=0;room.night=0;room.deadline=null;room.winner=null;
- room.votes={};room.voteClosed=false;room.closeRequests=[];room.extendedToday=[];room.nightActions={};room.deaths=[];room.public=[];
+ room.votes={};room.voteClosed=false;room.closeRequests=[];room.closeConsentAvailableAt={};room.extendedToday=[];room.nightActions={};room.deaths=[];room.public=[];
  for(const x of room.players){x.role=null;x.team=null;x.inheritedRole=null;x.alive=true;x.usedRip=false;x.foundWolves=[];x.knownRoles={};x.intel=[];x.ready=false;}
  room.notice='같은 방에서 새 게임을 준비합니다. 방장이 게임 시작을 누르세요.';
  emitRoom(room);
@@ -192,7 +192,7 @@ io.on('connection',socket=>{
  socket.on('setRule',rule=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.hostId!==socket.id||room.phase!=='lobby')return;room.rule=['basic','basic2','chaos'].includes(rule)?rule:'basic';emitRoom(room)});
  socket.on('startGame',()=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.hostId!==socket.id||room.phase!=='lobby')return;if(room.players.length<5)return socket.emit('errorMessage','최소 5명이 필요합니다.');const roles=roleSet(room.players.length);room.players.forEach((p,i)=>{p.role=roles[i];p.team=ROLE[p.role].team;p.alive=true;p.usedRip=false;p.veteranSave=true;p.foundWolves=[];p.intel=[];p.knownRoles={};p.inheritedRole=null;if(p.role==='wolf')p.wolfNo=room.players.filter((x,j)=>j<=i&&roles[j]==='wolf').length});room.day=0;room.night=0;room.votes={};room.public=[];room.logs=[];room.deaths=[];room.closeRequests=[];room.phase='day';room.notice='게임이 시작되었습니다.';if(room.rule==='basic'){enterDay(room)}else{enterNight(room);room.notice='2턴제 준비 밤입니다. 능력을 사용할 수 있습니다.';emitRoom(room)}});
  socket.on('chat',({channel,text,to})=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p)return;const lobbyChat=room.phase==='lobby'||room.phase==='ended';const msg=String(text||'').trim().slice(0,300);if(!msg)return;if(!lobbyChat&&!p.alive&&channel!=='ghost')return socket.emit('errorMessage','사망자는 유령 대화만 사용할 수 있습니다.');if(!lobbyChat&&room.phase==='night'&&channel==='all')return socket.emit('errorMessage','밤에는 전체 대화를 할 수 없습니다.');if(!lobbyChat&&channel==='wolf'&&!(p.role==='wolf'||(p.role==='hench'&&p.foundWolves.length)))return socket.emit('errorMessage','아직 동맹 대화를 사용할 수 없습니다.');if(!lobbyChat&&channel==='ghost'&&p.alive)return socket.emit('errorMessage','유령만 사용할 수 있는 대화입니다.');if(channel==='whisper'){if(room.phase!=='day')return socket.emit('errorMessage','귓속말은 낮에만 가능합니다.');const target=room.players.find(x=>x.id===Number(to));if(!target||!target.alive||target.id===p.id)return socket.emit('errorMessage','살아있는 다른 플레이어에게만 귓속말을 보낼 수 있습니다.');room.logs.push({id:crypto.randomUUID(),channel:'whisper',text:msg,to:target.id,from:p.id,fromName:`${p.id}번 ${String(p.name).replace(/번+$/,'')} → ${target.id}번 ${String(target.name).replace(/번+$/,'')}`,at:Date.now()});const s=io.sockets.sockets.get(target.socketId);if(s){s.emit('state',stateFor(room,target));s.emit('whisperNotice',{from:p.id});}socket.emit('state',stateFor(room,p));return;}if(lobbyChat&&channel!=='all')return socket.emit('errorMessage','대기실에서는 로비 채팅만 사용할 수 있습니다.');if(channel==='all'&&!lobbyChat&&room.phase!=='day')return;room.logs.push({id:crypto.randomUUID(),channel:channel==='ghost'?'ghost':channel==='wolf'?'wolf':'all',text:msg,from:p.id,fromName:`${p.id}번 ${String(p.name).replace(/번+$/,'')}`,at:Date.now()});if(room.logs.length>300)room.logs.shift();emitRoom(room)});
- socket.on('vote',targetId=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='day'||room.voteClosed||!p.alive)return socket.emit('errorMessage','지금은 투표할 수 없습니다.');if(Object.prototype.hasOwnProperty.call(room.votes,p.id))return socket.emit('errorMessage','오늘의 투표권은 이미 사용했습니다.');const target=Number(targetId);if(target!==0&&!living(room).some(x=>x.id===target))return socket.emit('errorMessage','투표 대상을 찾을 수 없습니다.');room.votes[p.id]=target;room.notice=target?`${p.name}이(가) 투표했습니다.`:`${p.name}이(가) 기권했습니다.`;emitRoom(room);if(living(room).every(x=>Object.prototype.hasOwnProperty.call(room.votes,x.id)))closeVote(room,false)});
+ socket.on('vote',targetId=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='day'||room.voteClosed||!p.alive)return socket.emit('errorMessage','지금은 투표할 수 없습니다.');if(Object.prototype.hasOwnProperty.call(room.votes,p.id))return socket.emit('errorMessage','오늘의 투표권은 이미 사용했습니다.');const target=Number(targetId);if(target!==0&&!living(room).some(x=>x.id===target))return socket.emit('errorMessage','투표 대상을 찾을 수 없습니다.');room.votes[p.id]=target;room.closeConsentAvailableAt ||= {};room.closeConsentAvailableAt[p.id]=Date.now()+30_000;room.notice=target?`${p.name}이(가) 투표했습니다.`:`${p.name}이(가) 기권했습니다.`;emitRoom(room);if(living(room).every(x=>Object.prototype.hasOwnProperty.call(room.votes,x.id)))closeVote(room,false)});
  socket.on('extendDay',()=>{
   const room=getRoom(socket),p=getPlayer(room,socket);
   if(!room||!p||!p.alive||room.phase!=='day'||room.voteClosed)return;
@@ -200,13 +200,14 @@ io.on('connection',socket=>{
   if(room.extendedToday.includes(p.id))return socket.emit('errorMessage','오늘은 이미 1분 연장을 사용했습니다.');
   if(Date.now()>=room.deadline)return socket.emit('errorMessage','이미 낮 시간이 종료되었습니다.');
   room.extendedToday.push(p.id);
-  room.deadline+=DAY_MS;
+  room.deadline+=DAY_EXTENSION_MS;
   room.notice='생존자가 토론 시간을 1분 연장했습니다.';
   emitRoom(room);scheduleDayEnd(room);
  });
  socket.on('closeVote',()=>{
  const room=getRoom(socket),p=getPlayer(room,socket);
  if(!room||!p||!p.alive||room.phase!=='day'||room.voteClosed)return;
+ if(Date.now()<(room.closeConsentAvailableAt?.[p.id]||0))return socket.emit('errorMessage','투표 또는 기권 후 30초가 지나야 마감에 동의할 수 있습니다.');
  room.closeRequests ||= [];
  if(!room.closeRequests.includes(p.id))room.closeRequests.push(p.id);
  if(living(room).every(x=>room.closeRequests.includes(x.id)))closeVote(room,false);
