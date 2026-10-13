@@ -207,6 +207,7 @@ function nightAction(socket, data){const room=getRoom(socket),p=getPlayer(room,s
 io.on('connection',socket=>{
  socket.data.siteName='방랑자';
  siteChatState(socket);emitSitePresence();
+ socket.on('requestSitePresence',()=>emitSitePresence());
  socket.on('siteName',name=>{socket.data.siteName=String(name||'방랑자').trim().slice(0,16)||'방랑자';emitSitePresence();});
  socket.on('siteChat',payload=>{
   if(!siteChatAllowed(socket))return socket.emit('errorMessage','게임 진행 중에는 웹사이트 전체 채팅을 사용할 수 없습니다.');
