@@ -151,6 +151,7 @@ function closeVote(room,timeout=false){
   const victim=room.players.find(p=>p.id===leaders[0]);
   if(victim){const first=Object.entries(room.votes).find(([v,t])=>t===victim.id);
    kill(room,victim,'vote',first?+first[0]:null);
+   playForRoom(room,'execution');
    room.notice=`${victim.name}이(가) 최다 득표했습니다.`;
   }
  }else room.notice=timeout?'투표 시간이 종료되었습니다. 처형은 없습니다.':'투표가 마감되었습니다. 동률 또는 무효 투표로 처형이 없습니다.';
