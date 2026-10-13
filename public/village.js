@@ -1,10 +1,11 @@
-/* LUPUS IN TABULA v2.5: expanded navigation + high-detail animated sprites + dynamic color-matched animated player sprites.
+/* LUPUS IN TABULA v3.3: expanded navigation + high-detail animated sprites + dynamic color-matched animated player sprites.
    Rendering only: voting, role logic, chats and timers remain in the original game. */
 (()=>{'use strict';
 const canvas=document.getElementById('villageCanvas');if(!canvas)return;
 const ctx=canvas.getContext('2d'),W=1200,H=550;canvas.width=W;canvas.height=H;
 const background=new Image();background.src='/village_empty_hd2d.jpg';
-const sprites=new Image();sprites.src='/village_characters_fine.png';
+const sprites=new Image();sprites.src='/village_characters_user.png?v=35';
+const deathSprites=new Image();deathSprites.src='/village_characters_death.png?v=35';
 const actors=new Map(),bubbles=new Map(),seen=new Set();
 let currentRoom='',previousPhase='',lastSend=0,lastTick=performance.now(),lastState=null;
 const fallbackColors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];
@@ -65,12 +66,16 @@ function drawActor(a,t,night){const x=a.x*W,y=a.y*H,col=a.color;
  const walking=a.alive&&Math.hypot(a.tx-a.x,a.ty-a.y)>.003&&!night;
  if(sprites.complete&&sprites.naturalWidth){
  const direction=a.dir,frame=walking?Math.floor(a.step)%4:0;
- const sx=(direction*4+frame)*160,sy=((a.id-1)%11)*224;
+ const sx=(direction*4+frame)*96,sy=((a.id-1)%11)*104;
  if(a.alive){ctx.imageSmoothingEnabled=false;
- ctx.save();ctx.filter=night?'brightness(0.64) saturate(0.72) sepia(0.12)':'none';ctx.shadowColor='#060a12';ctx.shadowBlur=5;ctx.drawImage(sprites,sx,sy,160,224,-39,-106+(walking?Math.sin(a.step*Math.PI/2)*2:0),78,110);ctx.restore();
+ ctx.save();ctx.filter=night?'brightness(0.64) saturate(0.72) sepia(0.12)':'none';ctx.shadowColor='#060a12';ctx.shadowBlur=5;ctx.drawImage(sprites,sx,sy,96,104,-45,-110+(walking?Math.sin(a.step*Math.PI/2)*2:0),90,114);ctx.restore();
  }else{
- ctx.save();ctx.translate(0,-8);ctx.rotate(Math.PI/2);ctx.globalAlpha=.86;ctx.filter=night?'brightness(0.64) saturate(0.72)':'none';
- ctx.drawImage(sprites,0,sy,160,224,-29,-37,58,80);ctx.restore();
+ ctx.save();ctx.globalAlpha=.9;ctx.filter=night?'brightness(0.64) saturate(0.72)':'none';
+ const elapsed=a.deathAt===null?99999:performance.now()-a.deathAt;
+ const deathFrame=Math.min(4,Math.floor(elapsed/230));
+ if(deathSprites.complete&&deathSprites.naturalWidth){
+  ctx.drawImage(deathSprites,deathFrame*96,sy,96,104,-45,-110,90,114);
+ }else{ctx.translate(0,-8);ctx.rotate(Math.PI/2);ctx.drawImage(sprites,0,sy,96,104,-29,-37,58,80)}ctx.restore();
  }
  }else{box(-12,-56,24,40,5,col,'#22212a');circle(0,-60,13,'#e8b58f')}
  if(a.isYou&&a.alive){ctx.save();ctx.globalAlpha=.17+.08*Math.sin(t/240);circle(0,-52,34,'#ffec94');ctx.restore()}
@@ -78,7 +83,7 @@ function drawActor(a,t,night){const x=a.x*W,y=a.y*H,col=a.color;
  // Nameplates are separated from artwork and therefore never remain baked into the scene.
  const name=`${a.name}${a.isYou?' (나)':''}`;
  ctx.font='bold 14px system-ui,sans-serif';const width=Math.min(180,Math.max(85,ctx.measureText(name).width+44));
- const ly=y-128;
+ const ly=y-114; // Nameplate 14px closer to the character
  box(x-width/2,ly,width,25,7,a.alive?(night?'#0a1423f2':'#07111de9'):'#22252ce2',a.isYou?'#e8c778':'#7384998a');
  circle(x-width/2+14,ly+12.5,10,col);
  ctx.fillStyle='#101521';ctx.textAlign='center';ctx.font='bold 12px system-ui';ctx.fillText(a.id,x-width/2+14,ly+16.7);
