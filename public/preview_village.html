@@ -1,0 +1,7 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>v2.1 마을 그래픽 미리보기</title><style>body{margin:0;background:#0c1524;color:#fff;font:14px sans-serif}h2{padding:8px 16px}canvas{display:block;width:100%;height:auto;max-width:1200px;margin:auto;border:2px solid #a88c57;border-radius:12px}</style><h2>LUPUS IN TABULA v2.1 — 마을 그래픽 미리보기</h2><canvas id="villageCanvas" width="1200" height="550"></canvas><script>
+const socket={on(){},emit(){}};
+const names=['방랑자','노이즈','세라','하린','제이','민준','루나','카이','현우','지훈','도윤'];
+const colors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];
+const xy=[[.35,.47],[.24,.60],[.62,.47],[.79,.59],[.85,.77],[.35,.76],[.64,.65],[.48,.85],[.61,.85],[.79,.83],[.18,.79]];
+const state={code:'DEMO',phase:'day',voteClosed:false,self:{id:1,alive:true},players:names.map((name,i)=>({id:i+1,name,color:colors[i],mapX:xy[i][0],mapY:xy[i][1],alive:true,isYou:i===0})),logs:[{id:'demo',channel:'all',from:'1번 방랑자',text:'오늘은 누구를 의심하시나요?'}]};
+</script><script src="/village.js"></script></html>
