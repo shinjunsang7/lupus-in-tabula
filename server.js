@@ -261,7 +261,7 @@ io.on('connection',socket=>{
  socket.on('nightAction',data=>nightAction(socket,data));
  socket.on('skipNight',()=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='night'||!p.alive)return;if(room.nightActions[p.id]?.done)return socket.emit('errorMessage','이번 밤 행동은 이미 완료했습니다.');room.nightActions[p.id]={done:true};emitRoom(room);if(allNightDone(room))resolveNight(room)});
  socket.on('publish',data=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p)return;
- const value=String(typeof data==='object'&&data!==null?data.text:data||'').trim().slice(0,500);
+ const value=String(typeof data==='object'&&data!==null?data.text:data||'').trim().slice(0,50);
  if(!value)return;
  const allowedColors=['#f4e9d6','#eecb7b','#b8e2ff','#b8f0c9','#ffb6c1','#e3c5ff'];
  const color=allowedColors.includes(data?.color)?data.color:allowedColors[0];
