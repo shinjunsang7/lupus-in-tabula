@@ -6,7 +6,7 @@ const ctx=canvas.getContext('2d'),W=1200,H=550;canvas.width=W;canvas.height=H;
 const background=new Image();background.src='/village_empty_hd2d.jpg';
 const sprites=new Image();sprites.src='/village_characters_user.png?v=35';
 const deathSprites=new Image();deathSprites.src='/village_characters_death.png?v=35';
-const actors=new Map(),bubbles=new Map(),seen=new Set();
+const actors=new Map(),bubbles=new Map(),seen=new Set(),spotlights=new Map();
 let currentRoom='',previousPhase='',lastSend=0,lastTick=performance.now(),lastState=null;
 const fallbackColors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];
 const starts=[[.35,.47],[.24,.60],[.62,.47],[.79,.59],[.85,.77],[.35,.76],[.64,.65],[.48,.85],[.61,.85],[.79,.83],[.18,.79]];
@@ -31,13 +31,13 @@ function clampGoal(x,y){
  return {x,y};
 }
 function ingest(s){if(!s)return;lastState=s;
- if(s.code!==currentRoom){actors.clear();bubbles.clear();seen.clear();currentRoom=s.code}
+ if(s.code!==currentRoom){actors.clear();bubbles.clear();seen.clear();spotlights.clear();currentRoom=s.code}
  const was=previousPhase;previousPhase=s.phase;
  for(const p of s.players||[]){const init=starts[(p.id-1)%starts.length];
  const spawn=clampGoal(Number.isFinite(p.mapX)?p.mapX:init[0],Number.isFinite(p.mapY)?p.mapY:init[1]);const x=spawn.x,y=spawn.y;
  let a=actors.get(p.id);if(!a){a={id:p.id,name:p.name,color:p.color||fallbackColors[(p.id-1)%11],x,y,tx:x,ty:y,alive:p.alive,isYou:p.isYou,dir:0,step:0,deathAt:null};actors.set(p.id,a)}
  else{a.name=p.name;a.color=p.color||fallbackColors[(p.id-1)%11];a.isYou=p.isYou;
- if(a.alive&&!p.alive)a.deathAt=performance.now();a.alive=p.alive;
+ if(a.alive&&!p.alive){a.deathAt=performance.now();spotlights.set(p.id,performance.now()+4000);}a.alive=p.alive;
  if(!a.isYou){a.tx=x;a.ty=y}else if(!a.lastClick||Date.now()-a.lastClick>10000){a.tx=x;a.ty=y}}
  }
  for(const id of [...actors.keys()])if(!(s.players||[]).some(p=>p.id===id))actors.delete(id);
@@ -48,6 +48,7 @@ function ingest(s){if(!s)return;lastState=s;
 }
 if(typeof socket!=='undefined'){
  socket.on('state',ingest);
+ socket.on('deathSpotlight',p=>{if(Number.isFinite(p?.id))spotlights.set(p.id,performance.now()+4000)});
  socket.on('villagePosition',p=>{const a=actors.get(p.id);if(a&&!a.isYou&&Number.isFinite(p.x)&&Number.isFinite(p.y)){a.tx=p.x;a.ty=p.y}})
 }
 canvas.addEventListener('pointerdown',e=>{
@@ -133,8 +134,26 @@ function frame(t){const s=stateNow(),night=s?.phase==='night',locked=night||s?.p
  // Darkness is drawn over the scenery but BEFORE players to keep sprites legible.
  if(night){ctx.fillStyle='#07142ac5';ctx.fillRect(0,0,W,H);
  const glow=ctx.createRadialGradient(280,155,10,280,155,430);glow.addColorStop(0,'#ffc77b25');glow.addColorStop(1,'#0000');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H)}
+ // Cinematic death spotlight: dim the square but leave a bright, soft circle on each fallen character.
+ for(const [id,until] of spotlights){if(t>until)spotlights.delete(id);}
+ const lit=[...spotlights.keys()].map(id=>actors.get(id)).filter(Boolean);
+ if(lit.length){
+  ctx.save();ctx.fillStyle='rgba(2,7,19,.65)';ctx.fillRect(0,0,W,H);
+  ctx.globalCompositeOperation='destination-out';
+  for(const a of lit){const x=a.x*W,y=a.y*H-65;
+   const beam=ctx.createRadialGradient(x,y,16,x,y,112);
+   beam.addColorStop(0,'rgba(0,0,0,1)');beam.addColorStop(.58,'rgba(0,0,0,.95)');beam.addColorStop(1,'rgba(0,0,0,0)');
+   ctx.fillStyle=beam;ctx.beginPath();ctx.arc(x,y,112,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+  for(const a of lit){const x=a.x*W,y=a.y*H-65;
+   ctx.save();const glow=ctx.createRadialGradient(x,y,8,x,y,108);
+   glow.addColorStop(0,'#ffe7a542');glow.addColorStop(.55,'#fff1bc21');glow.addColorStop(1,'#fff4d000');
+   ctx.fillStyle=glow;ctx.fillRect(x-110,y-110,220,220);ctx.restore();
+  }
+ }
  for(const a of [...actors.values()].sort((a,b)=>a.y-b.y))drawActor(a,t,night);
- if(s?.phase==='ended'){ctx.fillStyle='#07101b55';ctx.fillRect(0,0,W,H)}
+ if(s?.phase==='ended'&&!lit.length){ctx.fillStyle='#07101b55';ctx.fillRect(0,0,W,H)}
 
  if(s?.phase==='day'||s?.phase==='lobby'){box(W-358,H-37,338,27,7,'#0a1221dd','#a68a5c');ctx.fillStyle='#f7dba4';ctx.textAlign='center';ctx.font='13px system-ui';ctx.fillText('마을 바닥을 클릭하면 캐릭터가 이동합니다',W-189,H-19)}
  requestAnimationFrame(frame)}requestAnimationFrame(frame);
