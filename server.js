@@ -254,9 +254,14 @@ io.on('connection',socket=>{
  socket.on('closeVote',()=>{
  const room=getRoom(socket),p=getPlayer(room,socket);
  if(!room||!p||!p.alive||room.phase!=='day'||room.shortDay||room.voteClosed)return;
- if(Date.now()<(room.closeConsentAvailableAt?.[p.id]||0))return socket.emit('errorMessage','투표 또는 기권 후 30초가 지나야 마감에 동의할 수 있습니다.');
  room.closeRequests ||= [];
- if(!room.closeRequests.includes(p.id))room.closeRequests.push(p.id);
+ if(room.closeRequests.includes(p.id)){
+  room.closeRequests=room.closeRequests.filter(id=>id!==p.id);
+  emitRoom(room);
+  return;
+ }
+ if(Date.now()<(room.closeConsentAvailableAt?.[p.id]||0))return socket.emit('errorMessage','투표 또는 기권 후 30초가 지나야 마감에 동의할 수 있습니다.');
+ room.closeRequests.push(p.id);
  if(living(room).every(x=>room.closeRequests.includes(x.id)))closeVote(room,false);
  else emitRoom(room);
  });
