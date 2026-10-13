@@ -107,13 +107,6 @@ function drawActor(a,t,night){const x=a.x*W,y=a.y*H,col=a.color;
  }
 
 }
-function drawMiniMap(){const x=W-176,y=14;
- box(x,y,162,117,8,'#09111fe5','#b89b66');ctx.fillStyle='#f3deb0';ctx.textAlign='left';ctx.font='bold 14px system-ui';ctx.fillText('마을 광장',x+12,y+21);
- box(x+9,y+31,144,76,5,'#675c45db','#94774e');
- // fountain and buildings on the schematic map
- circle(x+81,y+71,12,'#577c88');circle(x+81,y+71,6,'#d3b88c');
- for(const a of actors.values())circle(x+9+a.x*144,y+31+a.y*76,a.isYou?5:3.5,a.alive?(a.isYou?'#ffe57c':a.color):'#62636a');
-}
 function frame(t){const s=stateNow(),night=s?.phase==='night',locked=night||s?.phase==='ended';const dt=Math.min(40,t-lastTick);lastTick=t;
  ctx.clearRect(0,0,W,H);
  if(background.complete&&background.naturalWidth)ctx.drawImage(background,0,0,background.naturalWidth,background.naturalHeight,0,0,W,H);
@@ -142,7 +135,7 @@ function frame(t){const s=stateNow(),night=s?.phase==='night',locked=night||s?.p
  const glow=ctx.createRadialGradient(280,155,10,280,155,430);glow.addColorStop(0,'#ffc77b25');glow.addColorStop(1,'#0000');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H)}
  for(const a of [...actors.values()].sort((a,b)=>a.y-b.y))drawActor(a,t,night);
  if(s?.phase==='ended'){ctx.fillStyle='#07101b55';ctx.fillRect(0,0,W,H)}
- drawMiniMap();
+
  if(s?.phase==='day'||s?.phase==='lobby'){box(W-358,H-37,338,27,7,'#0a1221dd','#a68a5c');ctx.fillStyle='#f7dba4';ctx.textAlign='center';ctx.font='13px system-ui';ctx.fillText('마을 바닥을 클릭하면 캐릭터가 이동합니다',W-189,H-19)}
  requestAnimationFrame(frame)}requestAnimationFrame(frame);
 })();
