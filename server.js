@@ -132,7 +132,7 @@ function enterDay(room){
  room.nightActions={};emitRoom(room);playForRoom(room,'day');scheduleDayEnd(room);
 }
 function enterNight(room){
- cancelTimer(room);room.phase='night';room.shortDay=false;room.night++;
+ cancelTimer(room);room.nightResolving=false;room.phase='night';room.shortDay=false;room.night++;
  room.deadline=Date.now()+NIGHT_MS;room.nightActions={};
  room.notice=`${room.night}번째 밤입니다. 1분 안에 능력을 사용하세요.`;
  room.players.forEach(p=>p.protected=false);
@@ -163,13 +163,13 @@ function closeVote(room,timeout=false){
  emitRoom(room);
  room.timer=setTimeout(()=>{if(room.phase==='day'&&room.voteClosed)enterNight(room)},POST_VOTE_MS);
 }
-function kill(room,p,how,firstVoter){if(!p||!p.alive)return;p.alive=false;room.deaths ||= [];room.deaths.push({id:p.id,role:p.role,team:p.team});log(room,'all',`${p.id}번 ${p.name}이(가) ${how==='vote'?'투표로 처형되었습니다.':'밤에 사망했습니다.'}`);if(how==='vote'&&activeRole(p)==='fanatic'&&firstVoter){const v=room.players.find(x=>x.id===firstVoter);if(v&&v.alive){v.alive=false;room.deaths.push({id:v.id,role:v.role,team:v.team});log(room,'all',`마녀의 저주! 최초 투표자 ${v.id}번 ${v.name}도 함께 사망했습니다.`);playForRoom(room,'witch')}}attemptInheritance(room);}
+function kill(room,p,how,firstVoter){if(!p||!p.alive)return;p.alive=false;io.to(room.code).emit('deathSpotlight',{id:p.id,at:Date.now()});room.deaths ||= [];room.deaths.push({id:p.id,role:p.role,team:p.team});log(room,'all',`${p.id}번 ${p.name}이(가) ${how==='vote'?'투표로 처형되었습니다.':'밤에 사망했습니다.'}`);if(how==='vote'&&activeRole(p)==='fanatic'&&firstVoter){const v=room.players.find(x=>x.id===firstVoter);if(v&&v.alive){v.alive=false;io.to(room.code).emit('deathSpotlight',{id:v.id,at:Date.now()});room.deaths.push({id:v.id,role:v.role,team:v.team});log(room,'all',`마녀의 저주! 최초 투표자 ${v.id}번 ${v.name}도 함께 사망했습니다.`);playForRoom(room,'witch')}}attemptInheritance(room);}
 function checkWin(room){if(room.phase==='ended')return;const alive= living(room);const wolves=alive.filter(p=>p.role==='wolf').length;const wolfTeam=alive.filter(p=>p.team==='wolf').length;const town=alive.filter(p=>p.team==='town').length;if(wolves===0){finish(room,'시민팀')}else if(wolfTeam>=town){finish(room,'늑대팀')}}
 function finish(room,winner){cancelTimer(room);room.phase='ended';room.logs=[];room.winner=winner;room.deadline=null;room.notice=`${winner} 승리! 모든 플레이어의 직업이 공개되었습니다.`;log(room,'all',room.notice);emitRoom(room);playForRoom(room,winner==='시민팀'?'townWin':'wolfWin');}
 function allNightDone(room){const livingPlayers=living(room);const actionable=livingPlayers.filter(p=>['wolf','seer','guard','medium','tracker','watcher','hench'].includes(activeRole(p))&&!(p.role==='hench'&&p.foundWolves?.length));return actionable.every(p=>room.nightActions[p.id]?.done);}
-function resolveNight(room){if(room.phase!=='night')return;cancelTimer(room);let wolves=living(room).filter(p=>p.role==='wolf');let attacker=null;if(wolves.length===1)attacker=wolves[0];else if(wolves.length>1){const turn=room.night%2===1?1:2;attacker=wolves.find(p=>p.wolfNo===turn)||wolves[0];}
+function resolveNight(room){if(room.phase!=='night'||room.nightResolving)return;cancelTimer(room);room.nightResolving=true;let nightEffectPlayed=false;let wolves=living(room).filter(p=>p.role==='wolf');let attacker=null;if(wolves.length===1)attacker=wolves[0];else if(wolves.length>1){const turn=room.night%2===1?1:2;attacker=wolves.find(p=>p.wolfNo===turn)||wolves[0];}
  let targetId=null,rip=false;if(attacker){const action=room.nightActions[attacker.id];if(action?.target) {targetId=action.target;rip=!!action.rip}}
- let attackedVictim=null,attackSucceeded=false;if(targetId){const target=room.players.find(p=>p.id===targetId&&p.alive);if(target){attackedVictim=target.id;if(target.protected&&!rip){if(room.rule!=='chaos'){playForRoom(room,'saved');log(room,'all','보디가드의 보호로 누군가 늑대의 공격에서 살아남았습니다.')}}else if(activeRole(target)==='veteran'&&target.veteranSave&&!rip){target.veteranSave=false;if(room.rule!=='chaos'){playForRoom(room,'honor');log(room,'all','퇴역군인이 늑대의 공격을 버텼습니다.')}}else {kill(room,target,'night');attackSucceeded=true;playForRoom(room,rip?'rip':'scratch')}}}
+ let attackedVictim=null,attackSucceeded=false;if(targetId){const target=room.players.find(p=>p.id===targetId&&p.alive);if(target){attackedVictim=target.id;if(target.protected&&!rip){if(room.rule!=='chaos'){playForRoom(room,'saved');nightEffectPlayed=true;log(room,'all','보디가드의 보호로 누군가 늑대의 공격에서 살아남았습니다.')}}else if(activeRole(target)==='veteran'&&target.veteranSave&&!rip){target.veteranSave=false;if(room.rule!=='chaos'){playForRoom(room,'honor');nightEffectPlayed=true;log(room,'all','퇴역군인이 늑대의 공격을 버텼습니다.')}}else {kill(room,target,'night');attackSucceeded=true;playForRoom(room,rip?'rip':'scratch');nightEffectPlayed=true}}}
  if(room.rule==='chaos'&&!attackSucceeded)log(room,'all','오늘 밤에는 아무도 죽지 않았습니다.');
  for(const tracker of room.players.filter(x=>activeRole(x)==='tracker'&&x.alive)){
  const action=room.nightActions[tracker.id];
@@ -181,9 +181,11 @@ function resolveNight(room){if(room.phase!=='night')return;cancelTimer(room);let
  log(room,'private',`추격 결과: ${action.target}번 — ${result}.`,tracker.id);
  }
  for(const p of room.players){p.protected=false;}
- checkWin(room);if(room.phase!=='ended'){if(room.rule!=='basic'&&room.night===1)enterInterludeDay(room);else enterDay(room);}
+ // Let night-action audio play before announcing the morning. Freeze further night actions during the reveal.
+ const reveal=()=>{checkWin(room);if(room.phase!=='ended'){if(room.rule!=='basic'&&room.night===1)enterInterludeDay(room);else enterDay(room);}};
+ if(nightEffectPlayed){emitRoom(room);room.timer=setTimeout(reveal,2600);}else reveal();
 }
-function nightAction(socket, data){const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='night'||!p.alive)return socket.emit('errorMessage','지금은 밤 행동을 할 수 없습니다.');if(room.nightActions[p.id]?.done)return socket.emit('errorMessage','이번 밤의 행동은 이미 완료했습니다.');if(p.role==='hench'&&p.foundWolves?.length)return socket.emit('errorMessage','동맹에 합류한 똘마니는 추가 탐색을 하지 않습니다.');const role=activeRole(p);const target=room.players.find(x=>x.id===Number(data.target));if(!target)return socket.emit('errorMessage','대상을 찾을 수 없습니다.');
+function nightAction(socket, data){const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='night'||room.nightResolving||!p.alive)return socket.emit('errorMessage','지금은 밤 행동을 할 수 없습니다.');if(room.nightActions[p.id]?.done)return socket.emit('errorMessage','이번 밤의 행동은 이미 완료했습니다.');if(p.role==='hench'&&p.foundWolves?.length)return socket.emit('errorMessage','동맹에 합류한 똘마니는 추가 탐색을 하지 않습니다.');const role=activeRole(p);const target=room.players.find(x=>x.id===Number(data.target));if(!target)return socket.emit('errorMessage','대상을 찾을 수 없습니다.');
  if(['seer','guard','tracker','watcher','wolf','hench'].includes(role)&&(!target.alive||target.id===p.id))return socket.emit('errorMessage','살아있는 다른 플레이어를 선택하세요.');if(role==='medium'&&target.alive)return socket.emit('errorMessage','영매는 사망한 플레이어를 선택해야 합니다.');
  const action={done:true,target:target.id};
  if(p.role==='wolf'){const wolves=living(room).filter(x=>x.role==='wolf');if(wolves.length>1){const activeNo=room.night%2===1?1:2;if(p.wolfNo!==activeNo)return socket.emit('errorMessage',`이번 밤은 늑대 ${activeNo}번의 공격 차례입니다.`)}action.rip=!!data.rip&&!p.usedRip;if(action.rip)p.usedRip=true;log(room,'wolf',`늑대 ${p.wolfNo}번이 ${target.id}번에게 ${action.rip?'참살':'일반 공격'}을 지정했습니다.`);for(const ally of room.players.filter(x=>x.role==='wolf'||(x.role==='hench'&&x.foundWolves?.length)))remember(ally,room.night,target.id,`늑대 ${p.wolfNo}번 · ${action.rip?'참살':'일반 공격'}`,'동맹 공격')}
@@ -266,7 +268,7 @@ io.on('connection',socket=>{
  else emitRoom(room);
  });
  socket.on('nightAction',data=>nightAction(socket,data));
- socket.on('skipNight',()=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='night'||!p.alive)return;if(room.nightActions[p.id]?.done)return socket.emit('errorMessage','이번 밤 행동은 이미 완료했습니다.');room.nightActions[p.id]={done:true};emitRoom(room);if(allNightDone(room))resolveNight(room)});
+ socket.on('skipNight',()=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='night'||room.nightResolving||!p.alive)return;if(room.nightActions[p.id]?.done)return socket.emit('errorMessage','이번 밤 행동은 이미 완료했습니다.');room.nightActions[p.id]={done:true};emitRoom(room);if(allNightDone(room))resolveNight(room)});
  socket.on('publish',data=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p)return;
  const value=String(typeof data==='object'&&data!==null?data.text:data||'').trim().slice(0,50);
  if(!value)return;
