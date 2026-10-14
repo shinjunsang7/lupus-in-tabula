@@ -47,6 +47,11 @@ function ingest(s){if(!s)return;lastState=s;
  if(was==='night'&&s.phase==='day')for(const a of actors.values()){a.tx=a.x;a.ty=a.y}
 }
 if(typeof socket!=='undefined'){
+ // Leaving a room must also clear the independent canvas renderer's cached actors.
+ socket.on('leftRoom',()=>{
+  actors.clear();bubbles.clear();seen.clear();spotlights.clear();
+  currentRoom='';previousPhase='';lastState=null;lastSend=0;
+ });
  socket.on('state',ingest);
  socket.on('deathSpotlight',p=>{if(Number.isFinite(p?.id))spotlights.set(p.id,performance.now()+4000)});
  socket.on('villagePosition',p=>{const a=actors.get(p.id);if(a&&!a.isYou&&Number.isFinite(p.x)&&Number.isFinite(p.y)){a.tx=p.x;a.ty=p.y}})
