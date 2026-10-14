@@ -208,6 +208,8 @@ function nightAction(socket, data){const room=getRoom(socket),p=getPlayer(room,s
  else if(role==='tracker'){log(room,'private',`추적 대상: ${target.id}번. 결과는 밤이 끝나면 개인 기록에 남습니다.`,p.id)}
  room.nightActions[p.id]=action;emitRoom(room);if(allNightDone(room)){emitRoom(room);setTimeout(()=>resolveNight(room),700)} }
 io.on('connection',socket=>{
+ const browserId=socket.handshake.auth?.browserId;
+ socket.data.browserId=typeof browserId==='string'&&/^[0-9a-f-]{36}$/i.test(browserId)?browserId:null;
  socket.data.siteName='방랑자';
  siteChatState(socket);emitSitePresence();
  socket.on('requestSitePresence',()=>emitSitePresence());
@@ -225,8 +227,14 @@ io.on('connection',socket=>{
   siteChatBroadcast(message);
  });
 
- socket.on('createRoom',({name})=>{socket.data.siteName=String(name||'방랑자').trim().slice(0,16)||'방랑자';const room=makeRoom(socket,socket.data.siteName);socket.emit('joined',{code:room.code});siteChatState(socket);emitSitePresence();});
- socket.on('joinRoom',({code,name})=>{code=String(code||'').trim().toUpperCase();const room=rooms.get(code);if(!room)return socket.emit('errorMessage','해당 방 코드를 찾을 수 없습니다.');if(room.phase!=='lobby')return socket.emit('errorMessage','이미 게임이 시작된 방입니다.');if(room.players.length>=11)return socket.emit('errorMessage','방이 가득 찼습니다.');const id=Math.max(0,...room.players.map(p=>p.id))+1;const p={id,socketId:socket.id,name:String(name||'여행자').slice(0,16),color:COLORS[(id-1)%COLORS.length],alive:true,ready:false,role:null,team:null,usedRip:false,veteranSave:true,foundWolves:[],intel:[],knownRoles:{}};room.players.push(p);socket.join(code);socket.data.room=code;socket.data.playerId=id;socket.data.siteName=p.name;room.notice=`${p.name}이(가) 방에 입장했습니다.`;log(room,'all',room.notice);socket.emit('joined',{code});siteChatState(socket);emitSitePresence();emitRoom(room);});
+ socket.on('createRoom',({name})=>{
+  if(getRoom(socket))return socket.emit('errorMessage','이미 방에 참가 중입니다. 새 방을 만들 수 없습니다.');
+  socket.data.siteName=String(name||'방랑자').trim().slice(0,16)||'방랑자';const room=makeRoom(socket,socket.data.siteName);room.players[0].browserId=socket.data.browserId;socket.emit('joined',{code:room.code});siteChatState(socket);emitSitePresence();});
+ socket.on('joinRoom',({code,name})=>{
+ if(getRoom(socket))return socket.emit('errorMessage','이미 방에 참가 중입니다.');
+ code=String(code||'').trim().toUpperCase();const room=rooms.get(code);
+ if(room&&socket.data.browserId&&room.players.some(p=>p.browserId===socket.data.browserId))
+  return socket.emit('errorMessage','같은 브라우저에서는 동일한 방에 한 명만 참가할 수 있습니다.');if(!room)return socket.emit('errorMessage','해당 방 코드를 찾을 수 없습니다.');if(room.phase!=='lobby')return socket.emit('errorMessage','이미 게임이 시작된 방입니다.');if(room.players.length>=11)return socket.emit('errorMessage','방이 가득 찼습니다.');const id=Math.max(0,...room.players.map(p=>p.id))+1;const p={id,socketId:socket.id,name:String(name||'여행자').slice(0,16),color:COLORS[(id-1)%COLORS.length],alive:true,ready:false,role:null,team:null,usedRip:false,veteranSave:true,foundWolves:[],intel:[],knownRoles:{}};p.browserId=socket.data.browserId;room.players.push(p);socket.join(code);socket.data.room=code;socket.data.playerId=id;socket.data.siteName=p.name;room.notice=`${p.name}이(가) 방에 입장했습니다.`;log(room,'all',room.notice);socket.emit('joined',{code});siteChatState(socket);emitSitePresence();emitRoom(room);});
  socket.on('rematch',()=>{
  const room=getRoom(socket),p=getPlayer(room,socket);
  if(!room||!p||room.phase!=='ended'||room.hostId!==socket.id)return;
