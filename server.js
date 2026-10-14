@@ -235,6 +235,29 @@ io.on('connection',socket=>{
  code=String(code||'').trim().toUpperCase();const room=rooms.get(code);
  if(room&&socket.data.browserId&&room.players.some(p=>p.browserId===socket.data.browserId))
   return socket.emit('errorMessage','같은 브라우저에서는 동일한 방에 한 명만 참가할 수 있습니다.');if(!room)return socket.emit('errorMessage','해당 방 코드를 찾을 수 없습니다.');if(room.phase!=='lobby')return socket.emit('errorMessage','이미 게임이 시작된 방입니다.');if(room.players.length>=11)return socket.emit('errorMessage','방이 가득 찼습니다.');const id=Math.max(0,...room.players.map(p=>p.id))+1;const p={id,socketId:socket.id,name:String(name||'여행자').slice(0,16),color:COLORS[(id-1)%COLORS.length],alive:true,ready:false,role:null,team:null,usedRip:false,veteranSave:true,foundWolves:[],intel:[],knownRoles:{}};p.browserId=socket.data.browserId;room.players.push(p);socket.join(code);socket.data.room=code;socket.data.playerId=id;socket.data.siteName=p.name;room.notice=`${p.name}이(가) 방에 입장했습니다.`;log(room,'all',room.notice);socket.emit('joined',{code});siteChatState(socket);emitSitePresence();emitRoom(room);});
+ socket.on('leaveRoom',()=>{
+  const room=getRoom(socket);if(!room)return socket.emit('leftRoom');
+  const player=getPlayer(room,socket);
+  socket.leave(room.code);socket.data.room=null;socket.data.playerId=null;
+  if(player){
+   if(room.phase==='lobby'||room.phase==='ended'){
+    room.players=room.players.filter(p=>p.socketId!==socket.id);
+   }else{
+    // A mid-game exit behaves like a disconnect: preserve the game record.
+    player.connected=false;
+   }
+   room.notice=`${player.name}이(가) 방에서 나갔습니다.`;
+   log(room,'all',room.notice);
+  }
+  if(room.hostId===socket.id){
+   const next=room.players.find(p=>p.socketId!==socket.id&&p.connected!==false);
+   if(next)room.hostId=next.socketId;
+  }
+  if(!room.players.length||!room.players.some(p=>p.connected!==false&&io.sockets.sockets.get(p.socketId))){
+   clearRoomTimers(room);rooms.delete(room.code);
+  }else emitRoom(room);
+  socket.emit('leftRoom');siteChatState(socket);emitSitePresence();
+ });
  socket.on('rematch',()=>{
  const room=getRoom(socket),p=getPlayer(room,socket);
  if(!room||!p||room.phase!=='ended'||room.hostId!==socket.id)return;
