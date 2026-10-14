@@ -134,23 +134,38 @@ function frame(t){const s=stateNow(),night=s?.phase==='night',locked=night||s?.p
  // Darkness is drawn over the scenery but BEFORE players to keep sprites legible.
  if(night){ctx.fillStyle='#07142ac5';ctx.fillRect(0,0,W,H);
  const glow=ctx.createRadialGradient(280,155,10,280,155,430);glow.addColorStop(0,'#ffc77b25');glow.addColorStop(1,'#0000');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H)}
- // Cinematic death spotlight: dim the square but leave a bright, soft circle on each fallen character.
+ // Death reveal: preserve the scenery, dim it moderately, then cast a cool-white
+ // theatrical cone and a warm ground pool onto each fallen player.
  for(const [id,until] of spotlights){if(t>until)spotlights.delete(id);}
- const lit=[...spotlights.keys()].map(id=>actors.get(id)).filter(Boolean);
+ const lit=[...spotlights.entries()].map(([id,until])=>({actor:actors.get(id),until})).filter(x=>x.actor);
  if(lit.length){
-  ctx.save();ctx.fillStyle='rgba(2,7,19,.65)';ctx.fillRect(0,0,W,H);
-  ctx.globalCompositeOperation='destination-out';
-  for(const a of lit){const x=a.x*W,y=a.y*H-65;
-   const beam=ctx.createRadialGradient(x,y,16,x,y,112);
-   beam.addColorStop(0,'rgba(0,0,0,1)');beam.addColorStop(.58,'rgba(0,0,0,.95)');beam.addColorStop(1,'rgba(0,0,0,0)');
-   ctx.fillStyle=beam;ctx.beginPath();ctx.arc(x,y,112,0,Math.PI*2);ctx.fill();
+  // Apply dimming only to the scenery; actors and their labels stay legible.
+  const latest=Math.max(...lit.map(x=>x.until));
+  const fade=Math.min(1,(latest-t)/650);
+  ctx.save();ctx.fillStyle=`rgba(7,13,25,${(.34*Math.max(0,fade)).toFixed(3)})`;ctx.fillRect(0,0,W,H);
+  for(const {actor:a,until} of lit){
+   const x=a.x*W, feet=a.y*H, groundY=feet-18;
+   const strength=Math.max(0,Math.min(1,(until-t)/600));
+   const topY=Math.max(-75,groundY-255), topHalf=13, bottomHalf=65;
+   // Soft-edged trapezoidal shaft, fading from the overhead light source.
+   ctx.save();ctx.globalAlpha=.70*strength;
+   const shaft=ctx.createLinearGradient(x,topY,x,groundY);
+   shaft.addColorStop(0,'rgba(231,244,255,.18)');
+   shaft.addColorStop(.38,'rgba(217,237,255,.21)');
+   shaft.addColorStop(1,'rgba(255,250,224,.32)');
+   ctx.fillStyle=shaft;ctx.beginPath();ctx.moveTo(x-topHalf,topY);ctx.lineTo(x+topHalf,topY);
+   ctx.lineTo(x+bottomHalf,groundY);ctx.lineTo(x-bottomHalf,groundY);ctx.closePath();ctx.fill();
+   const core=ctx.createLinearGradient(x,topY,x,groundY);
+   core.addColorStop(0,'rgba(255,255,255,.20)');core.addColorStop(1,'rgba(255,255,255,.10)');
+   ctx.fillStyle=core;ctx.beginPath();ctx.moveTo(x-6,topY);ctx.lineTo(x+6,topY);
+   ctx.lineTo(x+25,groundY);ctx.lineTo(x-25,groundY);ctx.closePath();ctx.fill();
+   const halo=ctx.createRadialGradient(x,groundY,5,x,groundY,98);
+   halo.addColorStop(0,'rgba(255,250,223,.63)');halo.addColorStop(.5,'rgba(255,242,203,.31)');
+   halo.addColorStop(1,'rgba(255,239,194,0)');
+   ctx.fillStyle=halo;ctx.beginPath();ctx.ellipse(x,groundY,99,58,0,0,Math.PI*2);ctx.fill();
+   ctx.restore();
   }
   ctx.restore();
-  for(const a of lit){const x=a.x*W,y=a.y*H-65;
-   ctx.save();const glow=ctx.createRadialGradient(x,y,8,x,y,108);
-   glow.addColorStop(0,'#ffe7a542');glow.addColorStop(.55,'#fff1bc21');glow.addColorStop(1,'#fff4d000');
-   ctx.fillStyle=glow;ctx.fillRect(x-110,y-110,220,220);ctx.restore();
-  }
  }
  for(const a of [...actors.values()].sort((a,b)=>a.y-b.y))drawActor(a,t,night);
  if(s?.phase==='ended'&&!lit.length){ctx.fillStyle='#07101b55';ctx.fillRect(0,0,W,H)}
