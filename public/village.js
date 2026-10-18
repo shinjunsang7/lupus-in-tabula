@@ -1,4 +1,4 @@
-/* LUPUS IN TABULA v3.3: expanded navigation + high-detail animated sprites + dynamic color-matched animated player sprites.
+/* LUPUS IN TABULA v4.3: expanded navigation + high-detail animated sprites + dynamic color-matched animated player sprites.
    Rendering only: voting, role logic, chats and timers remain in the original game. */
 (()=>{'use strict';
 const canvas=document.getElementById('villageCanvas');if(!canvas)return;
@@ -12,24 +12,30 @@ const deathSprites=new Image();deathSprites.src='/village_characters_death.png?v
 const actors=new Map(),bubbles=new Map(),seen=new Set(),spotlights=new Map();
 let currentRoom='',previousPhase='',lastSend=0,lastTick=performance.now(),lastState=null;
 const fallbackColors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];
-const starts=[[.35,.47],[.24,.60],[.62,.47],[.79,.59],[.85,.77],[.35,.76],[.64,.65],[.48,.85],[.61,.85],[.79,.83],[.18,.79]];
+const starts=[[0.35,0.47],[0.24,0.6],[0.62,0.47],[0.77592,0.58422],[0.85,0.77],[0.35,0.76],[0.64,0.65],[0.48,0.85],[0.60097,0.84217],[0.77538,0.8457],[0.31857,0.82097]];
 function stateNow(){return typeof state!=='undefined'&&state?state:lastState}
 function box(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.6;ctx.stroke()}}
 function circle(x,y,r,fill){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill()}
 // FINAL 2.9 revised: exact green-area collision mask approved by the user.
 // The yellow ground ring center (a.x, a.y) is the ONLY collision anchor.
 // Black pixels are blocked (water, fountain, buildings and parapets).
-const navImage=new Image();navImage.src='/village_walkable_final30.png?v=3.0';
+const navImage=new Image();navImage.src='/village_walkable_final42.png?v=4.3';
 let navPixels=null,navW=0,navH=0;
 navImage.onload=()=>{
  const c=document.createElement('canvas');c.width=navImage.naturalWidth;c.height=navImage.naturalHeight;
  const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(navImage,0,0);
  navPixels=cx.getImageData(0,0,c.width,c.height).data;navW=c.width;navH=c.height;
- // Keep the player's existing position; never teleport on map load.
+ // Only correct actors whose previous position is inside a wall.
+ for(const a of actors.values()){
+  if(!walkable(a.x,a.y)){
+   const safe=clampGoal(a.x,a.y);
+   a.x=safe.x;a.y=safe.y;a.tx=safe.x;a.ty=safe.y;a.route=[];
+  }
+ }
 };
 function walkable(x,y){
  if(x<0||x>=1||y<0||y>=1)return false;
- if(!navPixels)return true; // no forced repositioning before the actual map loads
+ if(!navPixels)return false; // wait for real collision mask
  const ix=Math.max(0,Math.min(navW-1,Math.floor(x*navW)));
  const iy=Math.max(0,Math.min(navH-1,Math.floor(y*navH)));
  return navPixels[(iy*navW+ix)*4]>180;
@@ -50,9 +56,9 @@ function clampGoal(x,y){
 }
 // A* path planning on the approved walkable floor prevents characters
 // getting stuck against stairs or fountain when a click is across an obstacle.
-const GRID_W=185,GRID_H=85;
+const GRID_W=370,GRID_H=170;
 function pathTo(start,goal){
- if(!navPixels)return [goal];
+ if(!navPixels)return [];
  const sx=Math.max(0,Math.min(GRID_W-1,Math.floor(start.x*GRID_W)));
  const sy=Math.max(0,Math.min(GRID_H-1,Math.floor(start.y*GRID_H)));
  const gx=Math.max(0,Math.min(GRID_W-1,Math.floor(goal.x*GRID_W)));
@@ -84,7 +90,7 @@ function pathTo(start,goal){
    score[next]=g;prev[next]=id;push(next,g+Math.hypot((nx-gx)/GRID_W,(ny-gy)/GRID_H));
   }
  }
- if(closest===startId)return [goal];
+ if(closest===startId)return [];
  const route=[];let id=closest;
  for(let k=0;k<count&&id!==startId&&id>=0;k++,id=prev[id])route.push(xy(id));
  route.reverse();
@@ -92,7 +98,7 @@ function pathTo(start,goal){
  const compact=[];
  for(let i=0;i<route.length;i+=3)compact.push(route[i]);
  if(route.length)compact.push(route[route.length-1]);
- if(closest===goalId)compact.push(goal);
+ if(closest===goalId&&walkable(goal.x,goal.y))compact.push(goal);
  return compact;
 }
 function setDestination(a,goal){
@@ -127,7 +133,7 @@ if(typeof socket!=='undefined'){
  socket.on('villagePosition',p=>{const a=actors.get(p.id);if(a&&!a.isYou&&Number.isFinite(p.x)&&Number.isFinite(p.y)){a.tx=p.x;a.ty=p.y}})
 }
 canvas.addEventListener('pointerdown',e=>{
- const s=stateNow();if(!s||!['day','lobby'].includes(s.phase)||!s.self?.alive)return;
+ const s=stateNow();if(!navPixels||!s||!['day','lobby'].includes(s.phase)||!s.self?.alive)return;
  const r=canvas.getBoundingClientRect();let x=(e.clientX-r.left)/r.width;
  let y=(e.clientY-r.top)/r.height;
  const goal=clampGoal(x,y);const a=actors.get(s.self.id);if(!a)return;
