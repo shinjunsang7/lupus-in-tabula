@@ -2,6 +2,19 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const crypto = require('crypto');
+// FINAL 4.3: server and browser use the SAME pixel-accurate walkable mask.
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+const VILLAGE_NAV_W=1852,VILLAGE_NAV_H=849;
+const villageNav=zlib.inflateSync(fs.readFileSync(path.join(__dirname,'village_nav_final43.bin')));
+function villageWalkable(x,y){
+ if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>=1||y<0||y>=1)return false;
+ const px=Math.min(VILLAGE_NAV_W-1,Math.floor(x*VILLAGE_NAV_W));
+ const py=Math.min(VILLAGE_NAV_H-1,Math.floor(y*VILLAGE_NAV_H));
+ return villageNav[py*VILLAGE_NAV_W+px]===1;
+}
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -75,7 +88,7 @@ function attemptInheritance(room){
   log(room,'private',`생존자가 7명이 되어 ${ROLE[deadTown.role].name} 직업을 계승했습니다.`,p.id);
  }
 }
-const VILLAGE_SPAWNS=[[.35,.47],[.24,.60],[.62,.47],[.79,.59],[.85,.77],[.35,.76],[.64,.65],[.48,.85],[.61,.85],[.79,.83],[.18,.79]];
+const VILLAGE_SPAWNS=[[0.35,0.47],[0.24,0.6],[0.62,0.47],[0.77592,0.58422],[0.85,0.77],[0.35,0.76],[0.64,0.65],[0.48,0.85],[0.60097,0.84217],[0.77538,0.8457],[0.31857,0.82097]];
 function pubPlayer(p, viewer, room){const self=p.id===viewer.id;const revealed=room.phase==='ended';return {id:p.id,name:p.name,color:p.color,alive:p.alive,ready:p.ready,isYou:self,role:revealed?p.role:null,roleName:revealed?ROLE[p.role].name:null,knownLabel:knownLabel(room,viewer,p),team:(self||revealed)?p.team:null,hasVoted:!!room.votes[p.id],mapX:p.mapX??VILLAGE_SPAWNS[(p.id-1)%11][0],mapY:p.mapY??VILLAGE_SPAWNS[(p.id-1)%11][1],vote:room.voteClosed?room.votes[p.id]??null:undefined};}
 function isAttackingWolf(room,p){
  const wolves=living(room).filter(x=>x.role==='wolf');
@@ -288,7 +301,7 @@ io.on('connection',socket=>{
  socket.on('setRule',rule=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.hostId!==socket.id||room.phase!=='lobby')return;room.rule=['basic','basic2','chaos'].includes(rule)?rule:'basic';emitRoom(room)});
  socket.on('startGame',()=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.hostId!==socket.id||room.phase!=='lobby')return;if(room.players.length<5)return socket.emit('errorMessage','최소 5명이 필요합니다.');const roles=roleSet(room.players.length);room.players.forEach((p,i)=>{p.role=roles[i];p.team=ROLE[p.role].team;p.alive=true;p.usedRip=false;p.veteranSave=true;p.foundWolves=[];p.intel=[];p.knownRoles={};p.inheritedRole=null;if(p.role==='wolf')p.wolfNo=room.players.filter((x,j)=>j<=i&&roles[j]==='wolf').length});room.day=0;room.night=0;room.shortDay=false;room.votes={};room.public=[];room.logs=[];room.deaths=[];room.closeRequests=[];room.phase='day';room.notice='게임이 시작되었습니다.';if(room.rule==='basic'){enterDay(room)}else{enterNight(room);room.notice='2턴제 준비 밤입니다. 능력을 사용할 수 있습니다.';emitRoom(room)}});
  socket.on('chat',({channel,text,to})=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p)return;const lobbyChat=room.phase==='lobby'||room.phase==='ended';const msg=String(text||'').trim().slice(0,300);if(!msg)return;if(!lobbyChat&&!p.alive&&channel!=='ghost')return socket.emit('errorMessage','사망자는 유령 대화만 사용할 수 있습니다.');if(!lobbyChat&&room.phase==='night'&&channel==='all')return socket.emit('errorMessage','밤에는 전체 대화를 할 수 없습니다.');if(!lobbyChat&&channel==='wolf'&&!(p.role==='wolf'||(p.role==='hench'&&p.foundWolves.length)))return socket.emit('errorMessage','아직 동맹 대화를 사용할 수 없습니다.');if(!lobbyChat&&channel==='ghost'&&p.alive)return socket.emit('errorMessage','유령만 사용할 수 있는 대화입니다.');if(channel==='whisper'){if(room.phase!=='day')return socket.emit('errorMessage','귓속말은 낮에만 가능합니다.');const target=room.players.find(x=>x.id===Number(to));if(!target||!target.alive||target.id===p.id)return socket.emit('errorMessage','살아있는 다른 플레이어에게만 귓속말을 보낼 수 있습니다.');room.logs.push({id:crypto.randomUUID(),channel:'whisper',text:msg,to:target.id,from:p.id,fromName:`${p.id}번 ${String(p.name).replace(/번+$/,'')} → ${target.id}번 ${String(target.name).replace(/번+$/,'')}`,at:Date.now()});const s=io.sockets.sockets.get(target.socketId);if(s){s.emit('state',stateFor(room,target));s.emit('whisperNotice',{from:p.id});}socket.emit('state',stateFor(room,p));return;}if(lobbyChat&&channel!=='all')return socket.emit('errorMessage','대기실에서는 로비 채팅만 사용할 수 있습니다.');if(channel==='all'&&!lobbyChat&&room.phase!=='day')return;room.logs.push({id:crypto.randomUUID(),channel:channel==='ghost'?'ghost':channel==='wolf'?'wolf':'all',text:msg,from:p.id,fromName:`${p.id}번 ${String(p.name).replace(/번+$/,'')}`,at:Date.now()});if(room.logs.length>300)room.logs.shift();emitRoom(room)});
- socket.on('villageMove',pos=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||!['day','lobby'].includes(room.phase)||!p.alive)return;const x=Number(pos?.x),y=Number(pos?.y);if(!Number.isFinite(x)||!Number.isFinite(y)||x<.055||x>.955||y<.265||y>.945)return;const now=Date.now();if(now-(p.lastMoveAt||0)<130)return;p.lastMoveAt=now;p.mapX=x;p.mapY=y;socket.to(room.code).emit('villagePosition',{id:p.id,x,y});});
+ socket.on('villageMove',pos=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||!['day','lobby'].includes(room.phase)||!p.alive)return;const x=Number(pos?.x),y=Number(pos?.y);if(!villageWalkable(x,y))return;const now=Date.now();if(now-(p.lastMoveAt||0)<130)return;p.lastMoveAt=now;p.mapX=x;p.mapY=y;socket.to(room.code).emit('villagePosition',{id:p.id,x,y});});
  socket.on('vote',targetId=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='day'||room.shortDay||room.voteClosed||!p.alive)return socket.emit('errorMessage','지금은 투표할 수 없습니다.');if(Object.prototype.hasOwnProperty.call(room.votes,p.id))return socket.emit('errorMessage','오늘의 투표권은 이미 사용했습니다.');const target=Number(targetId);if(target!==0&&!living(room).some(x=>x.id===target))return socket.emit('errorMessage','투표 대상을 찾을 수 없습니다.');room.votes[p.id]=target;room.closeRequests=(room.closeRequests||[]).filter(id=>id!==p.id);room.closeConsentAvailableAt ||= {};room.closeConsentAvailableAt[p.id]=Date.now()+30_000;room.notice=target?`${p.name}이(가) 투표했습니다.`:`${p.name}이(가) 기권했습니다.`;emitRoom(room);if(living(room).every(x=>Object.prototype.hasOwnProperty.call(room.votes,x.id)))closeVote(room,false)});
  socket.on('extendDay',()=>{
   const room=getRoom(socket),p=getPlayer(room,socket);
