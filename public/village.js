@@ -6,7 +6,7 @@ const ctx=canvas.getContext('2d'),W=1200,H=550,RENDER_SCALE=Math.min(2,Math.max(
 // FINAL 2.5: approved original-resolution lossless scenery, 80% camera, 85% characters, 90% nameplates.
 const CAMERA_ZOOM=.80, CHARACTER_ZOOM=.85, NAMEPLATE_ZOOM=.90;
 const CAMERA_OFFSET_X=W*(1-CAMERA_ZOOM)/2, CAMERA_OFFSET_Y=H*(1-CAMERA_ZOOM)/2;
-const background=new Image();background.src='/village_final25_crisp.png?v=2.5';
+const background=new Image();background.src='/village_final26_moonlit.png?v=2.6';
 const sprites=new Image();sprites.src='/village_characters_user.png?v=graphics7-original';
 const deathSprites=new Image();deathSprites.src='/village_characters_death.png?v=graphics7-original';
 const actors=new Map(),bubbles=new Map(),seen=new Set(),spotlights=new Map();
