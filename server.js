@@ -95,24 +95,7 @@ function stateFor(room, viewer){
  return {code:room.code,hostId:room.hostId,phase:room.phase,day:room.day,night:room.night,shortDay:!!room.shortDay,rule:room.rule,deadline:room.deadline,players:room.players.map(p=>pubPlayer(p,viewer,room)),self:{id:viewer.id,name:viewer.name,role:activeRole(viewer),baseRole:viewer.role,roleName:viewer.role ? (viewer.inheritedRole?'후계자 - '+ROLE[viewer.inheritedRole].name:ROLE[viewer.role].name) : null,team:viewer.team,alive:viewer.alive,usedRip:viewer.usedRip,foundWolves,intel:viewer.intel||[],nightDone:!!room.nightActions[viewer.id]?.done,henchJoined:viewer.role==='hench'&&!!viewer.foundWolves?.length,canWolfAttack:viewer.role==='wolf'&&isAttackingWolf(room,viewer)},knownWolves:wolves,logs,votesCast:Object.keys(room.votes).length,voteTally: tally(room),voteClosed:room.voteClosed,closeRequests:living(room).filter(x=>room.closeRequests?.includes(x.id)).length,closeRequested:room.closeRequests?.includes(viewer.id)||false,closeConsentAvailableAt:room.closeConsentAvailableAt?.[viewer.id]||0,abstainCount:Object.values(room.votes).filter(v=>v===0).length,extendedToday:room.extendedToday?.includes(viewer.id)||false,public:room.public,winner:room.winner,notice:room.notice};
 }
 function tally(room){const counts={};for(const p of living(room))counts[p.id]=0;for(const [v,t] of Object.entries(room.votes)){if(t>0&&counts[t]!==undefined)counts[t]++;}return counts;}
-// Voice signaling: channel membership is always computed on the server.
-function voiceChannel(room,p){
- if(!p||!room)return null;
- if(room.phase==='lobby'||room.phase==='ended')return 'lobby';
- if(!p.alive)return 'ghost';
- if(room.phase==='day')return 'day';
- if(room.phase==='night'&&(p.role==='wolf'||(p.role==='hench'&&p.foundWolves?.length)))return 'wolf';
- return null;
-}
-function voiceSync(room){
- for(const p of room.players){
-  const s=io.sockets.sockets.get(p.socketId);if(!s)continue;
-  const channel=s.data.voiceJoined?voiceChannel(room,p):null;
-  const peers=channel?room.players.filter(q=>q.socketId!==p.socketId&&io.sockets.sockets.get(q.socketId)?.data.voiceJoined&&voiceChannel(room,q)===channel).map(q=>({socketId:q.socketId,id:q.id,name:q.name})):[];
-  s.emit('voicePeers',{channel,peers,joined:!!s.data.voiceJoined});
- }
-}
-function emitRoom(room){for(const p of room.players){const s=io.sockets.sockets.get(p.socketId);if(s)s.emit('state',stateFor(room,p));}emitSitePresence();voiceSync(room);}
+function emitRoom(room){for(const p of room.players){const s=io.sockets.sockets.get(p.socketId);if(s)s.emit('state',stateFor(room,p));}emitSitePresence();}
 function broadcast(room, channel, text, to=null, from=null){room.logs.push({id:crypto.randomUUID(),channel,text,to,from,fromName:from?room.players.find(p=>p.id===from)?.name:null,at:Date.now()});if(room.logs.length>300)room.logs.shift();emitRoom(room);}
 function cancelTimer(room){if(room.timer){clearTimeout(room.timer);room.timer=null;}}
 function scheduleDayEnd(room){
@@ -244,23 +227,6 @@ io.on('connection',socket=>{
   siteChatBroadcast(message);
  });
 
- socket.on('voiceJoin',()=>{
-  const room=getRoom(socket),p=getPlayer(room,socket);
-  if(!room||!p)return socket.emit('voiceError','방에 먼저 입장하세요.');
-  socket.data.voiceJoined=true;voiceSync(room);
- });
- socket.on('voiceLeave',()=>{const room=getRoom(socket);socket.data.voiceJoined=false;if(room)voiceSync(room);});
- socket.on('voiceSignal',({to,data}={})=>{
-  const room=getRoom(socket),p=getPlayer(room,socket);
-  if(!room||!p||!socket.data.voiceJoined||!data||typeof data!=='object')return;
-  if(!['offer','answer','candidate'].includes(data.type))return;
-  if(JSON.stringify(data).length>16000)return;
-  const target=room.players.find(q=>q.socketId===to);
-  const targetSocket=target&&io.sockets.sockets.get(target.socketId);
-  const group=voiceChannel(room,p);
-  if(!group||!targetSocket?.data.voiceJoined||voiceChannel(room,target)!==group)return;
-  targetSocket.emit('voiceSignal',{from:socket.id,data});
- });
  socket.on('createRoom',({name})=>{
   if(getRoom(socket))return socket.emit('errorMessage','이미 방에 참가 중입니다. 새 방을 만들 수 없습니다.');
   socket.data.siteName=String(name||'방랑자').trim().slice(0,16)||'방랑자';const room=makeRoom(socket,socket.data.siteName);room.players[0].browserId=socket.data.browserId;socket.emit('joined',{code:room.code});siteChatState(socket);emitSitePresence();});
@@ -270,7 +236,7 @@ io.on('connection',socket=>{
  if(room&&socket.data.browserId&&room.players.some(p=>p.browserId===socket.data.browserId))
   return socket.emit('errorMessage','같은 브라우저에서는 동일한 방에 한 명만 참가할 수 있습니다.');if(!room)return socket.emit('errorMessage','해당 방 코드를 찾을 수 없습니다.');if(room.phase!=='lobby')return socket.emit('errorMessage','이미 게임이 시작된 방입니다.');if(room.players.length>=11)return socket.emit('errorMessage','방이 가득 찼습니다.');const id=Math.max(0,...room.players.map(p=>p.id))+1;const p={id,socketId:socket.id,name:String(name||'여행자').slice(0,16),color:COLORS[(id-1)%COLORS.length],alive:true,ready:false,role:null,team:null,usedRip:false,veteranSave:true,foundWolves:[],intel:[],knownRoles:{}};p.browserId=socket.data.browserId;room.players.push(p);socket.join(code);socket.data.room=code;socket.data.playerId=id;socket.data.siteName=p.name;room.notice=`${p.name}이(가) 방에 입장했습니다.`;log(room,'all',room.notice);socket.emit('joined',{code});siteChatState(socket);emitSitePresence();emitRoom(room);});
  socket.on('leaveRoom',()=>{
-  const room=getRoom(socket);socket.data.voiceJoined=false;if(!room)return socket.emit('leftRoom');
+  const room=getRoom(socket);if(!room)return socket.emit('leftRoom');
   const player=getPlayer(room,socket);
   socket.leave(room.code);socket.data.room=null;socket.data.playerId=null;
   if(player){
@@ -290,7 +256,7 @@ io.on('connection',socket=>{
   if(!room.players.length||!room.players.some(p=>p.connected!==false&&io.sockets.sockets.get(p.socketId))){
    clearRoomTimers(room);rooms.delete(room.code);
   }else emitRoom(room);
-  socket.emit('leftRoom');siteChatState(socket);emitSitePresence();if(rooms.has(room.code))voiceSync(room);
+  socket.emit('leftRoom');siteChatState(socket);emitSitePresence();
  });
  socket.on('rematch',()=>{
  const room=getRoom(socket),p=getPlayer(room,socket);
@@ -343,6 +309,6 @@ io.on('connection',socket=>{
  room.public=room.public.filter(x=>x.playerId!==p.id);
  room.public.push({id:crypto.randomUUID(),playerId:p.id,name:p.name,text:value,color,size});emitRoom(room);
 });
- socket.on('disconnect',()=>{const room=getRoom(socket);socket.data.voiceJoined=false;emitSitePresence();if(!room)return;const p=room.players.find(x=>x.socketId===socket.id);if(p){p.connected=false;room.notice=`${p.name} 연결이 끊어졌습니다.`;log(room,'all',room.notice);emitRoom(room);voiceSync(room);if(room.phase==='lobby'){room.players=room.players.filter(x=>x.socketId!==socket.id);if(!room.players.length){clearRoomTimers(room);rooms.delete(room.code)}else{if(room.hostId===socket.id)room.hostId=room.players[0].socketId;emitRoom(room)}}}});
+ socket.on('disconnect',()=>{const room=getRoom(socket);emitSitePresence();if(!room)return;const p=room.players.find(x=>x.socketId===socket.id);if(p){p.connected=false;room.notice=`${p.name} 연결이 끊어졌습니다.`;log(room,'all',room.notice);emitRoom(room);if(room.phase==='lobby'){room.players=room.players.filter(x=>x.socketId!==socket.id);if(!room.players.length){clearRoomTimers(room);rooms.delete(room.code)}else{if(room.hostId===socket.id)room.hostId=room.players[0].socketId;emitRoom(room)}}}});
 });
 server.listen(PORT,()=>console.log(`Lupus In Tabula server listening on ${PORT}`));
