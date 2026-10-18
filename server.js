@@ -214,6 +214,17 @@ io.on('connection',socket=>{
  siteChatState(socket);emitSitePresence();
  socket.on('requestSitePresence',()=>emitSitePresence());
  socket.on('siteName',name=>{socket.data.siteName=String(name||'방랑자').trim().slice(0,16)||'방랑자';emitSitePresence();});
+ socket.on('updateName',rawName=>{
+  const name=String(rawName||'').trim().slice(0,16)||'방랑자';
+  socket.data.siteName=name;
+  const room=getRoom(socket);
+  const player=getPlayer(room,socket);
+  if(player&&player.name!==name){
+   player.name=name;
+   emitRoom(room);
+  }
+  emitSitePresence();
+ });
  socket.on('siteChat',payload=>{
   if(!siteChatAllowed(socket))return socket.emit('errorMessage','게임 진행 중에는 웹사이트 전체 채팅을 사용할 수 없습니다.');
   const now=Date.now();
