@@ -2,10 +2,10 @@
    Rendering only: voting, role logic, chats and timers remain in the original game. */
 (()=>{'use strict';
 const canvas=document.getElementById('villageCanvas');if(!canvas)return;
-const ctx=canvas.getContext('2d'),W=1200,H=550;canvas.width=W;canvas.height=H;
+const ctx=canvas.getContext('2d'),W=1200,H=550,RENDER_SCALE=Math.min(2,Math.max(1,window.devicePixelRatio||1));canvas.width=Math.round(W*RENDER_SCALE);canvas.height=Math.round(H*RENDER_SCALE);ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);
 const background=new Image();background.src='/village_empty_hd2d.jpg';
-const sprites=new Image();sprites.src='/village_characters_user.png?v=35';
-const deathSprites=new Image();deathSprites.src='/village_characters_death.png?v=35';
+const sprites=new Image();sprites.src='/village_characters_user.png?v=graphics7-original';
+const deathSprites=new Image();deathSprites.src='/village_characters_death.png?v=graphics7-original';
 const actors=new Map(),bubbles=new Map(),seen=new Set(),spotlights=new Map();
 let currentRoom='',previousPhase='',lastSend=0,lastTick=performance.now(),lastState=null;
 const fallbackColors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];
@@ -57,7 +57,7 @@ if(typeof socket!=='undefined'){
  socket.on('villagePosition',p=>{const a=actors.get(p.id);if(a&&!a.isYou&&Number.isFinite(p.x)&&Number.isFinite(p.y)){a.tx=p.x;a.ty=p.y}})
 }
 canvas.addEventListener('pointerdown',e=>{
- const s=stateNow();if(!s||!['day','lobby'].includes(s.phase)||s.voteClosed||!s.self?.alive)return;
+ const s=stateNow();if(!s||!['day','lobby'].includes(s.phase)||!s.self?.alive)return;
  const r=canvas.getBoundingClientRect();let x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
  const goal=clampGoal(x,y);const a=actors.get(s.self.id);if(!a)return;
  a.tx=goal.x;a.ty=goal.y;a.lastClick=Date.now();
@@ -175,6 +175,6 @@ function frame(t){const s=stateNow(),night=s?.phase==='night',locked=night||s?.p
  for(const a of [...actors.values()].sort((a,b)=>a.y-b.y))drawActor(a,t,night);
  if(s?.phase==='ended'&&!lit.length){ctx.fillStyle='#07101b55';ctx.fillRect(0,0,W,H)}
 
- if(s?.phase==='day'||s?.phase==='lobby'){box(W-358,H-37,338,27,7,'#0a1221dd','#a68a5c');ctx.fillStyle='#f7dba4';ctx.textAlign='center';ctx.font='13px system-ui';ctx.fillText('마을 바닥을 클릭하면 캐릭터가 이동합니다',W-189,H-19)}
+
  requestAnimationFrame(frame)}requestAnimationFrame(frame);
 })();
