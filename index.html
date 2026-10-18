@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Lupus In Tabula — 타뷸라의 늑대</title><script src="/socket.io/socket.io.js"></script><script defer="" src="/village.js"></script><style>
+:root{--bg:#070b13;--panel:#0d1726;--line:#2c4059;--gold:#d9b879;--text:#e8edf4;--muted:#9eafc4;--red:#d85b67;--blue:#7fc9e8}*{box-sizing:border-box}body{margin:0;background:#070b13;color:var(--text);font:14px system-ui,sans-serif}button,input,select,textarea{font:inherit}button{background:#192b41;color:var(--text);border:1px solid #435873;padding:9px 12px;border-radius:7px;cursor:pointer}button:hover{border-color:var(--gold)}button:disabled{opacity:.4;cursor:not-allowed}input,select,textarea{background:#070f1b;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:9px;width:100%}header{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}header h1{margin:0;color:var(--gold);font:28px Georgia,serif}header small{color:var(--muted)}main{max-width:1750px;margin:auto;padding:14px;display:grid;grid-template-columns:260px minmax(0,1fr) 220px;gap:14px}.panel{background:linear-gradient(145deg,#122034,#0b1320);border:1px solid var(--line);border-radius:11px;padding:13px;min-width:0}.panel h2{font-size:16px;color:var(--gold);margin:0 0 10px}.stack{display:grid;gap:10px}.setup{display:grid;gap:8px}.setup label,.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}.hint{font-size:12px;line-height:1.5;color:var(--muted)}.right{display:grid;gap:14px}.hero{height:300px;position:relative;overflow:hidden;border:1px solid #3b4d65;border-radius:11px;background:linear-gradient(0deg,#040810ee,#04081025),radial-gradient(circle at 50% 15%,#a4b1c4 0,#3c506d 9%,#1b2b45 28%,#090f1b 70%);display:flex;align-items:end;padding:22px}.hero:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,transparent 0 70px,#04081080 71px 76px),linear-gradient(160deg,transparent 30%,#02050b);}.hero.night{background:linear-gradient(0deg,#02040bee,#02040b55),radial-gradient(circle at 70% 15%,#bbc7db 0,#38425d 8%,#111a30 29%,#03060d 72%)}.hero{background:linear-gradient(0deg,#020610e6,#02061022),url('/day.jpg') center/cover no-repeat}
+.hero.night{background:linear-gradient(0deg,#02040be9,#02040b40),url('/night.jpg') center/cover no-repeat}
+.hero:before{display:none}
+.herotxt{position:relative}.herotxt .phase{color:var(--gold);letter-spacing:2px;font-size:12px}.herotxt h2{font-size:29px;margin:5px 0}.herotxt p{margin:0;color:#c1cddd}.bar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}.badge{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:5px 9px}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px}.player{background:#08111d;border:1px solid #2a3c52;border-radius:8px;padding:9px}.player.dead{opacity:.48}.player.you{border-color:var(--gold)}.num{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:50%;color:#06101a;font-weight:bold;margin-right:6px}.pname{font-weight:600}.sub{font-size:11px;color:var(--muted);margin-top:5px}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.chatlog{height:380px;min-height:340px;overflow:auto;background:#060c15;border:1px solid var(--line);padding:9px;border-radius:8px;font-size:14px;line-height:1.65}.msg{margin-bottom:7px;overflow-wrap:anywhere}.msg b{color:var(--blue)}.row{display:flex;gap:7px;align-items:center}.row>*{min-width:0}.row input{flex:1}.tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px}.tabs button{padding:6px 8px;font-size:12px}.tabs .active{border-color:var(--gold);color:var(--gold)}.field{margin:9px 0}.vote-row{display:grid;grid-template-columns:110px 1fr 35px;gap:8px;align-items:center;margin:9px 0;font-size:12px}.track{height:9px;background:#1a293a;border-radius:9px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#8c3545,#e36b74);width:0}.notice{padding:9px;background:#272218;border:1px solid #5b4b2e;border-radius:7px;color:#f0d9a7;font-size:12px;line-height:1.5}.hide{display:none!important}.online{color:#9fe1b5}.error{color:#ff9da6;margin:8px 0}.intel-item{padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}.intel-item b{color:var(--gold)}.clue{color:#f0c977;font-size:11px}.public-item{padding:13px 10px;border-bottom:1px solid var(--line);background:#101c2b;border-radius:6px;margin-bottom:8px}.public-item b{color:#f1d59b;font-size:13px}.public-message{font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:7px;font-weight:550}@media(max-width:1150px){main{grid-template-columns:240px minmax(0,1fr)}#sitePresencePanel{grid-column:2;position:static}}@media(max-width:850px){#sitePresencePanel{grid-column:1}.chatlog{height:300px;min-height:260px}main{grid-template-columns:1fr}.two{grid-template-columns:1fr}.hero{height:220px}header h1{font-size:22px}}
+
+.chat-tab{position:relative}
+.unread{display:none;background:#c64c52;color:white;border-radius:99px;min-width:17px;height:17px;line-height:17px;font-size:10px;text-align:center;padding:0 4px;margin-left:5px}
+.unread.show{display:inline-block}
+.timer{font-weight:700;color:#e4c481;font-variant-numeric:tabular-nums}
+.sound-toggle{font-size:12px;padding:6px 9px}
+.guide-tabs{display:flex;gap:7px;margin:12px 0 7px}.guide-tabs button{font-size:12px;padding:6px 9px;flex:1;background:#13253b}.guide-tabs button.active{color:#f6d68d;border-color:#d9b879;background:#28354a}.game-help{background:#07111e;border:1px solid #3b526d;border-radius:8px;padding:11px;margin-bottom:12px;max-height:360px;overflow:auto;font-size:12px;line-height:1.65;color:#d8e5f5}.game-help h3{color:#e4c481;font-size:14px;margin:8px 0 5px}.game-help p{margin:5px 0 9px}.game-help ul{padding-left:19px;margin:5px 0 12px}.game-help li{margin:4px 0}.game-help details{border-bottom:1px solid #25384e;padding:5px 0}.game-help summary{cursor:pointer;color:#e4c481;font-weight:650}.game-help details p{margin:7px 0}.game-help h2{color:#f0d294;font-size:16px;margin:8px 0 12px}.game-help .help-table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:12px}.game-help .help-table th,.game-help .help-table td{border:1px solid #304761;padding:6px;text-align:left}.game-help .help-table th{color:#e4c481;background:#14263b}.game-help h3{margin-top:16px}.my-role-details{margin-top:8px;line-height:1.55}.my-role-details b{color:#f0d294}.my-role-details ul{margin:6px 0 0;padding-left:18px}.my-role-details li{margin:5px 0}#hero{height:530px;padding:0;display:block;background:#101a2c!important;cursor:crosshair;box-shadow:0 10px 40px #0009;border-color:#ad8a55}#hero:before{display:none}#villageCanvas{display:block;width:100%;height:100%;image-rendering:auto}#hero .herotxt{position:absolute;left:12px;top:10px;bottom:auto;pointer-events:none;text-shadow:1px 2px 3px #000;background:#08101bc7;padding:8px 12px;border:1px solid #ffffff30;border-radius:8px;max-width:62%}#hero .herotxt h2{font-size:18px;margin:2px 0}#hero .herotxt p{font-size:11px;max-height:34px;overflow:hidden}#hero .herotxt .phase{font-size:10px}@media(max-width:850px){#hero{height:330px}#hero .herotxt{max-width:75%}}.presence-list{display:flex;flex-direction:column;gap:7px;margin-top:10px}.presence-user{display:flex;flex-direction:column;gap:3px;overflow-wrap:anywhere;border:1px solid #35516c;border-radius:16px;background:#102238;padding:5px 10px;font-size:12px}.presence-user small{color:#9db1c9;margin-left:5px}#sitePresencePanel{align-self:start;position:sticky;top:10px;margin:0!important;max-height:80vh;overflow:auto}#sitePresencePanel h2{line-height:1.4}#siteLobbyPanel .chatlog{font-size:13px}#roomChatTabs button[data-channel='web'],#roomChatTabs button[data-channel='all']{font-weight:650}#roomChatTabs button.active{box-shadow:inset 0 -2px 0 #e8c783}
+.right-sidebar{grid-column:3;grid-row:1;display:flex;flex-direction:column;gap:12px;min-width:0;align-self:start;position:sticky;top:12px}
+#publicBoardPanel{max-height:65vh;overflow:auto}#publicBoardPanel .public-item{margin-top:9px}
+.presence-dropdown summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:6px;font-weight:700;list-style:none}
+.presence-dropdown summary::-webkit-details-marker{display:none}.presence-dropdown summary:after{content:'▾';font-size:12px;color:#d9b879}.presence-dropdown[open] summary:after{content:'▴'}
+.presence-dropdown .presence-list{margin-top:12px}
+@media(max-width:1150px){.right-sidebar{grid-column:2;grid-row:auto;position:static}}
+@media(max-width:850px){.right-sidebar{grid-column:1;grid-row:auto}}
+ 
+#gameInfo{line-height:1.65}#gameInfo p{margin:7px 0}#gameInfo ul,#gameInfo ol{padding-left:20px;margin:7px 0}#gameInfo li{margin:5px 0}
+.header-presence{position:relative;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px}
+.header-presence summary{cursor:pointer;display:flex;align-items:center;gap:7px;list-style:none}
+.header-presence summary::-webkit-details-marker{display:none}
+.header-presence summary:after{content:'▾';color:#d9b879}.header-presence[open] summary:after{content:'▴'}
+.header-presence .presence-list{position:absolute;z-index:1000;right:0;top:calc(100% + 7px);width:245px;max-height:350px;overflow:auto;background:#101c2d;border:1px solid var(--line);border-radius:10px;padding:10px;box-shadow:0 8px 24px #0009}
+
+/* v3.35 three-column work area + horizontal setup */
+.top-setup-bar{max-width:1750px;margin:10px auto 0;padding:0 14px}
+.top-setup-bar>.panel{padding:10px 13px}
+.top-setup-bar h2{margin:0 0 7px;font-size:14px}
+.top-setup-bar .setup{display:flex;align-items:end;gap:9px;flex-wrap:wrap}
+.top-setup-bar .setup>label{display:none}
+.top-setup-bar #name{width:130px;flex:0 1 130px}
+.top-setup-bar #code{width:110px;flex:0 1 110px}
+.top-setup-bar #create,.top-setup-bar #join{white-space:nowrap}
+.top-setup-bar #roomInfo{flex:1 1 200px;min-width:155px;max-width:300px}
+.top-setup-bar #hostControls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.top-setup-bar #hostControls.hide{display:none!important}
+.top-setup-bar #hostControls>label{display:none}
+.top-setup-bar #hostControls #rule{width:140px}
+.top-setup-bar #hostControls button{width:auto!important;white-space:nowrap}
+.top-setup-bar #myInfo{flex:1 1 230px;max-width:380px;min-width:180px}
+.top-setup-bar .guide-tabs{margin:0;flex:0 0 auto}
+.top-setup-bar .guide-tabs button{white-space:nowrap;flex:none}
+.top-setup-bar #gameHelp{position:absolute;z-index:110;left:max(14px,calc((100vw - 1722px)/2));right:14px;top:auto;max-height:65vh;overflow:auto;box-shadow:0 14px 35px #000c}
+.left-info-sidebar{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:12px;min-width:0;align-self:start}
+.left-info-sidebar>.two{display:flex;flex-direction:column;gap:12px}
+.left-info-sidebar>.two>.panel{width:100%}
+#sitePresencePanel{max-height:none;overflow:visible}
+#personalMemoPanel textarea,#publishEditorPanel textarea{width:100%}
+#publishEditorPanel label{display:block;color:var(--muted);font-size:12px;margin:8px 0 5px}
+#publishEditorPanel .public-style{flex-wrap:wrap;gap:5px}
+#publishEditorPanel .public-style select{width:auto;max-width:100%}
+#publishEditorPanel #publish{width:100%;margin-top:9px}
+@media(max-width:1150px){.left-info-sidebar{grid-column:1;grid-row:1}.top-setup-bar .setup{align-items:center}}
+@media(max-width:850px){.left-info-sidebar{grid-column:1;grid-row:auto}.right-sidebar{grid-column:1;grid-row:auto}.top-setup-bar #gameHelp{left:14px}}
+
+/* v3.33: compact controls inside header and movable, resizable help window */
+body>header{display:flex;flex-direction:column;align-items:stretch;gap:7px;padding-bottom:10px}
+body>header>div:first-child{align-self:flex-start}
+body>header>.row{position:absolute;right:14px;top:14px}
+body>header #topSetupBar{width:100%;max-width:none;margin:0;padding:0}
+body>header #topSetupBar>.panel{padding:7px 10px;background:#0d1a2a}
+body>header #topSetupBar h2{display:none}
+body>header #topSetupBar .setup{gap:7px}
+body>header #topSetupBar #roomInfo.hide{display:none!important}
+body>header #topSetupBar #roomInfo{flex:0 1 auto;min-width:190px;max-width:320px}
+body>header #topSetupBar #myInfo{display:none}
+#leftInfoSidebar #myInfo{margin:8px 0 12px}
+#gameHelp,body>header #topSetupBar #gameHelp{position:fixed!important;left:50%;top:16%;right:auto;bottom:auto;transform:translateX(-50%);z-index:5000;width:min(750px,90vw);height:min(580px,75vh);min-width:320px;min-height:180px;max-width:96vw;max-height:90vh;resize:both;overflow:auto;padding:0;background:#111e30;border:1px solid #6782a3;border-radius:12px;box-shadow:0 16px 55px #000c}
+#gameHelp.hide{display:none!important}
+#helpWindowHeader{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;background:#213651;color:#f1ce86;cursor:move;touch-action:none;padding:7px 12px;z-index:2;font-weight:700}
+#helpWindowClose{width:32px!important;padding:4px 8px;cursor:pointer}
+#helpWindowBody{padding:15px 18px;line-height:1.7}
+@media(max-width:850px){body>header>.row{position:static;align-self:flex-end}#gameHelp,body>header #topSetupBar #gameHelp{top:10%;left:5%;transform:none;width:90vw;min-width:0}}
+
+/* v3.33: one-row centered compact room controls */
+@media(min-width:1351px){
+ body>header{display:grid;grid-template-columns:minmax(230px,1fr) auto minmax(260px,1fr);align-items:center;gap:14px;padding:9px 16px}
+ body>header>div:first-child{align-self:center;justify-self:start}
+ body>header>.row{position:static;justify-self:end;flex-wrap:nowrap}
+ body>header #topSetupBar{width:max-content;max-width:min(100%,1100px);justify-self:center;margin:0;padding:0}
+ body>header #topSetupBar>.panel{width:max-content;max-width:100%;padding:5px 8px;border-radius:8px}
+ body>header #topSetupBar .setup{flex-wrap:nowrap;align-items:center;gap:5px}
+ body>header #topSetupBar #name{width:95px;flex:0 0 95px}
+ body>header #topSetupBar #code{width:75px;flex:0 0 75px}
+ body>header #topSetupBar #roomInfo{min-width:0;max-width:205px;flex:0 1 auto;padding:7px;font-size:11px}
+ body>header #topSetupBar button{padding:7px 9px;font-size:12px}
+ body>header #topSetupBar input{padding:7px;font-size:12px}
+ body>header #topSetupBar #hostControls{flex-wrap:nowrap;gap:5px}
+ body>header #topSetupBar #hostControls #rule{width:105px;font-size:12px;padding:7px 3px}
+}
+@media(min-width:851px) and (max-width:1350px){
+ body>header{display:flex;flex-wrap:wrap;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px}
+ body>header>.row{position:static;order:2}
+ body>header #topSetupBar{order:3;width:100%}
+ body>header #topSetupBar>.panel{width:fit-content;max-width:100%;padding:6px 8px}
+}
+@media(max-width:850px){
+ body>header #topSetupBar>.panel{width:fit-content;max-width:100%}
+}
+
+/* v3.33: logo and compact setup adjacent at left, audio/presence/status pinned right */
+@media(min-width:1101px){
+ body>header{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;padding:9px 14px!important;min-height:64px}
+ body>header>div:first-child{flex:0 0 auto;align-self:center!important;white-space:nowrap}
+ body>header #topSetupBar{order:1!important;flex:0 1 auto!important;width:max-content!important;max-width:calc(100% - 450px)!important;min-width:0;margin:0!important;padding:0!important;justify-self:auto!important}
+ body>header #topSetupBar>.panel{width:fit-content!important;max-width:100%;padding:5px 8px!important;border-radius:8px}
+ body>header #topSetupBar .setup{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+ body>header #topSetupBar #name{width:95px;flex:0 0 95px}
+ body>header #topSetupBar #code{width:85px;flex:0 0 85px}
+ body>header #topSetupBar button{padding:7px 9px;font-size:12px;white-space:nowrap}
+ body>header #topSetupBar input{padding:7px;font-size:12px}
+ body>header #topSetupBar #roomInfo{min-width:0;max-width:210px;padding:7px;font-size:11px}
+ body>header>.row{order:2!important;position:static!important;margin-left:auto!important;flex:0 0 auto;align-self:center!important;justify-self:auto!important;flex-wrap:nowrap!important;white-space:nowrap}
+}
+@media(max-width:1100px){
+ body>header{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important}
+ body>header>div:first-child{order:0!important}
+ body>header #topSetupBar{order:2!important;width:100%!important;max-width:100%!important}
+ body>header #topSetupBar>.panel{width:fit-content!important;max-width:100%!important}
+ body>header>.row{order:1!important;position:static!important;margin-left:auto!important}
+}
+
+/* v3.33: visible compact room settings title and inline field labels */
+body>header #topSetupBar>.panel{display:flex;align-items:center;gap:9px;padding:6px 9px}
+body>header #topSetupBar .setup-title{display:block!important;margin:0!important;flex:0 0 auto;white-space:nowrap;font-size:12px;line-height:1.2;color:#e4c481}
+body>header #topSetupBar .setup{display:flex;align-items:center;gap:5px}
+body>header #topSetupBar .setup>label.setup-inline-label{display:inline-block!important;flex:0 0 auto;white-space:nowrap;color:#a7c6ed;font-size:11px;margin:0 1px 0 4px}
+body>header #topSetupBar .setup>label.setup-inline-label:first-child{margin-left:0}
+body>header #topSetupBar #roomInfo{max-width:190px}
+.left-guide-panel .guide-tabs{display:flex;gap:7px;margin:0}
+.left-guide-panel .guide-tabs button{flex:1;min-width:0;white-space:nowrap}
+.left-guide-panel h2{margin-bottom:10px}
+/* Dialog is attached directly to body, so drag/resize is not limited by sidebar. */
+body>#gameHelp{position:fixed!important;z-index:10000!important;top:12%;left:calc(50% - 300px);right:auto;max-width:calc(100vw - 24px);max-height:75vh;overflow:auto}
+
+@media(max-width:850px){body>header #topSetupBar>.panel{flex-wrap:wrap}body>#gameHelp{left:5%;width:90vw}}
+/* Keep the web-lobby guidance beside room setup, not inside the chat window. */
+body>header .header-chat-hint{flex:0 1 auto;max-width:310px;min-width:160px;margin:0;padding:8px 10px;border:1px solid #31445c;border-radius:8px;background:#101d2d;color:#9dc5f3;font-size:12px;line-height:1.35}
+body>header .header-chat-hint.hide{display:none!important}
+@media(max-width:1100px){body>header .header-chat-hint{flex-basis:100%;max-width:none}}
+body>header .header-join-error{order:2;flex:0 1 auto;max-width:460px;min-width:0;margin:0;padding:0;background:transparent;border:0;font-size:12px;color:#ff9292;line-height:1.4;white-space:normal;align-self:center}
+body>header .header-join-error:empty{display:none}
+body>header .top-setup-bar{order:1}
+body>header>div.row{order:3;margin-left:auto}
+@media(max-width:1100px){body>header .header-join-error{max-width:100%;flex-basis:100%}}
+
+/* v3.33: place transient warning directly to the left of sound/presence controls. */
+@media(min-width:1101px){
+ body>header:has(#error:not(:empty)) .header-join-error{margin-left:auto!important;order:2!important;flex:0 1 430px!important;text-align:right!important}
+ body>header:has(#error:not(:empty)) > .row{margin-left:0!important;order:3!important}
+ body>header .header-join-error:empty{display:none!important}
+}
+@media(max-width:1100px){
+ body>header .header-join-error:not(:empty){order:3!important;flex-basis:100%!important;text-align:right!important}
+}
+
+/* v3.33: absolute viewport-center room controls, independent of side widths. */
+@media (min-width: 1500px){
+ body>header{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:70px!important;gap:10px!important}
+ body>header>div:first-child{order:0!important;flex:0 0 auto!important;z-index:1}
+ body>header #topSetupBar{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;order:1!important;flex:none!important;width:max-content!important;max-width:calc(100vw - 690px)!important;margin:0!important;z-index:2}
+ body>header #topSetupBar>.panel{width:max-content!important;max-width:100%!important}
+ body>header>.row{order:2!important;margin-left:auto!important;flex:0 0 auto!important;z-index:1}
+}
+@media (min-width: 1101px) and (max-width:1499px){
+ body>header{display:flex!important;flex-wrap:wrap!important;justify-content:space-between!important}
+ body>header #topSetupBar{order:3!important;flex:0 0 100%!important;width:100%!important;max-width:100%!important;display:flex!important;justify-content:center!important}
+ body>header #topSetupBar>.panel{width:fit-content!important;max-width:100%!important}
+ body>header>.row{order:2!important;margin-left:auto!important}
+}
+</style><style>
+/* v3.33: center-column room controls directly above the foggy village. */
+main>section.right>#topSetupBar{
+ display:block!important;position:relative!important;order:initial!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ margin:0 0 12px!important;padding:0!important;justify-self:stretch!important;
+}
+main>section.right>#topSetupBar>.panel{
+ display:flex!important;align-items:center!important;gap:9px!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ padding:9px 11px!important;border-radius:10px!important;
+ background:linear-gradient(145deg,#122034,#0b1320)!important;
+}
+main>section.right>#topSetupBar .setup-title{
+ display:block!important;flex:0 0 auto!important;margin:0!important;
+ font-size:12px!important;color:#e4c481!important;white-space:nowrap;
+}
+main>section.right>#topSetupBar .setup{
+ display:flex!important;flex:1 1 auto!important;min-width:0!important;
+ flex-wrap:wrap!important;align-items:center!important;gap:6px!important;
+}
+main>section.right>#topSetupBar .setup>label.setup-inline-label{
+ display:inline-block!important;flex:0 0 auto!important;
+ color:#a7c6ed!important;font-size:11px!important;margin:0 2px 0 4px!important;
+}
+main>section.right>#topSetupBar #name{width:95px!important;flex:0 0 95px!important}
+main>section.right>#topSetupBar #code{width:85px!important;flex:0 0 85px!important}
+main>section.right>#topSetupBar button{padding:7px 9px!important;font-size:12px!important;white-space:nowrap}
+main>section.right>#topSetupBar input{padding:7px!important;font-size:12px!important}
+main>section.right>#topSetupBar #roomInfo{
+ flex:0 1 auto!important;min-width:0!important;max-width:210px!important;
+ padding:7px!important;font-size:11px!important;
+}
+main>section.right>#topSetupBar #hostControls{display:flex;align-items:center;flex-wrap:wrap;gap:5px}
+main>section.right>#topSetupBar #hostControls.hide{display:none!important}
+main>section.right>#topSetupBar #hostControls #rule{width:105px!important;padding:7px 3px!important;font-size:12px!important}
+@media(max-width:850px){
+ main>section.right>#topSetupBar>.panel{flex-wrap:wrap!important}
+}
+</style><style>
+/* v3.33: single-row header: logo | room controls | right-aligned audio/presence. */
+body>header{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;padding:9px 14px!important;flex-wrap:wrap!important}
+body>header>div:first-child{flex:0 0 auto!important;align-self:center!important;white-space:nowrap!important}
+body>header>#topSetupBar{display:block!important;flex:0 1 auto!important;width:auto!important;max-width:none!important;min-width:0!important;margin:0!important;padding:0!important;order:initial!important}
+body>header>#topSetupBar>.panel{display:flex!important;align-items:center!important;gap:8px!important;width:max-content!important;max-width:100%!important;padding:6px 9px!important;border-radius:9px!important}
+body>header>#topSetupBar .setup{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:5px!important}
+body>header>#topSetupBar .setup-title{display:block!important;white-space:nowrap!important;font-size:12px!important;margin:0!important}
+body>header>#topSetupBar .setup>label.setup-inline-label{display:inline-block!important;font-size:11px!important;white-space:nowrap!important;margin:0 2px!important}
+body>header>#topSetupBar input{width:90px!important;max-width:90px!important;padding:7px!important;font-size:12px!important}
+body>header>#topSetupBar button{width:auto!important;padding:7px 9px!important;font-size:12px!important;white-space:nowrap!important}
+body>header>#topSetupBar #roomInfo{max-width:190px!important;font-size:11px!important;padding:7px!important}
+body>header>#topSetupBar #hostControls{display:flex;align-items:center;flex-wrap:wrap;gap:5px}
+body>header>#topSetupBar #hostControls.hide{display:none!important}
+body>header>#topSetupBar #hostControls #rule{width:95px!important;padding:7px 4px!important;font-size:12px!important}
+body>header>div.row{margin-left:auto!important;flex:0 0 auto!important;justify-content:flex-end!important;white-space:nowrap!important}
+body>header>.header-join-error{order:3!important;flex:0 1 auto!important}
+@media(max-width:1250px){body>header>#topSetupBar{flex:1 1 560px!important}body>header>#topSetupBar>.panel{width:100%!important;flex-wrap:wrap!important}body>header>div.row{margin-left:auto!important}}
+</style>
+<style id="hudLayoutV1">
+/* GRAPHICS TEST 12: full-viewport village, floating HUD panels. */
+body{overflow-x:hidden}
+body>header{position:relative;z-index:30;background:#080f1bea;min-height:54px}
+body>main{
+ position:relative!important;display:block!important;
+ width:100%!important;max-width:none!important;
+ margin:0!important;padding:0!important;
+ height:calc(100vh - 82px);min-height:660px;
+ overflow:hidden;
+ background:#070d17;
+}
+body>main .panel{
+ background:linear-gradient(145deg,rgba(9,17,29,.91),rgba(9,16,28,.88))!important;
+ border:1px solid #88734b!important;
+ box-shadow:0 5px 25px #0008;
+ backdrop-filter:blur(5px);
+}
+body>main #hero{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ max-width:none!important;margin:0!important;
+ border:0!important;border-radius:0!important;z-index:0!important;
+}
+body>main #villageCanvas{width:100%!important;height:100%!important;object-fit:cover!important}
+body>main #hero .herotxt{
+ left:50%!important;top:12px!important;transform:translateX(-50%);
+ text-align:center;min-width:260px;
+ background:#09111fe8!important;border:1px solid #b0925c!important;
+ border-radius:10px;padding:7px 20px!important;
+}
+body>main #hero .herotxt h2{font-size:15px;margin:2px}
+body>main #hero .herotxt p{font-size:11px;margin:0}
+body>main .left-info-sidebar,body>main .right,body>main .right-sidebar{
+ display:contents!important;
+}
+body>main .left-info-sidebar>.left-guide-panel{
+ position:absolute;z-index:10;left:14px;bottom:12px;width:180px;
+ max-height:230px;overflow:auto;
+}
+body>main .left-info-sidebar>.two{display:contents!important}
+body>main .left-info-sidebar>.two>.panel:first-child{
+ position:absolute;z-index:11;right:244px;bottom:12px;width:185px;
+ height:180px;overflow:auto;
+}
+body>main .left-info-sidebar>.two>.panel:last-child{
+ position:absolute;z-index:11;left:205px;bottom:12px;width:190px;
+ height:180px;overflow:auto;
+}
+body>main .right>#hero + .panel{
+ position:absolute;z-index:10;left:14px;top:12px;width:310px;
+ max-height:110px;overflow:auto;
+}
+body>main .right>.two{display:contents!important}
+body>main .right>.two>.panel:first-child{
+ position:absolute;z-index:12;left:14px;top:128px;width:310px;
+ height:clamp(250px,42vh,490px);
+ display:flex;flex-direction:column;min-height:0;
+}
+body>main .right>.two>.panel:first-child .chatlog{
+ flex:1;min-height:80px;height:auto!important;overflow-y:auto;
+}
+body>main .right>.two>.panel:last-child{
+ position:absolute;z-index:12;left:50%;bottom:12px;transform:translateX(-50%);
+ width:min(36vw,450px);max-height:245px;overflow:auto;
+}
+body>main #publicBoardPanel{
+ position:absolute;z-index:12;right:14px;top:12px;width:320px;
+ height:clamp(220px,40vh,450px);overflow:auto;
+}
+body>main #publishEditorPanel{
+ position:absolute;z-index:12;right:14px;top:calc(40vh + 25px);
+ width:320px;max-height:180px;overflow:auto;
+}
+body>main #personalMemoPanel{
+ position:absolute;z-index:12;right:14px;bottom:12px;width:210px;
+ height:180px;overflow:auto;
+}
+body>main .panel h2{font-size:13px;color:#e4c489}
+body>main .panel{padding:10px!important}
+body>main .right>.two>.panel:first-child textarea{min-height:38px}
+body>main .left-info-sidebar>.left-guide-panel{max-height:180px}
+@media(max-width:1350px){
+ body>main .right>#hero+.panel{width:250px}
+ body>main .right>.two>.panel:first-child{width:250px}
+ body>main #publicBoardPanel,body>main #publishEditorPanel{width:260px}
+ body>main .left-info-sidebar>.two>.panel:last-child{left:205px;width:175px}
+ body>main .left-info-sidebar>.two>.panel:first-child{right:220px;width:175px}
+ body>main #personalMemoPanel{width:195px}
+ body>main .right>.two>.panel:last-child{width:34vw}
+}
+@media(max-width:1050px){
+ body>main{height:calc(100vh - 75px);min-height:650px}
+ body>main .right>#hero+.panel{display:none}
+ body>main .right>.two>.panel:first-child{top:12px;width:235px;height:48vh}
+ body>main #publicBoardPanel{width:235px;height:43vh}
+ body>main #publishEditorPanel{width:235px;top:calc(43vh + 24px)}
+ body>main .left-info-sidebar>.left-guide-panel{left:10px;bottom:10px;width:145px}
+ body>main .left-info-sidebar>.two>.panel:last-child{left:165px;bottom:10px;width:160px}
+ body>main .left-info-sidebar>.two>.panel:first-child{right:190px;bottom:10px;width:155px}
+ body>main #personalMemoPanel{right:10px;bottom:10px;width:170px}
+ body>main .right>.two>.panel:last-child{bottom:205px;width:280px;max-height:150px}
+}
+@media(max-width:700px){
+ body>main{height:auto!important;min-height:100vh;overflow:visible!important;display:flex!important;flex-direction:column!important;padding:0 8px 12px!important;gap:8px}
+ body>main #hero{position:relative!important;height:58vh!important;min-height:350px}
+ body>main .left-info-sidebar,body>main .right,body>main .right-sidebar{display:contents!important}
+ body>main .left-info-sidebar>.two,body>main .right>.two{display:contents!important}
+ body>main .panel,body>main .left-info-sidebar>.left-guide-panel,body>main .left-info-sidebar>.two>.panel:first-child,body>main .left-info-sidebar>.two>.panel:last-child,body>main .right>#hero+.panel,body>main .right>.two>.panel:first-child,body>main .right>.two>.panel:last-child,body>main #publicBoardPanel,body>main #publishEditorPanel,body>main #personalMemoPanel{
+ position:relative!important;display:block!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;
+ width:100%!important;max-height:none!important;height:auto!important;min-height:0!important;
+ }
+ body>main .right>.two>.panel:first-child .chatlog{height:230px!important}
+}
+</style>
+<style id="graphicsPolish2">
+/* Visual refinement for Graphics Test 2; game state/behavior unchanged. */
+:root{--hud-gold:#e8c68a;--hud-line:#c5a36d}
+body{font-size:16px!important;letter-spacing:.05px}
+body>main .panel{
+ background:linear-gradient(160deg,rgba(10,20,34,.97),rgba(8,16,28,.93))!important;
+ border:2px solid rgba(191,155,93,.95)!important;
+ outline:1px solid rgba(11,20,33,.96);
+ outline-offset:-5px;
+ box-shadow:inset 0 0 0 1px rgba(235,197,123,.2),0 0 0 1px #050c16,0 10px 26px #000b,0 0 18px rgba(228,174,80,.10)!important;
+ border-radius:11px!important;
+ backdrop-filter:blur(7px);
+}
+body>main .panel h2{
+ color:var(--hud-gold)!important;
+ font-size:17px!important;font-weight:800!important;letter-spacing:.25px;
+ padding-bottom:7px;border-bottom:1px solid #9e825580;
+ text-shadow:0 1px 3px #000;
+}
+body>main .panel p,body>main .panel div,body>main .panel span,body>main .panel label,
+body>main .panel li,body>main .panel small{font-size:clamp(13px,1vw,16px);line-height:1.55}
+body>main .panel button,body>main .panel select,body>main .panel input,body>main .panel textarea{
+ font-size:14px!important;min-height:33px;
+ border:1px solid #6d8298!important;border-radius:7px!important;
+}
+body>main .panel button{background:linear-gradient(#24374c,#152539)!important;color:#f3e9d8!important;font-weight:700}
+body>main .panel button:hover:not(:disabled){border-color:#d8b777!important;background:#304762!important}
+body>main .panel textarea,body>main .panel input{background:#0c1b2ceb!important;color:#fff4e5!important}
+body>main #hero{z-index:0!important}
+body>main #villageCanvas{display:block;width:100%!important;height:100%!important;object-fit:fill!important}
+body>main #graphicsStatusHUD{
+ position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:20;
+ display:flex;align-items:center;justify-content:center;gap:14px;
+ min-width:300px;max-width:40vw;padding:9px 20px;
+ border:2px solid #d1ac65;border-radius:10px;
+ background:linear-gradient(180deg,#101b2ff2,#0a1325f2);
+ box-shadow:0 6px 18px #000c,inset 0 0 0 2px #d0ac6024;
+ color:#f3d69e;font-size:15px;font-weight:800;white-space:nowrap;
+}
+body>main #graphicsStatusHUD strong{font-size:26px;letter-spacing:1px;color:#ffdc8c}
+body>main #hero .herotxt{top:86px!important;min-width:210px;max-width:360px}
+body>main #hero .herotxt p{font-size:13px!important}
+body>main .right>.two>.panel:first-child{top:12px!important;height:clamp(280px,52vh,590px)!important}
+body>main #publicBoardPanel{height:clamp(270px,49vh,535px)!important}
+body>main #publishEditorPanel{top:calc(49vh + 25px)!important}
+body>main .right>#hero+.panel{display:none!important}
+body>main .left-info-sidebar>.two>.panel:first-child,
+body>main .left-info-sidebar>.two>.panel:last-child,
+body>main .left-info-sidebar>.left-guide-panel,
+body>main .right>.two>.panel:last-child,
+body>main #personalMemoPanel{height:200px!important;max-height:220px!important}
+#graphicsTestBanner{position:fixed;bottom:4px;left:50%;transform:translateX(-50%);z-index:9999;
+ background:#a47b25;color:#10151d;border:1px solid #f8d98a;border-radius:8px;padding:4px 14px;font-size:12px;font-weight:800;pointer-events:none}
+@media(max-width:1100px){body>main #graphicsStatusHUD{top:8px;min-width:235px;gap:8px;padding:7px 10px;font-size:12px}
+body>main #graphicsStatusHUD strong{font-size:20px}
+body>main #hero .herotxt{top:72px!important}
+body>main .right>.two>.panel:first-child{height:45vh!important}
+body>main #publicBoardPanel{height:42vh!important}
+body>main #publishEditorPanel{top:calc(42vh + 24px)!important}}
+@media(max-width:700px){
+body>main #graphicsStatusHUD{top:10px;min-width:0;max-width:95%;width:max-content}
+body>main .right>.two>.panel:first-child,body>main #publicBoardPanel,
+body>main .left-info-sidebar>.two>.panel:first-child,
+body>main .left-info-sidebar>.two>.panel:last-child,
+body>main .left-info-sidebar>.left-guide-panel,
+body>main .right>.two>.panel:last-child,body>main #personalMemoPanel{
+ height:auto!important;max-height:none!important}
+body>main #publishEditorPanel{top:auto!important}
+}
+</style><style id="graphicsTest3">
+/* Graphics Test 3: clear floating HUD and large action tray. */
+body>main .right>.two>.panel:first-child{
+ left:12px!important;top:12px!important;width:clamp(350px,29vw,480px)!important;
+ height:clamp(390px,67vh,780px)!important;max-height:calc(100% - 130px)!important;
+ padding:12px!important;display:flex!important;flex-direction:column!important;gap:6px!important;
+}
+body>main .right>.two>.panel:first-child .chatlog{flex:1!important;min-height:130px!important;font-size:16px!important;line-height:1.6!important}
+body>main .right>.two>.panel:first-child #players{max-height:175px!important;overflow-y:auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
+body>main .right>.two>.panel:first-child #players>*{min-width:0!important;margin:0!important}
+body>main .right>.two>.panel:first-child .hud-players{background:#0a1626ee;border:1px solid #bd965c;border-radius:9px;padding:8px;margin:2px 0 6px}
+body>main .right>.two>.panel:first-child .hud-players .bar{margin-bottom:5px}
+body>main .right>.two>.panel:first-child .hud-players h2{font-size:15px!important;border:0!important;margin:0!important;padding:0!important}
+body>main .right>.two>.panel:last-child{
+ left:50%!important;right:auto!important;bottom:14px!important;top:auto!important;
+ transform:translateX(-50%)!important;width:clamp(440px,44vw,730px)!important;
+ min-height:185px!important;max-height:39vh!important;height:auto!important;
+ z-index:22!important;overflow:auto!important;
+ border:3px solid #e3b96d!important;
+ box-shadow:0 0 0 2px #142337,0 12px 32px #000e,0 0 28px #e2a65038!important;
+}
+body>main .right>.two>.panel:last-child h2{font-size:22px!important}
+body>main .right>.two>.panel:last-child button,body>main .right>.two>.panel:last-child select{font-size:16px!important;min-height:41px!important}
+body>main #publicBoardPanel{right:12px!important;top:12px!important;width:clamp(300px,26vw,400px)!important;height:clamp(300px,57vh,660px)!important;overflow:auto!important}
+body>main #publishEditorPanel,body>main #personalMemoPanel,
+body>main .left-info-sidebar>.two>.panel:first-child,
+body>main .left-info-sidebar>.two>.panel:last-child{display:none!important}
+body>main .left-info-sidebar>.left-guide-panel{
+ left:auto!important;right:12px!important;bottom:12px!important;
+ width:260px!important;height:auto!important;max-height:none!important;padding:10px!important;
+}
+body>main .left-info-sidebar>.left-guide-panel h2{font-size:15px!important;margin:0 0 5px!important}
+body>main .left-info-sidebar>.left-guide-panel .guide-tabs{display:flex!important;gap:5px!important;flex-wrap:wrap!important}
+body>main .left-info-sidebar>.left-guide-panel button{padding:7px 9px!important;min-height:32px!important;font-size:13px!important}
+#hudFloatingTools{position:absolute;right:12px;bottom:135px;z-index:24;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+#hudFloatingTools button,.hud-open-editor,.hud-expand-btn{
+ border:2px solid #c5a36d!important;border-radius:9px!important;
+ color:#ffe3ac!important;background:linear-gradient(#263d55,#101f32)!important;
+ padding:9px 13px!important;font-weight:800!important;font-size:15px!important;
+ box-shadow:0 4px 12px #0009;cursor:pointer
+}
+#hudFloatingTools button:hover,.hud-open-editor:hover,.hud-expand-btn:hover{background:#385373!important}
+.hud-open-editor{display:block;width:100%;margin-top:10px}
+.hud-overlay{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;background:#000b;padding:20px}
+.hud-overlay.is-open{display:flex}
+.hud-overlay .hud-dialog{width:min(680px,95vw);max-height:88vh;overflow:auto;position:relative;
+ padding:20px;background:linear-gradient(160deg,#101f33,#071320);border:3px solid #d3ad70;
+ border-radius:13px;box-shadow:0 18px 70px #000e,0 0 25px #bc935433;color:#f5e9d5}
+.hud-overlay .hud-dialog h2{color:#f5cf8a;font-size:23px;border-bottom:1px solid #977f5a;padding-bottom:10px}
+.hud-overlay .hud-dialog button,.hud-overlay .hud-dialog input,.hud-overlay .hud-dialog textarea,.hud-overlay .hud-dialog select{font-size:16px!important;min-height:38px}
+.hud-overlay .hud-dialog textarea{width:100%;min-height:155px}
+.hud-close{float:right;border:1px solid #d3ad70;border-radius:8px;padding:5px 12px;background:#20364c;color:#fff;cursor:pointer}
+.hud-overlay .hud-dialog .panel{display:block!important;position:static!important;transform:none!important;width:100%!important;height:auto!important;max-height:none!important;border:0!important;box-shadow:none!important;background:transparent!important}
+body>main #publicBoardPanel .bar{align-items:center}
+body>main #publicBoardPanel #publicBoard{font-size:16px!important;line-height:1.65}
+@media(max-width:1200px){
+body>main .right>.two>.panel:first-child{width:310px!important}
+body>main #publicBoardPanel{width:285px!important}
+body>main .right>.two>.panel:last-child{width:420px!important}
+body>main .left-info-sidebar>.left-guide-panel{width:220px!important}
+}
+@media(max-width:850px){
+body>main .right>.two>.panel:first-child{width:42vw!important}
+body>main #publicBoardPanel{width:38vw!important}
+body>main .right>.two>.panel:last-child{bottom:90px!important;width:75vw!important}
+body>main .left-info-sidebar>.left-guide-panel{bottom:5px!important}
+#hudFloatingTools{bottom:105px!important}
+}
+@media(max-width:700px){
+body>main .right>.two>.panel:first-child,body>main #publicBoardPanel,
+body>main .right>.two>.panel:last-child,body>main .left-info-sidebar>.left-guide-panel{
+ position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+ transform:none!important;width:100%!important;height:auto!important;max-height:none!important;
+}
+body>main .right>.two>.panel:first-child{min-height:380px!important}
+body>main .right>.two>.panel:last-child{min-height:180px!important}
+#hudFloatingTools{position:relative!important;right:auto!important;bottom:auto!important;flex-direction:row!important;flex-wrap:wrap!important}
+}
+</style><style id="graphicsTest4Styles">
+/* Dedicated live voting at bottom left. */
+body>main #hudVotePanel{
+ position:absolute!important;z-index:23!important;
+ left:12px!important;bottom:12px!important;top:auto!important;right:auto!important;
+ width:clamp(350px,29vw,480px)!important;
+ max-height:31vh!important;overflow:auto!important;
+ display:block!important;
+}
+body>main #hudVotePanel h2{font-size:18px!important}
+body>main #hudVotePanel #votePanel.hide{display:none!important}
+body>main #hudVotePanel #votePanel:not(.hide){display:block!important}
+body>main .right>.two>.panel:first-child{height:clamp(340px,52vh,620px)!important;max-height:calc(100% - 270px)!important}
+body>main .right>.two>.panel:last-child{min-height:195px!important;max-height:40vh!important}
+body>main #graphicsStatusHUD{gap:12px!important;flex-wrap:wrap;max-width:55vw!important;min-width:340px}
+body>main #hudTimerControls{display:flex;align-items:center;justify-content:center;border-left:1px solid #95784a;padding-left:10px}
+body>main #hudTimerControls #extendDay{
+ font-size:14px!important;min-height:38px!important;
+ padding:8px 13px!important;width:auto!important;white-space:nowrap;
+ background:linear-gradient(#534326,#2b2518)!important;
+ border:2px solid #dfb76b!important;color:#ffdea4!important;border-radius:8px!important;
+ font-weight:800!important;cursor:pointer
+}
+body>main #hudTimerControls #extendDay:disabled{opacity:.5;cursor:not-allowed}
+body>main #dayControls>div.row:has(#timeLeft){display:none!important}
+body>main #hudFloatingTools{bottom:140px!important}
+body>main #hudFloatingTools button{min-width:180px;text-align:center}
+.hudPublicStyleNote{color:#e2c88f;font-size:14px;line-height:1.5;margin:10px 0}
+body>main #publicBoardPanel #publicBoard{font-size:18px!important}
+@media(max-width:1250px){
+body>main #hudVotePanel{width:310px!important;max-height:30vh!important}
+body>main .right>.two>.panel:first-child{height:46vh!important;max-height:calc(100% - 250px)!important}
+body>main #graphicsStatusHUD{max-width:57vw!important}
+}
+@media(max-width:850px){
+body>main #hudVotePanel{width:42vw!important;bottom:10px!important}
+body>main .right>.two>.panel:last-child{bottom:12px!important}
+body>main #hudFloatingTools{bottom:150px!important}
+body>main #graphicsStatusHUD{min-width:0!important;max-width:70vw!important;gap:7px!important}
+body>main #hudTimerControls #extendDay{font-size:12px!important;padding:6px 8px!important}
+}
+@media(max-width:700px){
+body>main #hudVotePanel{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;top:auto!important;width:100%!important;max-height:none!important}
+body>main .right>.two>.panel:first-child{height:auto!important;max-height:none!important}
+body>main #hudFloatingTools{bottom:auto!important}
+body>main #graphicsStatusHUD{max-width:95%!important}
+}
+</style><style id="graphicsTest5Styles">
+/* Player list is a separate card above chat, collapsible without hiding chat. */
+body>main #hudPeoplePanel{position:absolute!important;z-index:24!important;left:12px!important;top:12px!important;bottom:auto!important;width:clamp(350px,29vw,480px)!important;max-height:240px!important;overflow:auto!important;padding:10px!important}
+body>main #hudPeoplePanel .bar{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;margin:0 0 7px!important}
+body>main #hudPeoplePanel h2{margin:0!important;padding:0!important;border:0!important;font-size:17px!important}
+body>main #hudPeopleToggle{margin-left:auto!important;padding:5px 9px!important;min-height:28px!important;white-space:nowrap!important;font-size:12px!important}
+body>main #hudPeoplePanel #players{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;max-height:170px!important;overflow-y:auto!important}
+body>main #hudPeoplePanel #players>*{min-width:0!important;margin:0!important}
+body>main #hudPeoplePanel.is-collapsed #players{display:none!important}
+body>main #hudPeoplePanel.is-collapsed{max-height:65px!important}
+/* Chat now starts below the separate people list, and has a larger reading area. */
+body>main .right>.two>.panel:first-child{top:252px!important;left:12px!important;width:clamp(350px,29vw,480px)!important;height:calc(100% - 252px - min(45vh, 480px) - 28px)!important;min-height:190px!important;max-height:none!important}
+body>main .right>.two>.panel:first-child .chatlog{min-height:110px!important}
+/* Live votes: only one title, 5-11 rows visible; dynamic height via content. */
+body>main #hudVotePanel{left:12px!important;bottom:12px!important;width:clamp(350px,29vw,480px)!important;max-height:min(45vh,calc(190px + var(--vote-entries,11)*36px))!important;overflow:auto!important;padding:12px!important}
+body>main #hudVotePanel #votePanel{margin-top:0!important}
+body>main #hudVotePanel #voteRows{display:flex!important;flex-direction:column!important;gap:3px!important}
+body>main #hudVotePanel #voteRows .vote-row{min-height:28px!important;margin:0!important}
+/* More compact game actions. */
+body>main .right>.two>.panel:last-child{min-height:130px!important;max-height:31vh!important;padding:10px 13px!important}
+body>main .right>.two>.panel:last-child h2{font-size:19px!important;margin-bottom:6px!important}
+body>main .right>.two>.panel:last-child #dayControls .field{margin:5px 0!important}
+body>main .right>.two>.panel:last-child #closeVote{cursor:help}
+@media(max-width:1250px){body>main #hudPeoplePanel,body>main #hudVotePanel,body>main .right>.two>.panel:first-child{width:310px!important}}
+@media(max-width:850px){body>main #hudPeoplePanel,body>main #hudVotePanel,body>main .right>.two>.panel:first-child{width:42vw!important}body>main .right>.two>.panel:first-child{top:245px!important;height:calc(100% - 245px - min(45vh, 480px) - 25px)!important}}
+@media(max-width:700px){body>main #hudPeoplePanel,body>main #hudVotePanel,body>main .right>.two>.panel:first-child{position:relative!important;top:auto!important;left:auto!important;bottom:auto!important;width:100%!important;height:auto!important;max-height:none!important}body>main #hudPeoplePanel{max-height:240px!important}body>main .right>.two>.panel:first-child{min-height:370px!important}body>main #hudVotePanel{max-height:none!important}}
+</style><style id="graphicsTest6Styles">
+/* A single adaptive left rail keeps chat available even with both lists expanded. */
+body>main #hudLeftRail{position:absolute!important;left:12px;top:12px;bottom:12px;width:clamp(350px,29vw,480px);z-index:45;display:flex;flex-direction:column;gap:8px;min-height:0;pointer-events:none}
+body>main #hudLeftRail>.panel{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;width:100%!important;margin:0!important;min-height:0!important;pointer-events:auto}
+body>main #hudLeftRail>#hudPeoplePanel{flex:0 0 auto!important;max-height:30%!important;overflow:hidden!important}
+body>main #hudLeftRail>#hudPeoplePanel #players{max-height:calc(30vh - 80px)!important;overflow-y:auto!important}
+body>main #hudLeftRail>#hudPeoplePanel.is-collapsed{flex:0 0 auto!important;max-height:52px!important}
+body>main #hudLeftRail>#hudChatPanel{flex:1 1 auto!important;height:auto!important;min-height:155px!important;max-height:none!important;display:flex!important;flex-direction:column!important;z-index:60!important;overflow:hidden!important}
+body>main #hudLeftRail>#hudChatPanel .chatlog{flex:1 1 auto!important;min-height:30px!important;height:auto!important;overflow:auto!important}
+body>main #hudLeftRail>#hudChatPanel .field{flex:0 0 auto}
+body>main #hudLeftRail>#hudChatPanel.is-collapsed{flex:0 0 auto!important;height:51px!important;min-height:51px!important;max-height:51px!important}
+body>main #hudLeftRail>#hudChatPanel.is-collapsed>:not(.bar){display:none!important}
+body>main #hudLeftRail>#hudChatPanel.is-collapsed .bar{margin:0!important}
+body>main #hudLeftRail>#hudVotePanel{flex:0 1 auto!important;max-height:39%!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+body>main #hudLeftRail>#hudVotePanel #votePanel{overflow-y:auto!important;min-height:0!important;flex:1 1 auto!important}
+body>main #hudLeftRail>#hudVotePanel.is-collapsed{flex:0 0 auto!important;height:51px!important;min-height:51px!important;max-height:51px!important}
+body>main #hudLeftRail>#hudVotePanel.is-collapsed #votePanel{display:none!important}
+body>main #hudLeftRail .hud-rail-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0!important}
+body>main #hudLeftRail .hud-rail-heading h2{border:0!important;margin:0!important;padding:0!important;font-size:17px!important}
+body>main #hudLeftRail .hud-rail-heading button,body>main #hudLeftRail #hudPeopleToggle{font-size:12px!important;padding:5px 9px!important;min-height:28px!important;white-space:nowrap!important;flex:0 0 auto}
+body>main #hudLeftRail #hudVotePanel #votePanel>.bar>h2{display:none!important}
+body>main #hudLeftRail #hudVotePanel #votePanel>.bar{justify-content:flex-end!important}
+body>main .right>.two>.panel:last-child{width:clamp(290px,29.4vw,490px)!important;min-height:118px!important;max-height:29vh!important}
+body>main #publicBoardPanel{display:flex!important;flex-direction:column!important;overflow:hidden!important}
+body>main #publicBoardPanel #publicBoard{flex:1 1 auto;overflow-y:auto!important;min-height:0}
+body>main #publicBoardPanel.is-collapsed{height:53px!important;max-height:53px!important;min-height:53px!important;padding:8px 12px!important}
+body>main #publicBoardPanel.is-collapsed #publicBoard,body>main #publicBoardPanel.is-collapsed .hud-open-editor{display:none!important}
+body>main #publicBoardPanel .bar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+body>main #publicBoardPanel .bar h2{border:0!important;margin:0!important;padding:0!important}
+body>main #publicBoardPanel .bar button{font-size:12px!important;padding:5px 9px!important;min-height:28px!important}
+@media(max-width:1250px){body>main #hudLeftRail{width:310px}}
+@media(max-width:850px){body>main #hudLeftRail{width:42vw}}
+@media(max-width:700px){
+body>main #hudLeftRail{position:relative!important;top:auto!important;left:auto!important;bottom:auto!important;width:100%!important;height:650px!important;min-height:300px!important}
+body>main #hudLeftRail>#hudVotePanel{max-height:40%!important}
+body>main #hudLeftRail>#hudPeoplePanel{max-height:35%!important}
+body>main #hudLeftRail>#hudChatPanel{min-height:165px!important}
+}
+</style><style id="graphicsTest7Fix">
+/* Anchor action tray to the actual game viewport, independent of legacy .two layout. */
+body>main #hudActionPanel{
+ position:absolute!important;z-index:85!important;
+ left:50%!important;right:auto!important;top:auto!important;bottom:14px!important;
+ transform:translateX(-50%)!important;
+ width:clamp(300px,29vw,490px)!important;min-width:280px!important;
+ height:auto!important;min-height:120px!important;max-height:35vh!important;
+ overflow-y:auto!important;display:block!important;
+ box-sizing:border-box!important;visibility:visible!important;
+}
+body>main #hudActionPanel h2{font-size:19px!important}
+@media(max-width:1050px){body>main #hudActionPanel{width:36vw!important;min-width:260px!important}}
+@media(max-width:700px){body>main #hudActionPanel{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;top:auto!important;transform:none!important;width:100%!important;max-height:none!important}}
+</style><style id="graphicsTest8Styles">
+/* Floating panels share an adjustable opacity. Slider changes background only, never text. */
+:root{--hud-panel-alpha:.93}
+body>main .panel,
+body>main #hudLeftRail>.panel,
+body>main #hudActionPanel,
+.hud-overlay .hud-dialog{
+ background:rgba(10,20,34,var(--hud-panel-alpha))!important;
+ backdrop-filter:blur(7px)!important;
+}
+/* Keep game actions centered at the bottom and roughly half the prior width. */
+body>main #hudActionPanel{
+ position:absolute!important;left:50%!important;right:auto!important;
+ bottom:14px!important;top:auto!important;
+ transform:translateX(-50%)!important;
+ width:clamp(250px,23vw,330px)!important;
+ max-width:calc(100vw - 36px)!important;
+ min-width:0!important;
+ min-height:0!important;
+ max-height:38vh!important;
+ padding:10px 12px!important;
+ z-index:65!important;overflow-y:auto!important;
+}
+body>main #hudActionPanel h2{font-size:17px!important;margin:0 0 6px!important;padding-bottom:5px!important}
+body>main #hudActionPanel .field{margin:5px 0!important}
+body>main #hudActionPanel button{min-height:32px!important;font-size:13px!important;padding:6px 8px!important}
+body>main #hudActionPanel select{min-height:34px!important;font-size:13px!important}
+body>main #hudActionPanel .row{gap:4px!important;flex-wrap:wrap!important}
+body>main #hudActionPanel .hint{font-size:12px!important}
+/* Status chips are grouped with their collapse buttons, not floating between heading and body. */
+body>main #hudLeftRail .hud-rail-heading{display:flex!important;align-items:center!important;gap:7px!important}
+body>main #hudLeftRail .hud-rail-heading h2{margin-right:auto!important}
+body>main #hudLeftRail .hud-rail-heading .badge,
+body>main #hudLeftRail .hud-rail-heading #voteStatus{
+ margin-left:auto!important;position:static!important;white-space:nowrap!important;
+ flex:0 0 auto!important;
+}
+body>main #hudLeftRail .hud-rail-heading button{margin-left:0!important}
+body>main #hudLeftRail #hudVotePanel #votePanel>.bar{display:none!important}
+#hudOpacityControl{
+ display:flex;align-items:center;gap:7px;flex:0 0 auto;
+ padding:5px 10px;border:1px solid #997f55;border-radius:9px;
+ background:#101d30;color:#e7c98d;font-size:12px;white-space:nowrap
+}
+#hudOpacityControl input{width:100px;min-height:0!important;accent-color:#e2b76e;cursor:pointer}
+#hudOpacityControl output{font-variant-numeric:tabular-nums;min-width:34px;text-align:right}
+@media(max-width:700px){
+body>main #hudActionPanel{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;top:auto!important;transform:none!important;width:100%!important;max-height:none!important}
+#hudOpacityControl{order:4}
+}
+</style><style id="graphicsTest9Styles">
+:root{--hud-panel-alpha:.93;--hud-inner-alpha:.83;--hud-button-alpha:.84}
+body>main .panel,body>main #hudLeftRail>.panel,body>main #hudActionPanel,.hud-overlay .hud-dialog{
+ background:rgba(10,20,34,var(--hud-panel-alpha))!important;
+}
+body>main .panel .chatlog,body>main .panel .notice,body>main .panel .log,
+body>main .panel textarea,body>main .panel input:not([type=checkbox]):not([type=range]),
+body>main .panel select,body>main .panel .hud-players,
+body>main #hudLeftRail .chatlog,.hud-overlay .hud-dialog textarea{
+ background:rgba(8,17,30,var(--hud-inner-alpha))!important;
+}
+body>main .panel button,body>main #hudActionPanel button,body>main #hudLeftRail button,
+body>main #publicBoardPanel button,.hud-overlay .hud-dialog button{
+ background:rgba(32,52,76,var(--hud-button-alpha))!important;
+}
+body>main .panel button:hover:not(:disabled){background:rgba(49,78,110,var(--hud-button-alpha))!important}
+/* The checkbox must remain inside the night action card, aligned with the controls. */
+body>main #hudActionPanel #ripRow{position:static!important;float:none!important;clear:both!important;
+ display:flex!important;align-items:center!important;width:100%!important;max-width:100%!important;
+ margin:8px 0!important;padding:5px 2px!important;box-sizing:border-box!important;}
+body>main #hudActionPanel #ripRow.hide{display:none!important}
+body>main #hudActionPanel #ripRow label{display:flex!important;align-items:center!important;gap:9px!important;
+ flex-wrap:wrap!important;max-width:100%!important;margin:0!important;line-height:1.5!important}
+body>main #hudActionPanel #ripRow input[type=checkbox]{position:static!important;display:inline-block!important;
+ flex:0 0 17px!important;width:17px!important;height:17px!important;min-height:0!important;
+ margin:0!important;vertical-align:middle!important;accent-color:#e3bc7d}
+</style><style id="graphicsTest11Styles">
+/* The site lobby has only the village, chat, and general help. */
+body.lupus-web-lobby #hudPeoplePanel,
+body.lupus-web-lobby #hudVotePanel,
+body.lupus-web-lobby #hudActionPanel,
+body.lupus-web-lobby #publicBoardPanel,
+body.lupus-web-lobby #hudTimer,
+body.lupus-web-lobby #hudAlive,
+body.lupus-web-lobby #hudTimerControls {display:none!important}
+body.lupus-web-lobby #graphicsStatusHUD{min-width:0!important;width:auto!important;max-width:90vw!important;padding:9px 26px!important}
+body.lupus-web-lobby #hudLeftRail>#hudChatPanel{flex:1 1 auto!important;min-height:250px!important}
+</style><style id="graphicsTest12LobbyVisibility">
+/* Override the higher-specificity flex layout of the left rail. */
+body.lupus-web-lobby>main #hudLeftRail>#hudVotePanel,
+body.lupus-web-lobby>main #hudLeftRail>#hudPeoplePanel,
+body.lupus-web-lobby>main #hudActionPanel,
+body.lupus-web-lobby>main #publicBoardPanel{display:none!important;visibility:hidden!important}
+</style></head><body><header><div><h1>LUPUS IN TABULA <span style="font-size:.52em;vertical-align:middle;color:#e4c481;white-space:nowrap">v2.5</span></h1><small>타뷸라의 늑대</small></div><div class="top-setup-bar" id="topSetupBar"><aside class="panel"><h2 class="setup-title">방 / 플레이어 설정</h2><div class="setup"><label class="setup-inline-label">내 아이디</label><input id="name" maxlength="16" value="방랑자"/><button id="create" title="방을 만들거나 코드로 입장하세요.">새 방 만들기</button><label class="setup-inline-label">방 코드</label><input id="code" maxlength="6" placeholder="예: A1B2C3"/><button id="join" title="방을 만들거나 코드로 입장하세요.">방 코드로 입장</button><div class="notice hide" id="roomInfo">방을 만들거나 코드로 입장하세요.</div><div class="hide" id="hostControls"><label>게임 규칙</label><select id="rule"><option value="basic">기본</option><option value="basic2">기본 (2턴제)</option><option value="chaos">혼란 (2턴제)</option></select><button id="start" style="width:100%">게임 시작</button><button class="hide" id="rematch" style="width:100%">같은 방에서 다시 게임하기</button></div></div></aside></div><div class="row"><button class="sound-toggle" id="soundToggle" title="효과음 켜기/끄기">🔊 효과음 켜짐</button><details class="presence-dropdown header-presence" id="presenceDropdown"><summary>접속자 <span class="badge" id="sitePresenceCount">0명</span></summary><div class="presence-list" id="sitePresenceList"></div></details><span class="badge" id="connection">서버 연결 중…</span></div><div aria-live="polite" class="error header-join-error" id="error" role="alert"></div></header><main><aside class="left-info-sidebar" id="leftInfoSidebar"><section class="panel left-guide-panel"><h2>게임 도움말</h2><div aria-label="게임 도움말" class="guide-tabs" role="group"><button aria-controls="gameHelp" aria-expanded="false" id="rulesHelpBtn" type="button">게임 규칙</button><button aria-controls="gameHelp" aria-expanded="false" id="rolesHelpBtn" type="button">직업 설명</button></div></section><div class="two"><div class="panel"><h2>나만의 능력 기록</h2><div class="hint">조사 결과와 늑대 동맹 공격 기록은 본인에게만 표시됩니다.</div><div class="hint" id="intelBoard" style="max-height:250px;overflow:auto;margin-top:8px">아직 기록이 없습니다.</div></div><div class="panel"><h2>게임 정보</h2><div class="notice" id="myInfo">직업은 게임 시작 시 비밀 배정됩니다.</div><div class="hint" id="gameInfo">5~11명. 늑대팀은 시민팀과 동수가 되면 승리하고, 시민팀은 늑대를 모두 처형하면 승리합니다.</div></div></div></aside><section class="right"><div id="graphicsStatusHUD" aria-label="중앙 게임 상태">
+<span id="hudPhase">대기실</span><strong id="hudTimer">--:--</strong><span id="hudAlive">0명 생존</span>
+</div><div class="hero" id="hero"><canvas aria-label="마우스로 클릭해 이동하는 2D 마을" height="520" id="villageCanvas" width="1200"></canvas><div class="herotxt"><div class="phase" id="phaseLabel">THE VILLAGE AWAITS</div><h2 id="heroTitle">안개 속의 마을</h2><p id="heroSub">방을 만들고 다른 플레이어를 초대하세요.</p></div></div><div class="panel"><div class="bar"><h2>마을 사람들</h2><div><span class="badge" id="round">대기실</span> <span class="badge" id="alive">0명 생존</span></div></div><div class="players" id="players"><p class="hint">아직 방에 입장하지 않았습니다.</p></div></div><div class="two"><div class="panel"><div class="bar"><h2>대화</h2><span class="badge" id="chatLabel">웹사이트 전체</span></div><div class="tabs" id="roomChatTabs"><button data-channel="web" id="webLobbyTab" type="button">웹 로비<span class="unread" id="unread-web"></span></button><button class="active" data-channel="all"><span id="allTabLabel">로비</span><span class="unread" id="unread-all"></span></button><button data-channel="wolf">동맹<span class="unread" id="unread-wolf"></span></button><button data-channel="whisper">귓속말<span class="unread" id="unread-whisper"></span></button><button data-channel="ghost">유령<span class="unread" id="unread-ghost"></span></button></div><div class="hint" id="siteChatHint">방에 입장하기 전에는 웹 로비에서 대화할 수 있어요.</div><div class="chatlog" id="chatlog"></div><div class="field hide" id="whisperRow"><label>귓속말 받을 플레이어</label><select id="whisperTarget"></select></div><div class="field"><label>메시지</label><div class="row"><input id="chatText" maxlength="300" placeholder="메시지를 입력하세요"/><button id="send">전송</button></div></div></div><div class="panel"><h2 id="actionTitle">게임 행동</h2><div class="hint" id="notice">방에 입장하면 현재 단계와 가능한 행동이 표시됩니다.</div><div class="hide" id="dayControls"><div class="field"><label>투표 대상</label><select id="voteTarget"></select></div><div class="row"><button id="vote">투표 확정</button><button id="abstain">기권</button><button id="closeVote" title="마감 동의는 투표/기권과 별개입니다. 전원 마감 동의 또는 전원 투표/기권 시 즉시 집계하고 10초 후 밤으로 넘어갑니다. 전원 동의로 낮이 종료되면 미사용 투표권은 소멸합니다.">투표 마감 동의</button></div><div class="hint" id="closeProgress">마감 동의: 0명</div><div class="row" style="margin:8px 0"><button id="extendDay">토론 1분 연장 (오늘 1회)</button><span class="timer" id="timeLeft">02:00</span></div></div><div class="hide" id="nightControls"><div class="hint">남은 밤 시간: <span class="timer" id="nightTimeLeft">01:00</span> · 시간이 끝나면 자동으로 행동을 보류합니다.</div><div class="field"><label>능력 대상</label><select id="nightTarget"></select></div><div class="field hide" id="ripRow"><label><input id="rip" style="width:auto" type="checkbox"/> 참살 사용 (늑대별 1회)</label></div><div class="row"><button id="act">능력 사용</button><button id="skip">행동 보류 / 완료</button></div><div class="hint" id="abilityHint" style="margin-top:8px"></div></div><div class="hide" id="votePanel" style="margin-top:15px"><div class="bar"><h2>라이브 투표 현황</h2><span class="badge" id="voteStatus">진행 중</span></div><p class="hint">투표 전에도 현재까지 집계된 표를 확인할 수 있습니다.</p><div class="vote-row" id="voteCloseLive" style="margin:8px 0 14px"><span>마감 동의</span><div class="track"><div class="fill" id="voteCloseFill" style="width:0%;background:#d8b96a"></div></div><span id="voteCloseCount">0/0명</span></div><div id="voteRows"></div></div></div></div></section><aside class="right-sidebar" id="sitePresencePanel">
+<div class="panel" id="publicBoardPanel"><div class="bar"><h2 style="margin:0">공표 게시판</h2></div><div class="hint" id="publicBoard">아직 공표가 없습니다.</div></div>
+<div class="panel" id="publishEditorPanel"><h2>내 공표 작성 / 수정</h2><label>내 공표 한 줄 수정 (마지막 내용만 유지)</label><textarea id="pubtext" maxlength="15" placeholder="모두에게 공개 · 공백 포함 최대 15자 · 사망 후에도 유지" rows="3"></textarea><div class="row public-style" style="display:none!important" aria-hidden="true"><label for="pubColor">글 색상</label><select aria-label="공표 글 색상" id="pubColor"><option value="#f4e9d6">밝은 아이보리</option><option value="#eecb7b">금색</option><option value="#b8e2ff">하늘색</option><option value="#b8f0c9">연두색</option><option value="#ffb6c1">분홍색</option><option value="#e3c5ff">보라색</option></select><label for="pubSize">글 크기</label><select aria-label="공표 글 크기" id="pubSize"><option value="16">보통</option><option selected="" value="18">크게</option><option value="20">더 크게</option><option value="22">매우 크게</option></select></div><button id="publish">공표 게시</button></div>
+<div class="panel" id="personalMemoPanel"><h2>개인 메모</h2><textarea id="memo" placeholder="나만 볼 수 있는 메모" rows="4"></textarea></div>
+</aside></main>
+<section aria-label="게임 도움말" aria-live="polite" aria-modal="false" class="game-help hide" id="gameHelp" role="dialog"><div class="help-window-header" id="helpWindowHeader"><span id="helpWindowTitle">게임 도움말</span><button aria-label="닫기" id="helpWindowClose" type="button">✕</button></div><div id="helpWindowBody"></div></section><script>
+// Same-origin browser tabs share this identifier; different browsers/devices do not.
+const browserIdKey='lupus-browser-id';
+const graphicsMultiTest=new URLSearchParams(location.search).get('testMulti')==='1';
+let browserId;
+try {
+ browserId=localStorage.getItem(browserIdKey);
+ if(!browserId){browserId=crypto.randomUUID();localStorage.setItem(browserIdKey,browserId);}
+} catch(_){browserId=crypto.randomUUID();}
+if(graphicsMultiTest)browserId=crypto.randomUUID();
+const socket=io({auth:{browserId}});let state=null,channel='web';
+let siteChatLogs=[];
+function siteChatVisible(){return !state||state.phase==='lobby'||state.phase==='ended';}
+socket.on('connect',()=>socket.emit('requestSitePresence'));
+socket.on('sitePresence',data=>{
+ $('sitePresenceCount').textContent=`${data.count||0}명 접속 중`;
+ $('sitePresenceList').innerHTML=(data.members||[]).map(m=>`<span class="presence-user">${esc(m.name)}<small>${esc(m.status)}</small></span>`).join('')||'<span class="hint">접속자가 없습니다.</span>';
+});
+function renderSiteLobbyChat(){if(!state||channel==='web')renderChat();}
+function sendSiteLobbyChat(){if(!siteChatVisible())return;const text=$('chatText').value.trim();if(text){socket.emit('siteChat',{text});$('chatText').value='';}}
+
+socket.on('siteChatHistory',logs=>{if(!siteChatVisible())return;siteChatLogs=Array.isArray(logs)?logs.slice(-100):[];if(!state||channel==='web')renderChat()});
+socket.on('siteChatMessage',m=>{if(!siteChatVisible())return;siteChatLogs.push(m);if(siteChatLogs.length>100)siteChatLogs.shift();if(!state||channel==='web')renderChat()});
+function renderSiteChat(){
+ if(state&&channel!=='web')return;
+ $('roomChatTabs').classList.remove('hide');$('siteChatHint').classList.toggle('hide',!!state);if(!state)document.querySelectorAll('[data-channel]').forEach(b=>b.classList.toggle('hide',b.dataset.channel!=='web'));
+ $('chatLabel').textContent='웹 로비';document.querySelectorAll('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel==='web'));$('chatText').placeholder='웹사이트 전체에 메시지 보내기';
+ $('chatlog').innerHTML=siteChatLogs.map(m=>`<div class="msg"><b>${esc(m.name||'방랑자')}</b> ${esc(m.text||'')}</div>`).join('')||'<span class="hint">아직 메시지가 없습니다. 첫 인사를 남겨 보세요!</span>';
+ $('chatlog').scrollTop=$('chatlog').scrollHeight;
+}
+
+const GAME_MODE_HELP={
+basic:`<b>기본 모드</b><p>게임이 시작되면 첫 번째 낮부터 진행됩니다.</p><ul><li>첫 번째 낮에 모든 플레이어가 토론과 추리를 시작합니다.</li><li>낮이 종료되면 첫 번째 밤이 시작됩니다.</li><li>이후 낮과 밤이 번갈아 진행됩니다.</li></ul>`,
+basic2:`<b>기본 모드 (2턴제)</b><p>게임 시작 후 두 번의 밤이 먼저 진행되며, 세 번째 날의 낮부터 본격적인 토론과 투표가 시작됩니다.</p><ul><li>첫 번째 밤과 두 번째 밤에는 각 직업의 특수 능력을 사용할 수 있습니다.</li><li>두 번의 밤이 지나면 세 번째 날의 낮이 시작됩니다.</li><li>이후에는 일반적인 낮과 밤의 순서로 게임이 진행됩니다.</li></ul>`,
+chaos:`<b>혼란 모드 (2턴제)</b><p>기본 모드(2턴제)와 동일하게 진행되지만, <b>밤에 아무도 사망하지 않은 경우 원인을 공개하지 않습니다.</b></p><p>일반 모드에서 구분해 알리는 상황:</p><ol><li><b>늑대가 공격 대상을 지정하지 않은 경우</b> — 살인 대상을 선택하지 않아 사망자가 없습니다.</li><li><b>퇴역군인이 늑대의 습격에서 살아남은 경우</b> — 특수 능력으로 생존했습니다.</li><li><b>보디가드가 늑대의 공격을 막아낸 경우</b> — 보호 대상이 생존했습니다.</li></ol><p>혼란 모드에서는 세 경우 모두 동일하게 표시됩니다.</p><p><b>“오늘 밤에는 아무도 죽지 않았습니다.”</b></p>`
+};
+function gameModeDescription(rule){return GAME_MODE_HELP[rule]||GAME_MODE_HELP.basic;}
+
+let soundEnabled=true, audioCtx=null,seenLogs=new Set(),unread={all:0,wolf:0,whisper:0,ghost:0,web:0},initializedLogs=false;
+function audioReady(){try{audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;}catch(e){return null}}
+function beep(freq=740,duration=.12,shape='sine',volume=.10,delay=0){
+ const a=audioReady();if(!a)return;
+ const o=a.createOscillator(),g=a.createGain();o.type=shape;o.frequency.setValueAtTime(freq,a.currentTime+delay);
+ g.gain.setValueAtTime(.0001,a.currentTime+delay);g.gain.exponentialRampToValueAtTime(volume,a.currentTime+delay+.02);
+ g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+delay+duration);
+ o.connect(g).connect(a.destination);o.start(a.currentTime+delay);o.stop(a.currentTime+delay+duration+.03);
+}
+function noise(duration=.5,volume=.1,filterHz=1000){
+ const a=audioReady();if(!a)return;
+ const b=a.createBuffer(1,Math.ceil(a.sampleRate*duration),a.sampleRate),v=b.getChannelData(0);
+ for(let i=0;i<v.length;i++)v[i]=(Math.random()*2-1)*(1-i/v.length);
+ const src=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();src.buffer=b;f.type='lowpass';f.frequency.value=filterHz;g.gain.value=volume;src.connect(f).connect(g).connect(a.destination);src.start();
+}
+// Uploaded sound assets replace the synthesized phase/combat/defense effects.
+// Whisper notification retains its short electronic tone until a dedicated asset is provided.
+const soundFiles={
+ day:'/audio/day.mp3',night:'/audio/night.mp3',scratch:'/audio/scratch.mp3',
+ rip:'/audio/rip.mp3',saved:'/audio/saved.mp3',honor:'/audio/honor.mp3',
+ execution:'/audio/execution.mp3',witch:'/audio/witch.mp3',
+ townWin:'/audio/town_win.mp3',wolfWin:'/audio/wolf_win.mp3'
+};
+// Lower effects relative to the looping background music.
+const sfxVolume={day:.38,night:.38,scratch:.46,rip:.48,saved:.48,honor:.48,execution:.48,witch:.48,townWin:.48,wolfWin:.48};
+const soundCache={};
+for(const [key,url] of Object.entries(soundFiles)){
+ const audio=new Audio(url);audio.preload='auto';soundCache[key]=audio;
+}
+const bgm={
+ day:new Audio('/audio/day_bgm.mp3'),
+ night:new Audio('/audio/night_bgm.mp3'),
+ lobby:new Audio('/audio/lobby_bgm.mp3')
+};
+Object.values(bgm).forEach(a=>{a.loop=true;a.preload='none';a.volume=.24;});
+let activeBgm=null,desiredBgm=null,fadeTimer=null;
+let victoryAnnouncement=null;
+function safePlay(a){const promise=a.play();if(promise&&typeof promise.catch==='function')promise.catch(()=>{});}
+function stopBgm(){
+ if(fadeTimer){clearInterval(fadeTimer);fadeTimer=null;}
+ for(const a of Object.values(bgm)){a.pause();a.currentTime=0;a.volume=.24;}
+ activeBgm=null;
+}
+function syncBgm(){
+ const phase=state?.phase;
+ // Keep the winner announcement audible before returning to the lobby theme.
+ if(victoryAnnouncement && !victoryAnnouncement.ended && !victoryAnnouncement.paused){
+   if(phase==='ended')return;
+   victoryAnnouncement.pause();victoryAnnouncement=null;
+ }
+
+ desiredBgm=phase==='day'?'day':phase==='night'?'night':'lobby';
+ if(!soundEnabled||!desiredBgm){if(activeBgm)stopBgm();return;}
+ if(activeBgm===desiredBgm){if(bgm[activeBgm].paused)safePlay(bgm[activeBgm]);return;}
+ if(activeBgm)stopBgm();
+ activeBgm=desiredBgm;
+ const a=bgm[activeBgm];a.volume=.24;
+ safePlay(a);
+}
+function playSound(type){
+ if(!soundEnabled)return;
+ if(type==='ripThenScratch'){
+  // Play both attack effects together on the same event.
+  const ripSound=playSound('rip');
+  playSound('scratch');
+  return ripSound;
+ }
+ if(type==='whisper'){beep(880,.05);beep(1175,.14,'sine',.10,.065);return;}
+ const base=soundCache[type];
+ if(!base)return null;
+ // Clone for overlapping effects without interrupting a sound already playing.
+ const a=base.cloneNode();a.volume=sfxVolume[type]??.8;
+ safePlay(a);
+ return a;
+}
+function unlockAudio(){
+ if(!soundEnabled)return;
+ audioReady();syncBgm();
+}
+document.addEventListener('pointerdown',unlockAudio,{passive:true});
+document.addEventListener('keydown',unlockAudio);
+document.addEventListener('touchstart',unlockAudio,{passive:true});
+window.addEventListener('focus',unlockAudio);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncBgm();});
+// Autoplay is attempted on entry; the first user gesture unlocks playback where required.
+syncBgm();
+function showUnread(){for(const c of Object.keys(unread)){const el=document.getElementById('unread-'+c);if(el){el.textContent=unread[c]>9?'9+':String(unread[c]);el.classList.toggle('show',unread[c]>0)}}}
+function checkNewLogs(next){
+ const list=next.logs||[];
+ if(!initializedLogs){list.forEach(m=>seenLogs.add(m.id));initializedLogs=true;return}
+ for(const m of list){
+  if(seenLogs.has(m.id))continue;
+  seenLogs.add(m.id);
+  if(m.channel!==channel){unread[m.channel]=(unread[m.channel]||0)+1}
+  // Alert on incoming wolf-team or ghost chat, even if its tab is selected.
+  // Do not play an alert for the sender's own message or SYSTEM notices.
+  if((m.channel==='wolf'||m.channel==='ghost')&&m.fromId&&m.fromId!==next.self?.id){
+   playSound('whisper');
+  }
+ }
+ if(seenLogs.size>700)seenLogs=new Set(list.map(x=>x.id));
+ showUnread();
+}
+function timeFmt(ms){let sec=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')}
+function updateClock(){if(!state)return;const t=timeFmt((state.deadline||0)-Date.now());if(document.getElementById('timeLeft'))$('timeLeft').textContent=t;if(document.getElementById('nightTimeLeft'))$('nightTimeLeft').textContent=t}
+setInterval(updateClock,250);
+const $=id=>document.getElementById(id);const colors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];const detailedRoleInfo={"wolf":["야간 공격 및 참살",["매일 밤 생존한 플레이어 1명을 공격 대상으로 지정하여 살해할 수 있습니다.","늑대는 일반 공격 외에 참살이라는 특수 능력을 사용할 수 있습니다.","참살은 늑대 1명당 게임 전체에서 단 1회 사용할 수 있습니다.","참살은 보디가드의 보호, 퇴역군인의 생존, 추격자의 추적 능력을 무시합니다."]],"hench":["사망자 정보 확인, 늑대 탐색 및 동맹 채팅",["예언자의 조사에서 늑대로 판별되지 않으며, 영매의 조사에서도 시민으로 판별됩니다.","지금까지 사망한 모든 플레이어의 직업을 확인할 수 있습니다.","매일 밤 생존한 플레이어 1명을 선택하여 늑대인지 확인할 수 있습니다.","늑대 탐색에 성공하면 늑대와 동맹 채팅을 사용할 수 있습니다."]],"seer":["늑대 판별",["매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.","선택한 플레이어가 늑대인지 아닌지 확인할 수 있습니다.","똘마니는 늑대팀에 속하지만 예언자의 조사에서는 늑대로 판별되지 않습니다."]],"guard":["보호",["매일 밤 생존한 플레이어 1명을 선택하여 보호할 수 있습니다.","보호 대상이 늑대의 일반 공격을 받으면 해당 공격을 막아 생존시킵니다.","단, 늑대의 특수 능력인 참살은 방어할 수 없습니다."]],"tracker":["늑대 추적",["매일 밤 생존한 플레이어 1명을 추적 대상으로 지정할 수 있습니다.","지정한 플레이어가 그날 밤 늑대의 일반 공격으로 사망하면, 공격한 늑대의 정체를 알아낼 수 있습니다.","단, 추적 대상이 늑대의 참살로 사망한 경우에는 추적에 실패합니다."]],"medium":["사망자 조사",["두 번째 밤부터 매일 밤 사망한 플레이어 1명의 시체를 선택하여 조사할 수 있습니다.","조사 결과는 예언자 또는 보디가드, 늑대, 일반 시민의 분류로 표시됩니다."]],"watcher":["똘마니 판별",["매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.","선택한 플레이어가 똘마니인지 아닌지 확인할 수 있습니다.","예언자의 조사로는 구별할 수 없는 똘마니를 찾아낼 수 있습니다."]],"veteran":["생존",["늑대의 일반 공격을 받더라도 최초 1회에 한해 살아남을 수 있습니다.","생존 능력은 자동으로 발동하며, 한 번 발동한 이후에는 소멸합니다.","늑대의 참살을 당하면 생존 능력의 잔여 여부와 관계없이 즉시 사망합니다."]],"fanatic":["동반 처형",["낮 투표를 통해 처형될 경우, 자신에게 가장 먼저 투표한 플레이어 1명을 함께 사망시킵니다.","이 능력은 투표로 처형되었을 때만 발동합니다.","늑대의 야간 공격으로 사망한 경우에는 발동하지 않습니다."]],"heir":["직업 계승",["생존한 플레이어의 수가 7명이 되는 순간 능력이 자동으로 발동합니다.","게임에서 가장 먼저 사망한 시민팀 플레이어의 직업을 계승합니다.","계승 이후에는 해당 직업의 능력을 사용할 수 있습니다."]],"citizen":["토론 및 투표",["밤에 사용하는 특수 능력은 없습니다.","낮에 토론하고 정보를 공유하며 투표를 통해 늑대를 찾아내야 합니다."]]};
+const roleDesc={wolf:'늑대끼리는 서로를 알고 동맹 대화를 할 수 있습니다. 공격 순번은 밤마다 교대하며, 혼자 남으면 매번 공격할 수 있습니다.',hench:'늑대를 조사로 찾아야 정체를 확인하고 동맹 대화에 합류할 수 있습니다.',seer:'살아있는 플레이어가 늑대인지 조사합니다.',guard:'밤마다 살아있는 플레이어 한 명을 지정해 늑대인간의 일반 공격으로부터 보호할 수 있습니다. 보호에 성공하면 대상은 살아남습니다. 단, 늑대인간이 참살을 사용하면 보디가드의 보호를 무시하고 대상을 살해합니다.',medium:'사망자의 직업 분류를 확인합니다.',tracker:'밤마다 살아있는 플레이어 한 명을 지정해 추적합니다. 지정한 플레이어가 그날 밤 늑대인간에게 살해당하면, 공격한 늑대인간이 누구인지 알 수 있습니다. 단, 지정한 플레이어가 참살로 사망했다면 추적에 실패하여 공격한 늑대인간을 알아낼 수 없습니다.',watcher:'똘마니인지 조사합니다.',heir:'생존자가 7명이 되면 시민팀의 첫 사망 직업을 계승합니다.',veteran:'늑대인간의 일반 공격을 받더라도 한 번은 살아남을 수 있습니다. 이 생존 능력은 게임당 한 번만 발동합니다. 단, 늑대인간의 참살에는 생존 능력이 적용되지 않으며 즉시 사망합니다.',fanatic:'마녀가 낮 투표로 처형되면 마녀에게 가장 먼저 투표한 플레이어도 저주로 함께 사망합니다. 늑대의 밤 공격으로 사망할 때는 발동하지 않습니다.',citizen:'낮 토론과 투표로 늑대를 찾아야 합니다.'};
+const gameRulesHTML=`<h2>타뷸라의 늑대 (Lupus in Tabula) — 게임 규칙</h2><h3>1. 게임 개요</h3><p><b>타뷸라의 늑대</b>는 5~11명의 플레이어가 <b>늑대팀</b>과 <b>시민팀</b>으로 나뉘어 상대 팀을 제거하는 것을 목표로 하는 심리 추리 게임입니다.</p><p>시민팀은 플레이어 간의 대화, 정보 공유, 추리를 통해 늑대팀의 거짓 주장과 직업 사칭에 숨겨진 모순을 밝혀내고, 늑대를 찾아 처형해야 합니다.</p><p>반면 늑대팀은 자신의 정체를 숨긴 채 다른 직업을 사칭하거나 거짓 정보를 제공하여 시민들의 추리를 방해해야 합니다. 이를 통해 처형을 피하고, 생존한 늑대의 수가 시민의 수와 같아질 때까지 살아남는 것이 목표입니다.</p><p>게임은 다음 두 가지 결과 중 하나로 종료됩니다.</p><ul><li><b>시민팀 승리:</b> 모든 늑대의 정체를 밝혀내고 처형하여 마을을 지킵니다.</li><li><b>늑대팀 승리:</b> 시민들을 속이고 제거하여 마을을 장악합니다.</li></ul><h3>2. 게임 진행 방식</h3><p>게임은 <b>낮(Day)</b>과 <b>밤(Night)</b>으로 구분되며, 각 시간대에 따라 플레이어가 수행할 수 있는 행동이 달라집니다.</p><h3>2.1. 낮 (Day)</h3><p>낮에는 생존한 모든 플레이어가 자유롭게 대화하며, 정보를 공유하고 서로의 정체를 추리할 수 있습니다.</p><p>플레이어들은 토론과 심문을 통해 늑대로 의심되는 인물을 찾아내고, 투표를 통해 매일 최대 1명을 처형할 수 있습니다.</p><p><b>① 토론 및 추리</b></p><ul><li>생존한 플레이어는 자유롭게 대화하고 토론할 수 있습니다.</li><li>다른 플레이어에게 질문하거나 자신의 정보를 공개할 수 있습니다.</li><li>각자의 직업, 행동, 발언에서 발견되는 모순을 근거로 늑대의 정체를 추리합니다.</li></ul><p><b>② 투표 및 처형</b></p><ul><li>모든 생존 플레이어는 늑대로 의심되는 대상에게 투표할 수 있습니다.</li><li>투표 결과에 따라 하루에 최대 1명의 플레이어를 처형할 수 있습니다.</li><li>투표 과정에서 기권할 수도 있습니다.</li></ul><p><b>③ 낮 시간 및 시간 연장</b></p><ul><li>기본 낮 시간은 <b>2분</b>입니다.</li><li>각 플레이어는 한 턴에 한 번씩 낮 시간 연장 기능을 사용할 수 있으며, 한 번 사용할 때마다 남은 시간이 1분 연장됩니다.</li><li>모든 생존 플레이어가 투표 조기 마감에 동의하면, 남은 시간과 관계없이 낮이 종료되고 10초 뒤 밤으로 전환됩니다.</li><li>투표 조기 마감에 동의하더라도 낮이 실제로 종료되기 전까지는 투표하거나 기권할 수 있습니다. 단, 전원 동의로 낮이 종료되면 아직 행사하지 않은 투표권은 소멸합니다.</li><li>모든 생존 플레이어가 투표를 확정하거나 기권해도 낮이 즉시 종료되고 10초 뒤 밤으로 전환됩니다.</li></ul><p><b>④ 개인 메모 및 공표</b></p><ul><li><b>개인 메모:</b> 플레이어가 게임 중 수집한 정보, 추리 내용, 의심되는 인물 등을 자유롭게 기록할 수 있는 개인 공간입니다.</li><li><b>공표:</b> 각 플레이어가 다른 모든 플레이어에게 공개할 정보를 기록하는 공간입니다.</li><li>공표에 작성된 내용은 모든 플레이어가 확인할 수 있으며, 작성자가 사망한 이후에도 삭제되지 않고 유지됩니다.</li></ul><h3>2.2. 밤 (Night)</h3><p>밤에는 각 플레이어가 자신에게 부여된 직업의 고유 능력을 사용하여 행동합니다.</p><ul><li>플레이어는 자신의 직업에 따라 지정된 특수 능력을 사용할 수 있습니다.</li><li>각 직업의 능력과 사용 조건은 해당 직업의 설명을 따릅니다.</li><li>밤에는 직업별 특수 능력 사용을 제외한 일반적인 행동이 제한됩니다.</li><li>밤에 발생한 사건과 능력 사용 결과는 해당 게임 모드의 규칙에 따라 처리됩니다.</li></ul><h3>3. 승리 조건</h3><h3>3.1. 늑대팀 승리</h3><p>생존한 늑대의 수가 생존한 시민의 수와 같아지면 늑대팀이 승리합니다.</p><p><b>예시:</b> 생존 늑대 2명 / 생존 시민 2명 → 늑대팀 승리</p><h3>3.2. 시민팀 승리</h3><p>모든 늑대를 처형하면 시민팀이 승리합니다. 늑대가 한 명도 남지 않으면 게임은 즉시 종료되며, 시민팀의 승리가 선언됩니다.</p><h3>4. 게임 모드</h3><p>게임 시작 전 다음 세 가지 모드 중 하나를 선택할 수 있습니다.</p><h3>4.1. 기본 모드</h3><p>게임이 시작되면 첫 번째 낮부터 진행됩니다.</p><ul><li>첫 번째 낮에 모든 플레이어가 토론과 추리를 시작합니다.</li><li>낮이 종료되면 첫 번째 밤이 시작됩니다.</li><li>이후 낮과 밤이 번갈아 진행됩니다.</li></ul><h3>4.2. 기본 모드 (2턴제)</h3><p>게임 시작 후 두 번의 밤이 먼저 진행되며, 세 번째 날의 낮부터 본격적인 토론과 투표가 시작됩니다.</p><ul><li>첫 번째 밤과 두 번째 밤에는 각 직업의 특수 능력을 사용할 수 있습니다.</li><li>두 번의 밤이 지나면 세 번째 날의 낮이 시작됩니다.</li><li>이후에는 일반적인 낮과 밤의 순서로 게임이 진행됩니다.</li></ul><h3>4.3. 혼란 모드 (2턴제)</h3><p>기본 모드(2턴제)와 동일한 방식으로 진행되지만, <b>밤에 아무도 사망하지 않았을 경우 그 원인을 공개하지 않는다</b>는 차이점이 있습니다.</p><p>일반적인 게임 모드에서는 다음과 같은 상황이 발생하면 해당 사건의 원인이 다음 날 낮에 공개됩니다.</p><p><b>① 늑대가 공격 대상을 지정하지 않은 경우</b></p><ul><li>늑대가 살인 대상을 선택하지 않아 아무도 사망하지 않은 상황입니다.</li></ul><p><b>② 퇴역군인이 늑대의 습격에서 살아남은 경우</b></p><ul><li>퇴역군인이 늑대의 공격을 받았지만 자신의 특수 능력으로 생존한 상황입니다.</li></ul><p><b>③ 보디가드가 늑대의 공격을 막아낸 경우</b></p><ul><li>보디가드가 보호한 플레이어가 늑대의 습격을 받았지만 보호 능력으로 생존한 상황입니다.</li></ul><p>기본 모드에서는 위와 같은 사건의 발생 원인이 다음 날 낮에 공개되므로, 플레이어들은 이를 추리의 단서로 활용할 수 있습니다.</p><p>그러나 <b>혼란 모드에서는 위 세 가지 상황을 구분하지 않고 모두 동일한 메시지로 표시합니다.</b></p><p><b>“오늘 밤에는 아무도 죽지 않았습니다.”</b></p><p>따라서 시민팀은 아무도 사망하지 않은 이유가 늑대의 공격 포기 때문인지, 퇴역군인의 생존 능력 때문인지, 보디가드의 보호 때문인지 알 수 없습니다.</p><p>이러한 정보의 불확실성은 시민팀의 추리를 더욱 어렵게 만들며, 늑대팀에는 거짓 정보를 제공하거나 다른 직업을 사칭할 기회를 늘려줍니다.</p><p>혼란 모드는 플레이어 간의 심리전과 정보 분석의 중요성을 더욱 높이는 게임 방식입니다.</p>`;
+const helpRoleNames={wolf:'늑대',hench:'똘마니',seer:'예언자',guard:'보디가드',medium:'영매',tracker:'추격자',watcher:'감시자',heir:'후계자',veteran:'퇴역군인',fanatic:'마녀',citizen:'시민'};
+const helpRoleExtras={wolf:'늑대는 밤마다 한 명을 공격할 수 있으며, 늑대마다 게임당 한 번 보디가드 보호와 퇴역군인 생존 능력을 무시하는 참살을 사용할 수 있습니다.',hench:'늑대팀에 속합니다. 늑대를 찾기 전에는 동맹 대화에 참여할 수 없습니다.',seer:'예언자 조사에서는 늑대인지 아닌지만 알 수 있습니다.',guard:'자기 자신은 보호할 수 없습니다.',medium:'사망자의 분류를 확인합니다. 분류는 늑대 / 예언자·보디가드 / 평범한 시민 등으로 제공됩니다.',tracker:'참살 피해자에 대한 추적은 실패합니다.',watcher:'똘마니 여부를 조사합니다.',heir:'생존자가 7명이 되었을 때 사망한 시민팀 직업 중 계승 대상이 있으면 해당 능력을 이어받습니다.',veteran:'일반 공격 생존 능력은 게임당 한 번만 발동하며 참살은 막지 못합니다.',fanatic:'마녀가 투표로 처형될 때에만 발동합니다.',citizen:'특수 밤 능력은 없습니다.'};
+const gameRolesHTML=`<h2>타뷸라의 늑대 — 직업 설명</h2><h3>1. 시민팀 직업</h3><p>시민팀은 각자의 특수 능력을 활용해 늑대의 정체를 밝혀내고, 모든 늑대를 제거하는 것을 목표로 합니다.</p><h3>1.1. 예언자</h3><p><b>능력: 늑대 판별</b></p><ul><li>매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.</li><li>선택한 플레이어가 늑대인지 아닌지 확인할 수 있습니다.</li><li>똘마니는 늑대팀에 속하지만 예언자의 조사에서는 늑대로 판별되지 않습니다.</li></ul><h3>1.2. 보디가드</h3><p><b>능력: 보호</b></p><ul><li>매일 밤 생존한 플레이어 1명을 선택하여 보호할 수 있습니다.</li><li>보호 대상이 늑대의 일반 공격을 받으면 해당 공격을 막아 생존시킵니다.</li><li>단, 늑대의 특수 능력인 <b>참살</b>은 방어할 수 없습니다.</li></ul><h3>1.3. 추격자</h3><p><b>능력: 늑대 추적</b></p><ul><li>매일 밤 생존한 플레이어 1명을 추적 대상으로 지정할 수 있습니다.</li><li>지정한 플레이어가 그날 밤 늑대의 일반 공격으로 사망하면, 공격한 늑대의 정체를 알아낼 수 있습니다.</li><li>단, 추적 대상이 늑대의 <b>참살</b>로 사망한 경우에는 추적에 실패하며, 늑대의 정체를 알아낼 수 없습니다.</li></ul><h3>1.4. 영매</h3><p><b>능력: 사망자 조사</b></p><ul><li>두 번째 밤부터 매일 밤 사망한 플레이어 1명의 시체를 선택하여 조사할 수 있습니다.</li><li>조사 결과는 다음 유형 중 하나로 표시됩니다: <b>예언자 또는 보디가드</b>, <b>늑대</b>, <b>일반 시민</b>.</li></ul><h3>1.5. 감시자</h3><p><b>능력: 똘마니 판별</b></p><ul><li>매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.</li><li>선택한 플레이어가 똘마니인지 아닌지 확인할 수 있습니다.</li><li>예언자의 조사로는 구별할 수 없는 똘마니를 찾아낼 수 있는 직업입니다.</li></ul><h3>1.6. 퇴역군인</h3><p><b>능력: 생존</b></p><ul><li>늑대의 일반 공격을 받더라도 최초 1회에 한해 살아남을 수 있습니다.</li><li>생존 능력은 자동으로 발동하며, 한 번 발동한 이후에는 소멸합니다.</li><li>단, 늑대의 특수 능력인 <b>참살</b>을 당하면 생존 능력의 잔여 여부와 관계없이 즉시 사망합니다.</li></ul><h3>1.7. 마녀</h3><p><b>능력: 동반 처형</b></p><ul><li>낮 투표를 통해 처형될 경우, 자신에게 가장 먼저 투표한 플레이어 1명을 함께 사망시킵니다.</li><li>이 능력은 투표로 처형되었을 때만 발동합니다.</li><li>늑대의 야간 공격으로 사망한 경우에는 발동하지 않습니다.</li></ul><h3>1.8. 후계자</h3><p><b>능력: 직업 계승</b></p><ul><li>생존한 플레이어의 수가 <b>7명</b>이 되는 순간 능력이 자동으로 발동합니다.</li><li>게임에서 가장 먼저 사망한 시민팀 플레이어의 직업을 계승합니다.</li><li>계승 이후에는 해당 직업의 능력을 사용할 수 있습니다.</li></ul><h3>2. 늑대팀 직업</h3><p>늑대팀은 자신의 정체를 숨기고 시민들을 제거하여, 생존한 늑대의 수가 시민의 수와 같아지는 것을 목표로 합니다.</p><h3>2.1. 늑대</h3><p><b>능력: 야간 공격 및 참살</b></p><ul><li>매일 밤 생존한 플레이어 1명을 공격 대상으로 지정하여 살해할 수 있습니다.</li><li>늑대는 일반 공격 외에 <b>참살</b>이라는 특수 능력을 사용할 수 있습니다.</li><li>참살은 늑대 1명당 게임 전체에서 단 1회 사용할 수 있습니다.</li></ul><p><b>참살의 특징</b></p><ul><li>보디가드의 보호 능력을 무시합니다.</li><li>퇴역군인의 생존 능력을 무시합니다.</li><li>추격자의 추적 능력을 무력화합니다.</li></ul><p>늑대는 참살을 적절한 시점에 활용하여 시민팀의 방어 및 정보 수집 능력을 무력화할 수 있습니다.</p><h3>2.2. 똘마니</h3><p><b>능력: 사망자 정보 확인, 늑대 탐색 및 동맹 채팅</b></p><p>똘마니는 늑대팀에 속하지만 늑대와는 다른 방식으로 활동하는 보조 직업입니다.</p><p><b>① 조사 회피</b></p><ul><li>예언자의 조사에서 늑대로 판별되지 않습니다.</li><li>영매의 조사에서도 늑대가 아닌 시민으로 판별됩니다.</li></ul><p><b>② 사망자 정보 확인</b></p><ul><li>지금까지 사망한 모든 플레이어의 직업을 확인할 수 있습니다.</li></ul><p><b>③ 늑대 탐색</b></p><ul><li>매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.</li><li>선택한 플레이어가 늑대인지 아닌지 확인할 수 있습니다.</li></ul><p><b>④ 동맹 채팅 활성화</b></p><ul><li>똘마니가 늑대 탐색에 성공하면 늑대와의 동맹 채팅이 활성화됩니다.</li><li>이후 똘마니와 늑대는 동맹 채팅을 통해 서로 정보를 공유하고 전략을 논의할 수 있습니다.</li></ul><h3>3. 기본 직업 구성 (11인 기준)</h3><p>11명이 참가하는 게임에서는 총 10종류의 직업이 등장하며, 늑대 직업만 2명에게 배정됩니다.</p><p><b>늑대팀 — 3명</b></p><ul><li>늑대 × 2</li><li>똘마니 × 1</li></ul><p><b>시민팀 — 8명</b></p><ul><li>예언자 × 1</li><li>보디가드 × 1</li><li>추격자 × 1</li><li>영매 × 1</li><li>감시자 × 1</li><li>퇴역군인 × 1</li><li>마녀 × 1</li><li>후계자 × 1</li></ul><h3>4. 참가 인원별 직업 구성</h3><p>게임은 최소 5명부터 최대 11명까지 참가할 수 있습니다. 참가 인원에 따라 일부 직업이 제외되며, 나머지 직업은 기본 구성과 동일하게 유지됩니다.</p><table class="help-table"><thead><tr><th>참가 인원</th><th>제외되는 직업</th></tr></thead><tbody><tr><td>11명 (최대)</td><td>없음 — 모든 직업 등장</td></tr><tr><td>10명</td><td>후계자</td></tr><tr><td>9명</td><td>감시자, 똘마니</td></tr><tr><td>8명</td><td>후계자, 감시자, 똘마니</td></tr><tr><td>7명</td><td>후계자, 감시자, 똘마니, 추격자</td></tr><tr><td>6명</td><td>후계자, 감시자, 똘마니, 추격자, 늑대 1명</td></tr><tr><td>5명 (최소)</td><td>후계자, 감시자, 똘마니, 추격자, 늑대 1명, 보디가드</td></tr></tbody></table><h3>참가 인원별 팀 구성</h3><table class="help-table"><thead><tr><th>참가 인원</th><th>늑대팀</th><th>시민팀</th></tr></thead><tbody><tr><td>11</td><td>3</td><td>8</td></tr><tr><td>10</td><td>3</td><td>7</td></tr><tr><td>9</td><td>2</td><td>7</td></tr><tr><td>8</td><td>2</td><td>6</td></tr><tr><td>7</td><td>2</td><td>5</td></tr><tr><td>6</td><td>1</td><td>5</td></tr><tr><td>5</td><td>1</td><td>4</td></tr></tbody></table>`;
+let openHelp=null;
+function toggleGameHelp(which){openHelp=openHelp===which?null:which;const panel=$('gameHelp');panel.classList.toggle('hide',!openHelp);if(openHelp){$('helpWindowTitle').textContent=openHelp==='rules'?'게임 규칙':'직업 설명';$('helpWindowBody').innerHTML=openHelp==='rules'?gameRulesHTML:gameRolesHTML;}for(const [key,id] of [['rules','rulesHelpBtn'],['roles','rolesHelpBtn']]){$(id).classList.toggle('active',openHelp===key);$(id).setAttribute('aria-expanded',String(openHelp===key));}}
+$('helpWindowClose').onclick=()=>{if(openHelp)toggleGameHelp(openHelp)};
+(()=>{const win=$('gameHelp'),handle=$('helpWindowHeader');let drag=null;handle.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY,left:win.getBoundingClientRect().left,top:win.getBoundingClientRect().top};handle.setPointerCapture(e.pointerId);});handle.addEventListener('pointermove',e=>{if(!drag)return;const x=Math.max(0,Math.min(innerWidth-80,drag.left+e.clientX-drag.x));const y=Math.max(0,Math.min(innerHeight-50,drag.top+e.clientY-drag.y));win.style.left=x+'px';win.style.top=y+'px';win.style.right='auto';win.style.bottom='auto';win.style.transform='none';});const end=()=>drag=null;handle.addEventListener('pointerup',end);handle.addEventListener('pointercancel',end);})();
+$('rulesHelpBtn').onclick=()=>toggleGameHelp('rules');$('rolesHelpBtn').onclick=()=>toggleGameHelp('roles');
+function sendErr(t){$('error').textContent=t;setTimeout(()=>$('error').textContent='',5000)}socket.on('connect',()=>{$('connection').textContent='서버 연결됨';socket.emit('siteName',$('name').value)});socket.on('disconnect',()=>{$('connection').textContent='연결 끊김';stopBgm()});socket.on('connect_error',e=>{ $('connection').textContent='연결 오류';sendErr('서버 연결 오류: '+e.message);});socket.on('errorMessage',sendErr);socket.on('joined',d=>{updateRoomButtons(true);$('code').value=d.code; $('roomInfo').classList.remove('hide');$('roomInfo').textContent='방 코드: '+d.code+' · 친구에게 공유하세요.'});socket.on('state',s=>{if(s.self&&document.activeElement!==$('name'))$('name').value=s.self.name;if(!state){channel='all';$('roomChatTabs').classList.remove('hide');$('siteChatHint').classList.add('hide');document.querySelectorAll('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel==='all'));}if(state&&state.code!==s.code){seenLogs.clear();initializedLogs=false;unread={all:0,wolf:0,whisper:0,ghost:0,web:0}}checkNewLogs(s);state=s;updateRoomButtons(true);render();updateClock();syncBgm();window.dispatchEvent(new Event('lupusRoomPresenceChanged'))});
+socket.on('soundEffect',e=>{
+ if(e.type==='townWin'||e.type==='wolfWin'){
+   stopBgm();
+   if(victoryAnnouncement){victoryAnnouncement.pause();victoryAnnouncement=null;}
+   const announcement=playSound(e.type);
+   if(announcement){
+     victoryAnnouncement=announcement;
+     const resume=()=>{if(victoryAnnouncement===announcement){victoryAnnouncement=null;syncBgm();}};
+     announcement.addEventListener('ended',resume,{once:true});
+     announcement.addEventListener('error',resume,{once:true});
+     // If playback is blocked, there is no announcement to wait for.
+     if(announcement.paused){setTimeout(()=>{if(announcement.paused)resume();},500);}
+   }else syncBgm();
+ }else playSound(e.type);
+});
+socket.on('whisperNotice',()=>playSound('whisper'));
+$('soundToggle').onclick=()=>{soundEnabled=!soundEnabled;if(soundEnabled){audioReady();syncBgm()}else{if(victoryAnnouncement){victoryAnnouncement.pause();victoryAnnouncement=null;}stopBgm();for(const a of Object.values(soundCache)){a.pause();a.currentTime=0;}}$('soundToggle').textContent=soundEnabled?'🔊 효과음 켜짐':'🔇 효과음 꺼짐'};
+$('name').addEventListener('change',()=>{
+ const name=$('name').value.trim().slice(0,16)||'방랑자';
+ $('name').value=name;
+ socket.emit('updateName',name);
+});$('extendDay').onclick=()=>socket.emit('extendDay');function updateRoomButtons(inRoom){
+ $('create').textContent=inRoom?'방에서 나가기':'새 방 만들기';
+ $('join').textContent=inRoom?'방 코드 복사':'방 코드로 입장';
+ $('code').readOnly=!!inRoom;
+ $('code').title=inRoom?'현재 방 코드 (복사 가능)':'입장할 방 코드를 입력하세요';
+}
+function returnToWebLobby(){
+ state=null;channel='web';seenLogs.clear();initializedLogs=false;
+ unread={all:0,wolf:0,whisper:0,ghost:0,web:0};showUnread();
+ $('roomInfo').classList.add('hide');$('hostControls').classList.add('hide');
+ $('code').value='';$('chatText').value='';$('siteChatHint').classList.remove('hide');
+ $('whisperRow').classList.add('hide');updateRoomButtons(false);
+ $('phaseLabel').textContent='THE VILLAGE AWAITS';$('heroTitle').textContent='안개 속의 마을';
+ $('hero').classList.remove('night');$('myInfo').textContent='방을 만들거나 입장해 게임을 시작하세요.';
+ $('players').innerHTML='';renderSiteChat();syncBgm();window.dispatchEvent(new Event('lupusRoomPresenceChanged'));
+}
+socket.on('leftRoom',()=>{returnToWebLobby();});
+$('create').onclick=()=>{
+ if(state){socket.emit('leaveRoom');return;}
+ socket.emit('createRoom',{name:$('name').value});
+};
+$('join').onclick=async()=>{
+ if(!state){socket.emit('joinRoom',{code:$('code').value,name:$('name').value});return;}
+ const code=state.code;
+ try{
+  if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(code);
+  else{const field=$('code');field.select();if(!document.execCommand('copy'))throw Error('copy failed');field.setSelectionRange(0,0);}
+  $('join').textContent='복사 완료!';setTimeout(()=>{if(state&&state.code===code)$('join').textContent='방 코드 복사';},1600);
+ }catch(_){sendErr('방 코드 복사에 실패했습니다. 방 코드를 직접 선택해 복사해 주세요.');}
+};$('rule').onchange=()=>socket.emit('setRule',$('rule').value);$('start').onclick=()=>socket.emit('startGame');$('rematch').onclick=()=>socket.emit('rematch');document.querySelectorAll('[data-channel]').forEach(b=>b.onclick=()=>{if(b.dataset.channel==='web'&&!siteChatVisible())return;channel=b.dataset.channel;unread[channel]=0;showUnread();document.querySelectorAll('[data-channel]').forEach(x=>x.classList.toggle('active',x===b));$('chatLabel').textContent={all:'전체',web:'웹 로비',wolf:'동맹',whisper:'귓속말',ghost:'유령'}[channel];$('whisperRow').classList.toggle('hide',channel!=='whisper');$('chatText').placeholder=channel==='web'?'웹사이트 전체에 메시지 보내기':'메시지를 입력하세요';renderChat()});$('send').onclick=sendChat;let chatComposing=false,chatEnterPending=false,chatLastSentAt=0;
+function submitChatOnce(){
+ if(Date.now()-chatLastSentAt<250)return;
+ if(!$('chatText').value.trim())return;
+ chatLastSentAt=Date.now();
+ sendChat();
+}
+$('chatText').addEventListener('compositionstart',()=>{chatComposing=true;});
+$('chatText').addEventListener('compositionend',()=>{
+ chatComposing=false;
+ if(chatEnterPending){
+  chatEnterPending=false;
+  // Let the browser commit the final Hangul syllable to the input first.
+  setTimeout(submitChatOnce,0);
+ }
+});
+$('chatText').addEventListener('keydown',e=>{
+ if(e.key!=='Enter')return;
+ e.preventDefault();
+ if(e.repeat)return;
+ if(e.isComposing||chatComposing||e.keyCode===229){
+  chatEnterPending=true;
+  return;
+ }
+ chatEnterPending=false;
+ submitChatOnce();
+});
+function sendChat(){if(!state){const text=$('chatText').value.trim();if(!text)return;socket.emit('siteChat',{text});$('chatText').value='';return;}if(channel==='web'){sendSiteLobbyChat();return;}if(state&&(state.phase==='lobby'||state.phase==='ended')&&channel!=='web')channel='all';const text=$('chatText').value.trim();if(!text)return;let to=null;if(channel==='whisper'){to=$('whisperTarget').value;if(!to)return}socket.emit('chat',{channel,text,to});$('chatText').value=''}$('vote').onclick=()=>socket.emit('vote',+$('voteTarget').value);$('abstain').onclick=()=>socket.emit('vote',0);$('closeVote').onclick=()=>socket.emit('closeVote');$('act').onclick=()=>{if(!state)return;socket.emit('nightAction',{target:+$('nightTarget').value,rip:$('rip').checked})};$('skip').onclick=()=>socket.emit('skipNight');$('publish').onclick=()=>{if(!state||state.phase!=='day')return;const t=$('pubtext').value.trim();if(t){socket.emit('publish',{text:t,color:'#f4e9d6',size:20});$('pubtext').value='';$('publishEditorPanel').closest('.hud-overlay')?.classList.remove('is-open')}};
+setInterval(()=>{if(!state||state.phase!=='day'||!state.self.alive||state.voteClosed||state.shortDay)return;const wait=Math.max(0,Math.ceil(((state.closeConsentAvailableAt||0)-Date.now())/1000));const btn=$('closeVote');btn.disabled=!state.closeRequested&&wait>0;btn.textContent=state.closeRequested?'마감 동의 취소':wait>0?`마감 동의 (${wait}초 후 가능)`:'투표 마감 동의';},250);
+function detailedRoleHtml(role){const r=detailedRoleInfo[role];return r?`<div class="my-role-details"><b>능력: ${esc(r[0])}</b><ul>${r[1].map(line=>`<li>${esc(line)}</li>`).join('')}</ul></div>`:'';}
+function render(){if(!state){$('publish').disabled=true;$('pubtext').disabled=true;$('pubColor').disabled=true;$('pubSize').disabled=true;$('publish').title='공표는 낮 토론 시간에만 작성할 수 있습니다.';renderSiteChat();return;} if(!siteChatVisible()&&channel==='web'){channel='all';document.querySelectorAll('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel==='all'));} $('roomChatTabs').classList.remove('hide');$('siteChatHint').classList.add('hide');const lobbyChat=state.phase==='lobby'||state.phase==='ended';if(lobbyChat&&channel!=='all'&&channel!=='web'){channel='all';unread.all=0;document.querySelectorAll('[data-channel]').forEach(x=>x.classList.toggle('active',x.dataset.channel==='all'));}document.querySelectorAll('[data-channel]').forEach(x=>{
+ const tab=x.dataset.channel;
+ x.classList.toggle('hide',tab==='web'?!siteChatVisible():tab==='all'?false:lobbyChat);
+ x.classList.toggle('active',tab===channel);
+});$('allTabLabel').textContent=lobbyChat?'게임 로비':'전체';$('chatLabel').textContent=channel==='web'?'웹 로비':lobbyChat?'게임 로비':({all:'전체',web:'웹 로비',wolf:'동맹',whisper:'귓속말',ghost:'유령'}[channel]);$('whisperRow').classList.toggle('hide',lobbyChat||channel!=='whisper');$('chatText').placeholder=channel==='web'?'웹사이트 전체에 메시지 보내기':lobbyChat?'게임 로비에서 대화하세요':'메시지를 입력하세요';const self=state.self,night=state.phase==='night';const canPublish=state.phase==='day';for(const id of ['publish','pubtext','pubColor','pubSize'])$(id).disabled=!canPublish;$('publish').title=canPublish?'공표 작성 또는 수정':'공표는 낮 토론 시간에만 작성할 수 있습니다.';$('hero').classList.toggle('night',night);$('phaseLabel').textContent=state.phase==='lobby'?'THE VILLAGE AWAITS':state.phase==='ended'?'GAME OVER':night?'NIGHTFALL · 비밀 행동':'DAYLIGHT · 공개 토론';$('heroTitle').textContent=state.phase==='lobby'?'안개 속의 마을':state.phase==='ended'?state.winner+' 승리':night?'어둠 속의 마을':'마을 광장';$('heroSub').textContent=state.notice||'';$('round').textContent=state.phase==='lobby'?'대기실':state.phase==='ended'?'게임 종료':night?`${state.night}번째 밤`:`${state.day}일차 낮`;$('alive').textContent=`${state.players.filter(p=>p.alive).length}/${state.players.length}명 생존`;$('roomInfo').classList.remove('hide');$('roomInfo').textContent=`방 코드: ${state.code} · ${state.players.length}/11명 · ${state.phase==='lobby'?'대기 중':'게임 진행 중'}`;$('hostControls').classList.toggle('hide',state.hostId!==socket.id||state.phase!=='lobby');$('start').disabled=state.players.length<5;$('rematch').classList.toggle('hide',!(state.phase==='ended'&&state.hostId===socket.id));$('hostControls').classList.toggle('hide',!(state.hostId===socket.id&&(state.phase==='lobby'||state.phase==='ended')));$('start').classList.toggle('hide',state.phase==='ended');$('rule').classList.toggle('hide',state.phase==='ended');$('rule').value=state.rule;$('myInfo').innerHTML=state.phase==='lobby'?'직업은 게임 시작 시 비밀 배정됩니다.':`<b>${self.id}번 ${esc(self.name)} · ${esc(self.roleName)}</b><br>${self.team==='wolf'?'늑대팀':'시민팀'}<br>${detailedRoleHtml(self.role)}${self.role==='wolf'?`<br><br>동료 늑대: ${state.knownWolves.filter(w=>w.id!==self.id).map(w=>w.id+'번 '+esc(w.name)).join(', ')||'없음'}`:''}${self.baseRole==='hench'?`<br><br>발견한 늑대: ${self.foundWolves.map(id=>{let p=state.players.find(x=>x.id===id);return p?`${id}번 ${esc(p.name)}`:''}).filter(Boolean).join(', ')||'아직 없음'}`:''}`;$('players').innerHTML=state.players.map(p=>`<div class="player ${p.alive?'':'dead'} ${p.isYou?'you':''}"><div><span class="num" style="background:${p.color}">${p.id}</span><span class="pname">${esc(p.name)}${p.isYou?' (나)':''}</span></div><div class="sub">${p.alive?'생존':'유령 · 사망'}${p.knownLabel?' · <span class="clue">('+esc(p.knownLabel)+')</span>':''}${p.hasVoted?' · 투표 완료':''}${p.roleName?' · '+esc(p.roleName):''}</div></div>`).join('');$('dayControls').classList.toggle('hide',state.phase!=='day'||!self.alive||state.voteClosed);$('nightControls').classList.toggle('hide',state.phase!=='night'||!self.alive);$('actionTitle').textContent=state.phase==='night'?'밤 행동':state.phase==='day'?'낮 행동':'게임 상태';$('notice').textContent=state.notice||'';$('votePanel').classList.toggle('hide',state.phase!=='day');$('voteStatus').textContent=state.shortDay?'짧은 낮 · 투표 불가':state.voteClosed?'투표 마감':'진행 중';$('voteTarget').innerHTML=state.players.filter(p=>p.alive&&!p.isYou).map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join('');$('vote').disabled=!self.alive||!!state.players.find(p=>p.isYou&&p.hasVoted)||(state.voteClosed||state.shortDay);$('abstain').disabled=$('vote').disabled;$('extendDay').disabled=state.extendedToday||state.voteClosed||state.shortDay;$('extendDay').textContent=state.extendedToday?'오늘 연장 사용 완료':'토론 1분 연장 (오늘 1회)';const closeWait=Math.max(0,Math.ceil(((state.closeConsentAvailableAt||0)-Date.now())/1000));$('closeVote').disabled=!self.alive||state.voteClosed||state.shortDay||(!state.closeRequested&&closeWait>0);$('closeVote').textContent=state.shortDay?'짧은 낮 · 투표 불가':state.closeRequested?'마감 동의 취소':closeWait>0?`마감 동의 (${closeWait}초 후 가능)`:'투표 마감 동의';$('closeProgress').textContent=`마감 동의: ${state.closeRequests||0}/${state.players.filter(p=>p.alive).length}명 · 전원 동의 시 즉시 집계`; $('voteCloseCount').textContent=`${state.closeRequests||0}/${state.players.filter(p=>p.alive).length}명`; $('voteCloseFill').style.width=`${state.players.filter(p=>p.alive).length?100*(state.closeRequests||0)/state.players.filter(p=>p.alive).length:0}%`; let targets=state.players.filter(p=>p.alive&&!p.isYou);if(self.role==='medium')targets=state.players.filter(p=>!p.alive);if(self.role==='wolf')targets=targets.filter(p=>!state.knownWolves.some(w=>w.id===p.id));$('whisperTarget').innerHTML=state.players.filter(p=>p.alive&&!p.isYou).map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join('');$('nightTarget').innerHTML=targets.map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join('');const canAct=['wolf','seer','guard','medium','tracker','watcher','hench'].includes(self.role)&&!(self.baseRole==='hench'&&self.henchJoined);$('act').disabled=!canAct||!targets.length||self.nightDone||(self.role==='wolf'&&!self.canWolfAttack);$('skip').disabled=!!self.nightDone; $('ripRow').classList.toggle('hide',self.role!=='wolf'||self.usedRip);$('rip').disabled=self.usedRip;$('abilityHint').textContent=(self.nightDone?'이번 밤의 행동을 완료했습니다. 다른 플레이어의 행동은 공개되지 않습니다.':self.role==='wolf'&&!self.canWolfAttack?'이번 밤은 다른 늑대의 공격 순서입니다.':roleDesc[self.role]||'');$('voteRows').innerHTML=state.players.filter(p=>p.alive).map(p=>{const n=state.voteTally[p.id]||0;const total=Object.values(state.voteTally).reduce((a,b)=>a+b,0);return `<div class="vote-row"><span>${p.id}번 ${esc(p.name)}</span><div class="track"><div class="fill" style="width:${total?100*n/Math.max(1,...Object.values(state.voteTally)):0}%"></div></div><span>${n}표</span></div>`}).join('')+`<div class="vote-row"><span>기권</span><div class="track"><div class="fill" style="width:${state.players.filter(p=>p.alive).length?100*(state.abstainCount||0)/state.players.filter(p=>p.alive).length:0}%"></div></div><span>${state.abstainCount||0}표</span></div><div class="hint">투표 제출: ${state.votesCast}/${state.players.filter(p=>p.alive).length}</div>`;$('intelBoard').innerHTML=(self.intel||[]).length?[...self.intel].reverse().map(x=>`<div class="intel-item"><b>${x.night}번째 밤 · ${esc(x.kind)}</b><br>${x.target}번 대상 — ${esc(x.result)}</div>`).join(''):'아직 기록이 없습니다.';$('publicBoard').innerHTML=state.public.length?state.public.map(p=>`<div class="public-item"><b>${esc(p.name)}</b><div class="public-message" style="color:${['#f4e9d6','#eecb7b','#b8e2ff','#b8f0c9','#ffb6c1','#e3c5ff'].includes(p.color)?p.color:'#f4e9d6'};font-size:${[16,18,20,22].includes(p.size)?p.size:18}px">${esc(p.text)}</div></div>`).join(''):'아직 공표가 없습니다.';$('gameInfo').innerHTML=gameModeDescription(state.rule)+`${state.phase==='ended'?'<br><br><b>최종 직업 공개</b><br>'+state.players.map(p=>`${p.id}번 ${esc(p.name)} — ${esc(p.roleName||'')}`).join('<br>'):''}`;renderChat();}
+function renderChat(){if(channel==='web'||!state){renderSiteChat();return;}const logs=state.logs.filter(m=>m.channel===channel||(channel==='all'&&m.channel==='all'));$('chatlog').innerHTML=logs.map(m=>`<div class="msg"><b>${esc(m.from || 'SYSTEM')}</b> ${esc(m.text)}</div>`).join('')||'<span class="hint">대화 기록이 없습니다.</span>';$('chatlog').scrollTop=$('chatlog').scrollHeight}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+</script><script id="graphicsHudSync">
+(()=>{const ids=[['round','hudPhase'],['timeLeft','hudTimer'],['alive','hudAlive']];
+const update=()=>{for(const [source,dest] of ids){const a=document.getElementById(source),b=document.getElementById(dest);if(a&&b)b.textContent=a.textContent||'--';}};
+document.addEventListener('DOMContentLoaded',()=>{
+ for(const [source] of ids){const el=document.getElementById(source);if(el)new MutationObserver(update).observe(el,{childList:true,subtree:true,characterData:true});}
+ update();
+ if(new URLSearchParams(location.search).get('testMulti')==='1'){
+ const banner=document.createElement('div');banner.id='graphicsTestBanner';banner.textContent='멀티탭 테스트 모드 · 탭마다 별도 플레이어';
+ document.body.appendChild(banner);
+ }
+});
+})();
+</script><script id="graphicsTest3Layout">
+document.addEventListener('DOMContentLoaded',()=>{
+ const $=id=>document.getElementById(id);
+ const main=document.querySelector('main');
+ const tools=document.createElement('div');tools.id='hudFloatingTools';main.append(tools);
+ function popup(panelId,title,buttonText,target){
+  const panel=$(panelId);if(!panel)return;
+  const overlay=document.createElement('div');overlay.className='hud-overlay';overlay.id='hudPopup_'+panelId;
+  const dialog=document.createElement('div');dialog.className='hud-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label',title);
+  const close=document.createElement('button');close.className='hud-close';close.textContent='닫기 ✕';close.type='button';
+  close.onclick=()=>overlay.classList.remove('is-open');
+  dialog.append(close,panel);overlay.append(dialog);document.body.append(overlay);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)close.click()});
+  const btn=document.createElement('button');btn.type='button';btn.textContent=buttonText;
+  btn.onclick=()=>overlay.classList.add('is-open');
+  target.append(btn);
+  return btn;
+ }
+ const guide=document.querySelector('.left-guide-panel .guide-tabs');
+ const info=$('myInfo')?.closest('.panel');
+ if(info){
+  info.id='hudGameInfoPanel';
+  popup('hudGameInfoPanel','게임 정보','게임 정보',guide);
+ }
+ const intel=$('intelBoard')?.closest('.panel');
+ if(intel){intel.id='hudIntelPanel';popup('hudIntelPanel','나만의 능력 기록','📜 능력 기록 열기',tools);}
+ popup('personalMemoPanel','개인 메모','✒ 개인 메모 열기',tools);
+ const board=$('publicBoardPanel');
+ const pubBtn=document.createElement('button');pubBtn.className='hud-open-editor';pubBtn.textContent='✒ 공표 작성 / 수정';
+ board?.append(pubBtn);
+ const editor=$('publishEditorPanel');
+ if(editor){
+  const overlay=document.createElement('div');overlay.className='hud-overlay';
+  const dialog=document.createElement('div');dialog.className='hud-dialog';
+  const close=document.createElement('button');close.type='button';close.className='hud-close';close.textContent='닫기 ✕';
+  close.onclick=()=>overlay.classList.remove('is-open');
+  dialog.append(close,editor);overlay.append(dialog);document.body.append(overlay);
+  overlay.onclick=e=>{if(e.target===overlay)close.click()};
+  pubBtn.onclick=()=>overlay.classList.add('is-open');
+ }
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.hud-overlay.is-open').forEach(x=>x.classList.remove('is-open'));});
+});
+</script><script id="graphicsTest4Layout">
+document.addEventListener('DOMContentLoaded',()=>{
+ const $=id=>document.getElementById(id);
+ const main=document.querySelector('main');
+ const actions=$('actionTitle')?.closest('.panel');
+ const votes=$('votePanel');
+ if(actions&&votes){
+   const panel=document.createElement('section');
+   panel.id='hudVotePanel';
+   panel.className='panel';
+   panel.append(votes);
+   main.append(panel);
+   const progress=$('closeProgress');
+   if(progress)votes.append(progress);
+ }
+ // Move the discussion extension to the timer at top center, preserving the existing event listener.
+ const hud=$('graphicsStatusHUD'),extension=$('extendDay'),day=$('dayControls');
+ if(hud&&extension&&day){
+   const timerGroup=document.createElement('div');
+   timerGroup.id='hudTimerControls';
+   hud.append(timerGroup);
+   timerGroup.append(extension);
+   const sync=()=>{timerGroup.style.display=day.classList.contains('hide')?'none':'flex';};
+   new MutationObserver(sync).observe(day,{attributes:true,attributeFilter:['class']});
+   sync();
+ }
+ // Game information becomes a separate top button above the ability record button.
+ const tools=$('hudFloatingTools');
+ const infoBtn=document.querySelector('.left-guide-panel .guide-tabs button:last-child');
+ // Locate by text rather than DOM position, as rules/roles may be reordered.
+ const gameInfoBtn=Array.from(document.querySelectorAll('.left-guide-panel button')).find(x=>x.textContent.trim()==='게임 정보');
+ if(tools&&gameInfoBtn)tools.prepend(gameInfoBtn);
+ // Public editor uses one fixed, readable typography style.
+ const editor=$('publishEditorPanel');
+ if(editor){
+  const note=document.createElement('p');
+  note.className='hudPublicStyleNote';
+  note.textContent='모든 공표는 동일한 밝은 글씨와 큰 글자 크기로 표시됩니다.';
+  const textarea=$('pubtext');
+  if(textarea)textarea.before(note);
+ }
+});
+</script><script id="graphicsTest5Layout">
+document.addEventListener('DOMContentLoaded',()=>{
+ const main=document.querySelector('main');
+ const playerList=document.getElementById('players');
+ const source=playerList?.closest('.panel');
+ if(main&&source&&playerList){
+  source.id='hudPeoplePanel';
+  main.append(source);
+  const bar=source.querySelector('.bar');
+  const summary=bar?.querySelector('div');
+  // The central status HUD owns round/alive. Keep the existing live elements in DOM.
+  if(summary){summary.style.cssText='position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important;';}
+  const toggle=document.createElement('button');toggle.type='button';toggle.id='hudPeopleToggle';toggle.textContent='목록 접기';
+  toggle.setAttribute('aria-expanded','true');
+  bar?.append(toggle);
+  toggle.onclick=()=>{
+   const collapsed=source.classList.toggle('is-collapsed');
+   toggle.textContent=collapsed?'목록 펼치기':'목록 접기';
+   toggle.setAttribute('aria-expanded',String(!collapsed));
+  };
+ }
+ const votePanel=document.getElementById('votePanel');
+ const voteRows=document.getElementById('voteRows');
+ const resize=()=>{
+  const n=voteRows?.querySelectorAll('.vote-row').length||0;
+  if(votePanel)votePanel.style.setProperty('--vote-entries',String(Math.min(11,Math.max(5,n))));
+ };
+ if(voteRows)new MutationObserver(resize).observe(voteRows,{childList:true,subtree:true});
+ resize();
+});
+</script><script id="graphicsTest6Layout">
+document.addEventListener('DOMContentLoaded',()=>{
+ const main=document.querySelector('main');
+ const people=document.getElementById('hudPeoplePanel');
+ const chat=document.getElementById('chatText')?.closest('.panel');
+ const vote=document.getElementById('hudVotePanel');
+ if(!main||!people||!chat||!vote)return;
+ chat.id='hudChatPanel';
+ const rail=document.createElement('div');rail.id='hudLeftRail';
+ main.append(rail);
+ rail.append(people,chat,vote);
+ // Keep chat input always above other panels and allocate all remaining height to chat.
+ function makeToggle(panel,title,buttonId,defaultCollapsed=false){
+  let bar=panel.querySelector(':scope > .bar');
+  if(!bar){bar=document.createElement('div');bar.className='bar hud-rail-heading';panel.prepend(bar);}
+  bar.classList.add('hud-rail-heading');
+  if(!bar.querySelector('h2')){const h=document.createElement('h2');h.textContent=title;bar.prepend(h);}
+  let button=panel.querySelector('#'+buttonId);
+  if(!button){button=document.createElement('button');button.type='button';button.id=buttonId;bar.append(button);}
+  else if(button.parentElement!==bar)bar.append(button);
+  const update=()=>{
+   const closed=panel.classList.contains('is-collapsed');
+   button.textContent=closed?'펼치기':'접기';
+   button.setAttribute('aria-expanded',String(!closed));
+   button.title=title+(closed?' 펼치기':' 접기');
+  };
+  panel.classList.toggle('is-collapsed',defaultCollapsed);
+  button.onclick=()=>{panel.classList.toggle('is-collapsed');update();};
+  update();
+ }
+ makeToggle(people,'마을 사람들','hudPeopleToggle');
+ makeToggle(chat,'대화','hudChatToggle');
+ makeToggle(vote,'라이브 투표 현황','hudVoteToggle');
+ const board=document.getElementById('publicBoardPanel');
+ if(board)makeToggle(board,'공표 게시판','hudPublicToggle');
+});
+</script><script id="graphicsTest7FixScript">
+document.addEventListener('DOMContentLoaded',()=>{
+ const action=document.getElementById('actionTitle')?.closest('.panel');
+ const main=document.querySelector('body>main');
+ if(action&&main){action.id='hudActionPanel';main.append(action);}
+});
+</script><script id="graphicsTest8Script">
+document.addEventListener('DOMContentLoaded',()=>{
+ const chat=document.getElementById('hudChatPanel');
+ const vote=document.getElementById('hudVotePanel');
+ function moveChip(panel,selector){
+  if(!panel)return;
+  const heading=panel.querySelector(':scope > .hud-rail-heading');
+  const chip=panel.querySelector(selector);
+  const toggle=heading?.querySelector('button');
+  if(heading&&chip&&toggle){
+   heading.insertBefore(chip,toggle);
+   chip.style.removeProperty('position');
+  }
+ }
+ // Channel (전체 / 동맹 / 귓속말 / 유령) and voting status now sit directly left of '접기'.
+ moveChip(chat,'.badge');
+ moveChip(vote,'#voteStatus');
+ const header=document.querySelector('body>header');
+ if(!header)return;
+ const control=document.createElement('label');
+ control.id='hudOpacityControl';
+ const label=document.createElement('span');label.textContent='UI 투명도';
+ const slider=document.createElement('input');slider.type='range';slider.min='25';slider.max='100';slider.step='5';slider.value='93';
+ slider.setAttribute('aria-label','모든 UI 패널 불투명도 조절');
+ const output=document.createElement('output');output.textContent='93%';
+ control.append(label,slider,output);
+ // Put the slider at the far right of the top bar without changing room controls.
+ header.append(control);
+ const apply=()=>{
+  const pct=Number(slider.value);
+  document.documentElement.style.setProperty('--hud-panel-alpha',(pct/100).toFixed(2));
+  output.textContent=pct+'%';
+ };
+ slider.addEventListener('input',apply);apply();
+});
+</script><script id="graphicsTest9Script">
+document.addEventListener('DOMContentLoaded',()=>{
+ const slider=document.querySelector('#hudOpacityControl input[type=range]');
+ if(slider){const update=()=>{
+  const a=Number(slider.value)/100;
+  document.documentElement.style.setProperty('--hud-panel-alpha',a.toFixed(2));
+  document.documentElement.style.setProperty('--hud-inner-alpha',Math.max(0,a*.91).toFixed(2));
+  document.documentElement.style.setProperty('--hud-button-alpha',Math.max(0,a*.93).toFixed(2));
+ };slider.addEventListener('input',update);update();}
+});
+</script><script id="graphicsTest11Script">
+document.addEventListener('DOMContentLoaded',()=>{
+ const chat=document.getElementById('chatText');
+ const hud=document.getElementById('graphicsStatusHUD');
+ const phase=document.getElementById('hudPhase');
+ const timer=document.getElementById('hudTimer');
+ const alive=document.getElementById('hudAlive');
+ // Read the actual room state rather than inferring from a visible game phase.
+ const sync=()=>{
+  const outside=typeof state==='undefined'||!state;
+  document.body.classList.toggle('lupus-web-lobby',outside);
+  if(outside){
+   if(phase)phase.textContent='대기실';
+   if(timer)timer.textContent='';
+   if(alive)alive.textContent='';
+  }
+ };
+ window.addEventListener('lupusRoomPresenceChanged',sync);
+ sync();
+ // Enter focuses chat only when no other editable field, button or modal owns it.
+ document.addEventListener('keydown',event=>{
+  if(event.key!=='Enter'||event.defaultPrevented||event.isComposing||event.keyCode===229||event.ctrlKey||event.altKey||event.metaKey)return;
+  const active=document.activeElement;
+  if(!chat||active===chat)return;
+  if(active&&active.closest?.('input,textarea,select,button,[contenteditable="true"],[role="dialog"],.hud-overlay.is-open'))return;
+  if(document.querySelector('.hud-overlay.is-open'))return;
+  event.preventDefault();chat.focus();
+ });
+});
+</script></body></html>
