@@ -58,7 +58,7 @@
 @media(max-width:1150px){.left-info-sidebar{grid-column:1;grid-row:1}.top-setup-bar .setup{align-items:center}}
 @media(max-width:850px){.left-info-sidebar{grid-column:1;grid-row:auto}.right-sidebar{grid-column:1;grid-row:auto}.top-setup-bar #gameHelp{left:14px}}
 
-/* v3.36: compact controls inside header and movable, resizable help window */
+/* v3.33: compact controls inside header and movable, resizable help window */
 body>header{display:flex;flex-direction:column;align-items:stretch;gap:7px;padding-bottom:10px}
 body>header>div:first-child{align-self:flex-start}
 body>header>.row{position:absolute;right:14px;top:14px}
@@ -77,7 +77,7 @@ body>header #topSetupBar #myInfo{display:none}
 #helpWindowBody{padding:15px 18px;line-height:1.7}
 @media(max-width:850px){body>header>.row{position:static;align-self:flex-end}#gameHelp,body>header #topSetupBar #gameHelp{top:10%;left:5%;transform:none;width:90vw;min-width:0}}
 
-/* v3.36: one-row centered compact room controls */
+/* v3.33: one-row centered compact room controls */
 @media(min-width:1351px){
  body>header{display:grid;grid-template-columns:minmax(230px,1fr) auto minmax(260px,1fr);align-items:center;gap:14px;padding:9px 16px}
  body>header>div:first-child{align-self:center;justify-self:start}
@@ -103,7 +103,7 @@ body>header #topSetupBar #myInfo{display:none}
  body>header #topSetupBar>.panel{width:fit-content;max-width:100%}
 }
 
-/* v3.36: logo and compact setup adjacent at left, audio/presence/status pinned right */
+/* v3.33: logo and compact setup adjacent at left, audio/presence/status pinned right */
 @media(min-width:1101px){
  body>header{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;padding:9px 14px!important;min-height:64px}
  body>header>div:first-child{flex:0 0 auto;align-self:center!important;white-space:nowrap}
@@ -125,7 +125,7 @@ body>header #topSetupBar #myInfo{display:none}
  body>header>.row{order:1!important;position:static!important;margin-left:auto!important}
 }
 
-/* v3.36: visible compact room settings title and inline field labels */
+/* v3.33: visible compact room settings title and inline field labels */
 body>header #topSetupBar>.panel{display:flex;align-items:center;gap:9px;padding:6px 9px}
 body>header #topSetupBar .setup-title{display:block!important;margin:0!important;flex:0 0 auto;white-space:nowrap;font-size:12px;line-height:1.2;color:#e4c481}
 body>header #topSetupBar .setup{display:flex;align-items:center;gap:5px}
@@ -149,7 +149,7 @@ body>header .top-setup-bar{order:1}
 body>header>div.row{order:3;margin-left:auto}
 @media(max-width:1100px){body>header .header-join-error{max-width:100%;flex-basis:100%}}
 
-/* v3.36: place transient warning directly to the left of sound/presence controls. */
+/* v3.33: place transient warning directly to the left of sound/presence controls. */
 @media(min-width:1101px){
  body>header:has(#error:not(:empty)) .header-join-error{margin-left:auto!important;order:2!important;flex:0 1 430px!important;text-align:right!important}
  body>header:has(#error:not(:empty)) > .row{margin-left:0!important;order:3!important}
@@ -159,7 +159,7 @@ body>header>div.row{order:3;margin-left:auto}
  body>header .header-join-error:not(:empty){order:3!important;flex-basis:100%!important;text-align:right!important}
 }
 
-/* v3.36: absolute viewport-center room controls, independent of side widths. */
+/* v3.33: absolute viewport-center room controls, independent of side widths. */
 @media (min-width: 1500px){
  body>header{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:70px!important;gap:10px!important}
  body>header>div:first-child{order:0!important;flex:0 0 auto!important;z-index:1}
@@ -174,7 +174,7 @@ body>header>div.row{order:3;margin-left:auto}
  body>header>.row{order:2!important;margin-left:auto!important}
 }
 </style><style>
-/* v3.36: center-column room controls directly above the foggy village. */
+/* v3.33: center-column room controls directly above the foggy village. */
 main>section.right>#topSetupBar{
  display:block!important;position:relative!important;order:initial!important;
  width:100%!important;max-width:100%!important;min-width:0!important;
@@ -213,7 +213,7 @@ main>section.right>#topSetupBar #hostControls #rule{width:105px!important;paddin
  main>section.right>#topSetupBar>.panel{flex-wrap:wrap!important}
 }
 </style><style>
-/* v3.36: single-row header: logo | room controls | right-aligned audio/presence. */
+/* v3.33: single-row header: logo | room controls | right-aligned audio/presence. */
 body>header{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;padding:9px 14px!important;flex-wrap:wrap!important}
 body>header>div:first-child{flex:0 0 auto!important;align-self:center!important;white-space:nowrap!important}
 body>header>#topSetupBar{display:block!important;flex:0 1 auto!important;width:auto!important;max-width:none!important;min-width:0!important;margin:0!important;padding:0!important;order:initial!important}
@@ -230,33 +230,7 @@ body>header>#topSetupBar #hostControls #rule{width:95px!important;padding:7px 4p
 body>header>div.row{margin-left:auto!important;flex:0 0 auto!important;justify-content:flex-end!important;white-space:nowrap!important}
 body>header>.header-join-error{order:3!important;flex:0 1 auto!important}
 @media(max-width:1250px){body>header>#topSetupBar{flex:1 1 560px!important}body>header>#topSetupBar>.panel{width:100%!important;flex-wrap:wrap!important}body>header>div.row{margin-left:auto!important}}
-</style><style>
-.voice-panel{display:flex;align-items:center;gap:5px;flex-wrap:wrap;max-width:370px;padding:5px 8px;border:1px solid #3d5870;border-radius:9px;background:#0d1a2a}
-.voice-panel.hide,.voice-panel .hide{display:none!important}
-.voice-panel button{width:auto!important;padding:7px 9px!important;font-size:12px!important;white-space:nowrap}
-.voice-status{font-size:11px;color:#b9c9d9}
-.voice-members{font-size:11px;color:#8fe0ae;width:100%}
-@media(max-width:1100px){body>header>#voicePanel{order:2;flex:1 1 270px}}
-</style><style>
-body>header #topSetupBar #voicePanel{display:inline-flex!important;align-items:center!important;flex:0 1 auto!important;max-width:350px!important;padding:3px 5px!important;margin:0!important;gap:5px!important}
-body>header #topSetupBar #voicePanel.hide{display:none!important}
-body>header #topSetupBar #voicePanel .hide{display:none!important}
-body>header #topSetupBar #voicePanel button{width:auto!important;max-width:none!important}
-</style><style>
-/* v3.39: keep host controls and voice controls in one horizontal group. */
-body>header #topSetupBar #hostControls{display:inline-flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:5px!important}
-body>header #topSetupBar #hostControls.hide{display:none!important}
-body>header #topSetupBar #voicePanel{display:inline-flex!important;align-items:center!important;flex-wrap:wrap!important;gap:5px!important;max-width:350px!important}
-body>header #topSetupBar #voicePanel.hide{display:none!important}
-body>header #topSetupBar #voicePanel .hide{display:none!important}
-body>header #topSetupBar #hostControls #start{width:auto!important}
-</style><style>
-/* v3.40: channel status sits immediately to the right of the listen button. */
-body>header #topSetupBar #voicePanel:not(.hide){display:inline-flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:5px!important;max-width:none!important;width:max-content!important}
-body>header #topSetupBar #voicePanel .voice-info{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;flex:0 0 auto!important;min-width:0!important;max-width:210px!important;gap:2px!important;margin-left:5px!important}
-body>header #topSetupBar #voicePanel .voice-info #voiceStatus,body>header #topSetupBar #voicePanel .voice-info #voiceMembers{display:block!important;width:auto!important;max-width:210px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;margin:0!important;line-height:1.35!important}
-body>header #topSetupBar #voicePanel .voice-info #voiceStatus:empty,body>header #topSetupBar #voicePanel .voice-info #voiceMembers:empty{display:none!important}
-</style></head><body><header><div><h1>LUPUS IN TABULA <span style="font-size:.52em;vertical-align:middle;color:#e4c481;white-space:nowrap">v3.40</span></h1><small>타뷸라의 늑대</small></div><div class="top-setup-bar" id="topSetupBar"><aside class="panel"><h2 class="setup-title">방 / 플레이어 설정</h2><div class="setup"><label class="setup-inline-label">내 아이디</label><input id="name" maxlength="16" value="방랑자"/><button id="create" title="방을 만들거나 코드로 입장하세요.">새 방 만들기</button><label class="setup-inline-label">방 코드</label><input id="code" maxlength="6" placeholder="예: A1B2C3"/><button id="join" title="방을 만들거나 코드로 입장하세요.">방 코드로 입장</button><div class="notice hide" id="roomInfo">방을 만들거나 코드로 입장하세요.</div><div class="hide" id="hostControls"><label>게임 규칙</label><select id="rule"><option value="basic">기본</option><option value="basic2">기본 (2턴제)</option><option value="chaos">혼란 (2턴제)</option></select><button id="start" style="width:100%">게임 시작</button><button class="hide" id="rematch" style="width:100%">같은 방에서 다시 게임하기</button></div><div id="voicePanel" class="voice-panel hide"><button id="voiceJoin" type="button">🎙️ 음성채팅 참여</button><button id="voiceMute" class="hide" type="button">🎤 마이크 켜짐</button><button id="voiceDeafen" class="hide" type="button">🔊 듣기 켜짐</button><div class="voice-info"><span id="voiceStatus" class="voice-status"></span><div id="voiceMembers" class="voice-members"></div></div></div></div></aside></div></div><div class="row"><button class="sound-toggle" id="soundToggle" title="효과음 켜기/끄기">🔊 효과음 켜짐</button><details class="presence-dropdown header-presence" id="presenceDropdown"><summary>접속자 <span class="badge" id="sitePresenceCount">0명</span></summary><div class="presence-list" id="sitePresenceList"></div></details><span class="badge" id="connection">서버 연결 중…</span></div><div aria-live="polite" class="error header-join-error" id="error" role="alert"></div></header><main><aside class="left-info-sidebar" id="leftInfoSidebar"><section class="panel left-guide-panel"><h2>게임 도움말</h2><div aria-label="게임 도움말" class="guide-tabs" role="group"><button aria-controls="gameHelp" aria-expanded="false" id="rulesHelpBtn" type="button">게임 규칙</button><button aria-controls="gameHelp" aria-expanded="false" id="rolesHelpBtn" type="button">직업 설명</button></div></section><div class="two"><div class="panel"><h2>나만의 능력 기록</h2><div class="hint">조사 결과와 늑대 동맹 공격 기록은 본인에게만 표시됩니다.</div><div class="hint" id="intelBoard" style="max-height:250px;overflow:auto;margin-top:8px">아직 기록이 없습니다.</div></div><div class="panel"><h2>게임 정보</h2><div class="notice" id="myInfo">직업은 게임 시작 시 비밀 배정됩니다.</div><div class="hint" id="gameInfo">5~11명. 늑대팀은 시민팀과 동수가 되면 승리하고, 시민팀은 늑대를 모두 처형하면 승리합니다.</div></div></div></aside><section class="right"><div class="hero" id="hero"><canvas aria-label="마우스로 클릭해 이동하는 2D 마을" height="520" id="villageCanvas" width="1200"></canvas><div class="herotxt"><div class="phase" id="phaseLabel">THE VILLAGE AWAITS</div><h2 id="heroTitle">안개 속의 마을</h2><p id="heroSub">방을 만들고 다른 플레이어를 초대하세요.</p></div></div><div class="panel"><div class="bar"><h2>마을 사람들</h2><div><span class="badge" id="round">대기실</span> <span class="badge" id="alive">0명 생존</span></div></div><div class="players" id="players"><p class="hint">아직 방에 입장하지 않았습니다.</p></div></div><div class="two"><div class="panel"><div class="bar"><h2>대화</h2><span class="badge" id="chatLabel">웹사이트 전체</span></div><div class="tabs" id="roomChatTabs"><button data-channel="web" id="webLobbyTab" type="button">웹 로비<span class="unread" id="unread-web"></span></button><button class="active" data-channel="all"><span id="allTabLabel">로비</span><span class="unread" id="unread-all"></span></button><button data-channel="wolf">동맹<span class="unread" id="unread-wolf"></span></button><button data-channel="whisper">귓속말<span class="unread" id="unread-whisper"></span></button><button data-channel="ghost">유령<span class="unread" id="unread-ghost"></span></button></div><div class="hint" id="siteChatHint">방에 입장하기 전에는 웹 로비에서 대화할 수 있어요.</div><div class="chatlog" id="chatlog"></div><div class="field hide" id="whisperRow"><label>귓속말 받을 플레이어</label><select id="whisperTarget"></select></div><div class="field"><label>메시지</label><div class="row"><input id="chatText" maxlength="300" placeholder="메시지를 입력하세요"/><button id="send">전송</button></div></div></div><div class="panel"><h2 id="actionTitle">게임 행동</h2><div class="hint" id="notice">방에 입장하면 현재 단계와 가능한 행동이 표시됩니다.</div><div class="hide" id="dayControls"><div class="field"><label>투표 대상</label><select id="voteTarget"></select></div><div class="row"><button id="vote">투표 확정</button><button id="abstain">기권</button><button id="closeVote">투표 마감 동의</button></div><div class="hint" id="closeProgress">마감 동의: 0명</div><div class="row" style="margin:8px 0"><button id="extendDay">토론 1분 연장 (오늘 1회)</button><span class="timer" id="timeLeft">02:00</span></div><div class="hint">마감 동의는 투표/기권과 별개입니다. 전원 마감 동의 또는 전원 투표/기권 시 즉시 집계하고 10초 후 밤으로 넘어갑니다. 전원 동의로 낮이 종료되면 미사용 투표권은 소멸합니다.</div></div><div class="hide" id="nightControls"><div class="hint">남은 밤 시간: <span class="timer" id="nightTimeLeft">01:00</span> · 시간이 끝나면 자동으로 행동을 보류합니다.</div><div class="field"><label>능력 대상</label><select id="nightTarget"></select></div><div class="field hide" id="ripRow"><label><input id="rip" style="width:auto" type="checkbox"/> 참살 사용 (늑대별 1회)</label></div><div class="row"><button id="act">능력 사용</button><button id="skip">행동 보류 / 완료</button></div><div class="hint" id="abilityHint" style="margin-top:8px"></div></div><div class="hide" id="votePanel" style="margin-top:15px"><div class="bar"><h2>라이브 투표 현황</h2><span class="badge" id="voteStatus">진행 중</span></div><p class="hint">투표 전에도 현재까지 집계된 표를 확인할 수 있습니다.</p><div class="vote-row" id="voteCloseLive" style="margin:8px 0 14px"><span>마감 동의</span><div class="track"><div class="fill" id="voteCloseFill" style="width:0%;background:#d8b96a"></div></div><span id="voteCloseCount">0/0명</span></div><div id="voteRows"></div></div></div></div></section><aside class="right-sidebar" id="sitePresencePanel">
+</style></head><body><header><div><h1>LUPUS IN TABULA <span style="font-size:.52em;vertical-align:middle;color:#e4c481;white-space:nowrap">v3.33</span></h1><small>타뷸라의 늑대</small></div><div class="top-setup-bar" id="topSetupBar"><aside class="panel"><h2 class="setup-title">방 / 플레이어 설정</h2><div class="setup"><label class="setup-inline-label">내 아이디</label><input id="name" maxlength="16" value="방랑자"/><button id="create" title="방을 만들거나 코드로 입장하세요.">새 방 만들기</button><label class="setup-inline-label">방 코드</label><input id="code" maxlength="6" placeholder="예: A1B2C3"/><button id="join" title="방을 만들거나 코드로 입장하세요.">방 코드로 입장</button><div class="notice hide" id="roomInfo">방을 만들거나 코드로 입장하세요.</div><div class="hide" id="hostControls"><label>게임 규칙</label><select id="rule"><option value="basic">기본</option><option value="basic2">기본 (2턴제)</option><option value="chaos">혼란 (2턴제)</option></select><button id="start" style="width:100%">게임 시작</button><button class="hide" id="rematch" style="width:100%">같은 방에서 다시 게임하기</button></div></div></aside></div><div class="row"><button class="sound-toggle" id="soundToggle" title="효과음 켜기/끄기">🔊 효과음 켜짐</button><details class="presence-dropdown header-presence" id="presenceDropdown"><summary>접속자 <span class="badge" id="sitePresenceCount">0명</span></summary><div class="presence-list" id="sitePresenceList"></div></details><span class="badge" id="connection">서버 연결 중…</span></div><div aria-live="polite" class="error header-join-error" id="error" role="alert"></div></header><main><aside class="left-info-sidebar" id="leftInfoSidebar"><section class="panel left-guide-panel"><h2>게임 도움말</h2><div aria-label="게임 도움말" class="guide-tabs" role="group"><button aria-controls="gameHelp" aria-expanded="false" id="rulesHelpBtn" type="button">게임 규칙</button><button aria-controls="gameHelp" aria-expanded="false" id="rolesHelpBtn" type="button">직업 설명</button></div></section><div class="two"><div class="panel"><h2>나만의 능력 기록</h2><div class="hint">조사 결과와 늑대 동맹 공격 기록은 본인에게만 표시됩니다.</div><div class="hint" id="intelBoard" style="max-height:250px;overflow:auto;margin-top:8px">아직 기록이 없습니다.</div></div><div class="panel"><h2>게임 정보</h2><div class="notice" id="myInfo">직업은 게임 시작 시 비밀 배정됩니다.</div><div class="hint" id="gameInfo">5~11명. 늑대팀은 시민팀과 동수가 되면 승리하고, 시민팀은 늑대를 모두 처형하면 승리합니다.</div></div></div></aside><section class="right"><div class="hero" id="hero"><canvas aria-label="마우스로 클릭해 이동하는 2D 마을" height="520" id="villageCanvas" width="1200"></canvas><div class="herotxt"><div class="phase" id="phaseLabel">THE VILLAGE AWAITS</div><h2 id="heroTitle">안개 속의 마을</h2><p id="heroSub">방을 만들고 다른 플레이어를 초대하세요.</p></div></div><div class="panel"><div class="bar"><h2>마을 사람들</h2><div><span class="badge" id="round">대기실</span> <span class="badge" id="alive">0명 생존</span></div></div><div class="players" id="players"><p class="hint">아직 방에 입장하지 않았습니다.</p></div></div><div class="two"><div class="panel"><div class="bar"><h2>대화</h2><span class="badge" id="chatLabel">웹사이트 전체</span></div><div class="tabs" id="roomChatTabs"><button data-channel="web" id="webLobbyTab" type="button">웹 로비<span class="unread" id="unread-web"></span></button><button class="active" data-channel="all"><span id="allTabLabel">로비</span><span class="unread" id="unread-all"></span></button><button data-channel="wolf">동맹<span class="unread" id="unread-wolf"></span></button><button data-channel="whisper">귓속말<span class="unread" id="unread-whisper"></span></button><button data-channel="ghost">유령<span class="unread" id="unread-ghost"></span></button></div><div class="hint" id="siteChatHint">방에 입장하기 전에는 웹 로비에서 대화할 수 있어요.</div><div class="chatlog" id="chatlog"></div><div class="field hide" id="whisperRow"><label>귓속말 받을 플레이어</label><select id="whisperTarget"></select></div><div class="field"><label>메시지</label><div class="row"><input id="chatText" maxlength="300" placeholder="메시지를 입력하세요"/><button id="send">전송</button></div></div></div><div class="panel"><h2 id="actionTitle">게임 행동</h2><div class="hint" id="notice">방에 입장하면 현재 단계와 가능한 행동이 표시됩니다.</div><div class="hide" id="dayControls"><div class="field"><label>투표 대상</label><select id="voteTarget"></select></div><div class="row"><button id="vote">투표 확정</button><button id="abstain">기권</button><button id="closeVote">투표 마감 동의</button></div><div class="hint" id="closeProgress">마감 동의: 0명</div><div class="row" style="margin:8px 0"><button id="extendDay">토론 1분 연장 (오늘 1회)</button><span class="timer" id="timeLeft">02:00</span></div><div class="hint">마감 동의는 투표/기권과 별개입니다. 전원 마감 동의 또는 전원 투표/기권 시 즉시 집계하고 10초 후 밤으로 넘어갑니다. 전원 동의로 낮이 종료되면 미사용 투표권은 소멸합니다.</div></div><div class="hide" id="nightControls"><div class="hint">남은 밤 시간: <span class="timer" id="nightTimeLeft">01:00</span> · 시간이 끝나면 자동으로 행동을 보류합니다.</div><div class="field"><label>능력 대상</label><select id="nightTarget"></select></div><div class="field hide" id="ripRow"><label><input id="rip" style="width:auto" type="checkbox"/> 참살 사용 (늑대별 1회)</label></div><div class="row"><button id="act">능력 사용</button><button id="skip">행동 보류 / 완료</button></div><div class="hint" id="abilityHint" style="margin-top:8px"></div></div><div class="hide" id="votePanel" style="margin-top:15px"><div class="bar"><h2>라이브 투표 현황</h2><span class="badge" id="voteStatus">진행 중</span></div><p class="hint">투표 전에도 현재까지 집계된 표를 확인할 수 있습니다.</p><div class="vote-row" id="voteCloseLive" style="margin:8px 0 14px"><span>마감 동의</span><div class="track"><div class="fill" id="voteCloseFill" style="width:0%;background:#d8b96a"></div></div><span id="voteCloseCount">0/0명</span></div><div id="voteRows"></div></div></div></div></section><aside class="right-sidebar" id="sitePresencePanel">
 <div class="panel" id="publicBoardPanel"><div class="bar"><h2 style="margin:0">공표 게시판</h2></div><div class="hint" id="publicBoard">아직 공표가 없습니다.</div></div>
 <div class="panel" id="publishEditorPanel"><h2>내 공표 작성 / 수정</h2><label>내 공표 한 줄 수정 (마지막 내용만 유지)</label><textarea id="pubtext" maxlength="50" placeholder="모두에게 공개 · 공백 포함 최대 50자 · 사망 후에도 유지" rows="3"></textarea><div class="row public-style"><label for="pubColor">글 색상</label><select aria-label="공표 글 색상" id="pubColor"><option value="#f4e9d6">밝은 아이보리</option><option value="#eecb7b">금색</option><option value="#b8e2ff">하늘색</option><option value="#b8f0c9">연두색</option><option value="#ffb6c1">분홍색</option><option value="#e3c5ff">보라색</option></select><label for="pubSize">글 크기</label><select aria-label="공표 글 크기" id="pubSize"><option value="16">보통</option><option selected="" value="18">크게</option><option value="20">더 크게</option><option value="22">매우 크게</option></select></div><button id="publish">공표 게시</button></div>
 <div class="panel" id="personalMemoPanel"><h2>개인 메모</h2><textarea id="memo" placeholder="나만 볼 수 있는 메모" rows="4"></textarea></div>
@@ -269,82 +243,8 @@ try {
  browserId=localStorage.getItem(browserIdKey);
  if(!browserId){browserId=crypto.randomUUID();localStorage.setItem(browserIdKey,browserId);}
 } catch(_){browserId=crypto.randomUUID();}
-const $=id=>document.getElementById(id);
 const socket=io({auth:{browserId}});let state=null,channel='web';
 let siteChatLogs=[];
-// Opt-in WebRTC mesh voice. No microphone is requested before pressing Join.
-let voiceStream=null,voiceActive=false,voiceMuted=false,voiceDeafened=false,voiceChannelName=null;
-const voiceConnections=new Map();let voicePeerList=[];
-const voiceRtcConfig={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
-function voiceUi(){
- const inRoom=!!state;
- $('voicePanel').classList.toggle('hide',!inRoom);
- $('voiceJoin').textContent=voiceActive?'🚪 음성채팅 나가기':'🎙️ 음성채팅 참여';
- $('voiceMute').classList.toggle('hide',!voiceActive);$('voiceDeafen').classList.toggle('hide',!voiceActive);
- $('voiceMute').textContent=voiceMuted?'🔇 마이크 꺼짐':'🎤 마이크 켜짐';
- $('voiceDeafen').textContent=voiceDeafened?'🔇 듣기 꺼짐':'🔊 듣기 켜짐';
- const labels={lobby:'대기실',day:'낮 토론',wolf:'늑대 동맹',ghost:'유령'};
- $('voiceStatus').textContent=voiceActive?(voiceChannelName?'연결: '+labels[voiceChannelName]:'대기 중 · 현재 발언 불가'):'';
- $('voiceMembers').textContent=voiceActive&&voiceChannelName?'같은 채널: 나'+(voicePeerList.length?' · '+voicePeerList.map(x=>x.name).join(' · '):''):'';
-}
-function closeVoicePeer(id){const entry=voiceConnections.get(id);if(!entry)return;entry.pc.close();entry.audio.srcObject=null;entry.audio.remove();voiceConnections.delete(id);}
-function stopVoice(emit=true){
- if(emit&&socket.connected)socket.emit('voiceLeave');
- for(const id of [...voiceConnections.keys()])closeVoicePeer(id);
- if(voiceStream){voiceStream.getTracks().forEach(t=>t.stop());voiceStream=null;}
- voiceActive=false;voiceMuted=false;voiceDeafened=false;voiceChannelName=null;voicePeerList=[];voiceUi();
-}
-async function makeVoicePeer(id,initiator){
- if(voiceConnections.has(id)||!voiceStream||!voiceChannelName)return;
- const pc=new RTCPeerConnection(voiceRtcConfig),audio=document.createElement('audio');audio.autoplay=true;audio.playsInline=true;audio.muted=voiceDeafened;document.body.appendChild(audio);
- voiceConnections.set(id,{pc,audio});
- voiceStream.getTracks().forEach(t=>pc.addTrack(t,voiceStream));
- pc.ontrack=e=>{audio.srcObject=e.streams[0];audio.play().catch(()=>{});};
- pc.onicecandidate=e=>{if(e.candidate)socket.emit('voiceSignal',{to:id,data:{type:'candidate',candidate:e.candidate}})};
- pc.onconnectionstatechange=()=>{if(['failed','closed'].includes(pc.connectionState))closeVoicePeer(id)};
- if(initiator){const offer=await pc.createOffer();await pc.setLocalDescription(offer);socket.emit('voiceSignal',{to:id,data:{type:'offer',sdp:pc.localDescription}})}
-}
-$('voiceJoin').onclick=async()=>{
- if(voiceActive){stopVoice();return;}
- if(!state)return;
- if(!navigator.mediaDevices?.getUserMedia){sendErr('HTTPS 환경과 마이크를 지원하는 브라우저가 필요합니다.');return;}
- try{
-  voiceStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false});
-  voiceActive=true;voiceUi();socket.emit('voiceJoin');
- }catch(e){sendErr('마이크를 사용할 수 없습니다. 브라우저 권한을 확인하세요.');stopVoice(false)}
-};
-$('voiceMute').onclick=()=>{voiceMuted=!voiceMuted;if(voiceStream)voiceStream.getAudioTracks().forEach(t=>t.enabled=!voiceMuted);voiceUi()};
-$('voiceDeafen').onclick=()=>{voiceDeafened=!voiceDeafened;for(const {audio} of voiceConnections.values())audio.muted=voiceDeafened;voiceUi()};
-socket.on('voicePeers',async({channel,peers,joined})=>{
- if(!voiceActive||!joined)return;
- const changed=channel!==voiceChannelName;
- voiceChannelName=channel;voicePeerList=peers||[];
- if(changed)for(const id of [...voiceConnections.keys()])closeVoicePeer(id);
- const ids=new Set(voicePeerList.map(x=>x.socketId));
- for(const id of [...voiceConnections.keys()])if(!ids.has(id))closeVoicePeer(id);
- voiceUi();
- if(!channel)return;
- // Only one endpoint creates an offer per pair.
- for(const peer of voicePeerList)if(socket.id<peer.socketId&&!voiceConnections.has(peer.socketId))try{await makeVoicePeer(peer.socketId,true)}catch(e){closeVoicePeer(peer.socketId)}
-});
-socket.on('voiceSignal',async({from,data})=>{
- if(!voiceActive||!voiceChannelName||!voicePeerList.some(x=>x.socketId===from))return;
- try{
-  if(data.type==='offer'){
-   if(!voiceConnections.has(from))await makeVoicePeer(from,false);
-   const pc=voiceConnections.get(from)?.pc;if(!pc)return;
-   await pc.setRemoteDescription(data.sdp);
-   const answer=await pc.createAnswer();await pc.setLocalDescription(answer);
-   socket.emit('voiceSignal',{to:from,data:{type:'answer',sdp:pc.localDescription}});
-  }else if(data.type==='answer'){
-   const pc=voiceConnections.get(from)?.pc;if(pc&&pc.signalingState==='have-local-offer')await pc.setRemoteDescription(data.sdp);
-  }else if(data.type==='candidate'){
-   const pc=voiceConnections.get(from)?.pc;if(pc&&pc.remoteDescription)await pc.addIceCandidate(data.candidate);
-  }
- }catch(e){console.warn('Voice signaling:',e)}
-});
-socket.on('voiceError',sendErr);
-
 function siteChatVisible(){return !state||state.phase==='lobby'||state.phase==='ended';}
 socket.on('connect',()=>socket.emit('requestSitePresence'));
 socket.on('sitePresence',data=>{
@@ -477,7 +377,7 @@ function checkNewLogs(next){
 function timeFmt(ms){let sec=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')}
 function updateClock(){if(!state)return;const t=timeFmt((state.deadline||0)-Date.now());if(document.getElementById('timeLeft'))$('timeLeft').textContent=t;if(document.getElementById('nightTimeLeft'))$('nightTimeLeft').textContent=t}
 setInterval(updateClock,250);
-const colors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];const detailedRoleInfo={"wolf":["야간 공격 및 참살",["매일 밤 생존한 플레이어 1명을 공격 대상으로 지정하여 살해할 수 있습니다.","늑대는 일반 공격 외에 참살이라는 특수 능력을 사용할 수 있습니다.","참살은 늑대 1명당 게임 전체에서 단 1회 사용할 수 있습니다.","참살은 보디가드의 보호, 퇴역군인의 생존, 추격자의 추적 능력을 무시합니다."]],"hench":["사망자 정보 확인, 늑대 탐색 및 동맹 채팅",["예언자의 조사에서 늑대로 판별되지 않으며, 영매의 조사에서도 시민으로 판별됩니다.","지금까지 사망한 모든 플레이어의 직업을 확인할 수 있습니다.","매일 밤 생존한 플레이어 1명을 선택하여 늑대인지 확인할 수 있습니다.","늑대 탐색에 성공하면 늑대와 동맹 채팅을 사용할 수 있습니다."]],"seer":["늑대 판별",["매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.","선택한 플레이어가 늑대인지 아닌지 확인할 수 있습니다.","똘마니는 늑대팀에 속하지만 예언자의 조사에서는 늑대로 판별되지 않습니다."]],"guard":["보호",["매일 밤 생존한 플레이어 1명을 선택하여 보호할 수 있습니다.","보호 대상이 늑대의 일반 공격을 받으면 해당 공격을 막아 생존시킵니다.","단, 늑대의 특수 능력인 참살은 방어할 수 없습니다."]],"tracker":["늑대 추적",["매일 밤 생존한 플레이어 1명을 추적 대상으로 지정할 수 있습니다.","지정한 플레이어가 그날 밤 늑대의 일반 공격으로 사망하면, 공격한 늑대의 정체를 알아낼 수 있습니다.","단, 추적 대상이 늑대의 참살로 사망한 경우에는 추적에 실패합니다."]],"medium":["사망자 조사",["두 번째 밤부터 매일 밤 사망한 플레이어 1명의 시체를 선택하여 조사할 수 있습니다.","조사 결과는 예언자 또는 보디가드, 늑대, 일반 시민의 분류로 표시됩니다."]],"watcher":["똘마니 판별",["매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.","선택한 플레이어가 똘마니인지 아닌지 확인할 수 있습니다.","예언자의 조사로는 구별할 수 없는 똘마니를 찾아낼 수 있습니다."]],"veteran":["생존",["늑대의 일반 공격을 받더라도 최초 1회에 한해 살아남을 수 있습니다.","생존 능력은 자동으로 발동하며, 한 번 발동한 이후에는 소멸합니다.","늑대의 참살을 당하면 생존 능력의 잔여 여부와 관계없이 즉시 사망합니다."]],"fanatic":["동반 처형",["낮 투표를 통해 처형될 경우, 자신에게 가장 먼저 투표한 플레이어 1명을 함께 사망시킵니다.","이 능력은 투표로 처형되었을 때만 발동합니다.","늑대의 야간 공격으로 사망한 경우에는 발동하지 않습니다."]],"heir":["직업 계승",["생존한 플레이어의 수가 7명이 되는 순간 능력이 자동으로 발동합니다.","게임에서 가장 먼저 사망한 시민팀 플레이어의 직업을 계승합니다.","계승 이후에는 해당 직업의 능력을 사용할 수 있습니다."]],"citizen":["토론 및 투표",["밤에 사용하는 특수 능력은 없습니다.","낮에 토론하고 정보를 공유하며 투표를 통해 늑대를 찾아내야 합니다."]]};
+const $=id=>document.getElementById(id);const colors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];const detailedRoleInfo={"wolf":["야간 공격 및 참살",["매일 밤 생존한 플레이어 1명을 공격 대상으로 지정하여 살해할 수 있습니다.","늑대는 일반 공격 외에 참살이라는 특수 능력을 사용할 수 있습니다.","참살은 늑대 1명당 게임 전체에서 단 1회 사용할 수 있습니다.","참살은 보디가드의 보호, 퇴역군인의 생존, 추격자의 추적 능력을 무시합니다."]],"hench":["사망자 정보 확인, 늑대 탐색 및 동맹 채팅",["예언자의 조사에서 늑대로 판별되지 않으며, 영매의 조사에서도 시민으로 판별됩니다.","지금까지 사망한 모든 플레이어의 직업을 확인할 수 있습니다.","매일 밤 생존한 플레이어 1명을 선택하여 늑대인지 확인할 수 있습니다.","늑대 탐색에 성공하면 늑대와 동맹 채팅을 사용할 수 있습니다."]],"seer":["늑대 판별",["매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.","선택한 플레이어가 늑대인지 아닌지 확인할 수 있습니다.","똘마니는 늑대팀에 속하지만 예언자의 조사에서는 늑대로 판별되지 않습니다."]],"guard":["보호",["매일 밤 생존한 플레이어 1명을 선택하여 보호할 수 있습니다.","보호 대상이 늑대의 일반 공격을 받으면 해당 공격을 막아 생존시킵니다.","단, 늑대의 특수 능력인 참살은 방어할 수 없습니다."]],"tracker":["늑대 추적",["매일 밤 생존한 플레이어 1명을 추적 대상으로 지정할 수 있습니다.","지정한 플레이어가 그날 밤 늑대의 일반 공격으로 사망하면, 공격한 늑대의 정체를 알아낼 수 있습니다.","단, 추적 대상이 늑대의 참살로 사망한 경우에는 추적에 실패합니다."]],"medium":["사망자 조사",["두 번째 밤부터 매일 밤 사망한 플레이어 1명의 시체를 선택하여 조사할 수 있습니다.","조사 결과는 예언자 또는 보디가드, 늑대, 일반 시민의 분류로 표시됩니다."]],"watcher":["똘마니 판별",["매일 밤 생존한 플레이어 1명을 선택할 수 있습니다.","선택한 플레이어가 똘마니인지 아닌지 확인할 수 있습니다.","예언자의 조사로는 구별할 수 없는 똘마니를 찾아낼 수 있습니다."]],"veteran":["생존",["늑대의 일반 공격을 받더라도 최초 1회에 한해 살아남을 수 있습니다.","생존 능력은 자동으로 발동하며, 한 번 발동한 이후에는 소멸합니다.","늑대의 참살을 당하면 생존 능력의 잔여 여부와 관계없이 즉시 사망합니다."]],"fanatic":["동반 처형",["낮 투표를 통해 처형될 경우, 자신에게 가장 먼저 투표한 플레이어 1명을 함께 사망시킵니다.","이 능력은 투표로 처형되었을 때만 발동합니다.","늑대의 야간 공격으로 사망한 경우에는 발동하지 않습니다."]],"heir":["직업 계승",["생존한 플레이어의 수가 7명이 되는 순간 능력이 자동으로 발동합니다.","게임에서 가장 먼저 사망한 시민팀 플레이어의 직업을 계승합니다.","계승 이후에는 해당 직업의 능력을 사용할 수 있습니다."]],"citizen":["토론 및 투표",["밤에 사용하는 특수 능력은 없습니다.","낮에 토론하고 정보를 공유하며 투표를 통해 늑대를 찾아내야 합니다."]]};
 const roleDesc={wolf:'늑대끼리는 서로를 알고 동맹 대화를 할 수 있습니다. 공격 순번은 밤마다 교대하며, 혼자 남으면 매번 공격할 수 있습니다.',hench:'늑대를 조사로 찾아야 정체를 확인하고 동맹 대화에 합류할 수 있습니다.',seer:'살아있는 플레이어가 늑대인지 조사합니다.',guard:'밤마다 살아있는 플레이어 한 명을 지정해 늑대인간의 일반 공격으로부터 보호할 수 있습니다. 보호에 성공하면 대상은 살아남습니다. 단, 늑대인간이 참살을 사용하면 보디가드의 보호를 무시하고 대상을 살해합니다.',medium:'사망자의 직업 분류를 확인합니다.',tracker:'밤마다 살아있는 플레이어 한 명을 지정해 추적합니다. 지정한 플레이어가 그날 밤 늑대인간에게 살해당하면, 공격한 늑대인간이 누구인지 알 수 있습니다. 단, 지정한 플레이어가 참살로 사망했다면 추적에 실패하여 공격한 늑대인간을 알아낼 수 없습니다.',watcher:'똘마니인지 조사합니다.',heir:'생존자가 7명이 되면 시민팀의 첫 사망 직업을 계승합니다.',veteran:'늑대인간의 일반 공격을 받더라도 한 번은 살아남을 수 있습니다. 이 생존 능력은 게임당 한 번만 발동합니다. 단, 늑대인간의 참살에는 생존 능력이 적용되지 않으며 즉시 사망합니다.',fanatic:'마녀가 낮 투표로 처형되면 마녀에게 가장 먼저 투표한 플레이어도 저주로 함께 사망합니다. 늑대의 밤 공격으로 사망할 때는 발동하지 않습니다.',citizen:'낮 토론과 투표로 늑대를 찾아야 합니다.'};
 const gameRulesHTML=`<h2>타뷸라의 늑대 (Lupus in Tabula) — 게임 규칙</h2><h3>1. 게임 개요</h3><p><b>타뷸라의 늑대</b>는 5~11명의 플레이어가 <b>늑대팀</b>과 <b>시민팀</b>으로 나뉘어 상대 팀을 제거하는 것을 목표로 하는 심리 추리 게임입니다.</p><p>시민팀은 플레이어 간의 대화, 정보 공유, 추리를 통해 늑대팀의 거짓 주장과 직업 사칭에 숨겨진 모순을 밝혀내고, 늑대를 찾아 처형해야 합니다.</p><p>반면 늑대팀은 자신의 정체를 숨긴 채 다른 직업을 사칭하거나 거짓 정보를 제공하여 시민들의 추리를 방해해야 합니다. 이를 통해 처형을 피하고, 생존한 늑대의 수가 시민의 수와 같아질 때까지 살아남는 것이 목표입니다.</p><p>게임은 다음 두 가지 결과 중 하나로 종료됩니다.</p><ul><li><b>시민팀 승리:</b> 모든 늑대의 정체를 밝혀내고 처형하여 마을을 지킵니다.</li><li><b>늑대팀 승리:</b> 시민들을 속이고 제거하여 마을을 장악합니다.</li></ul><h3>2. 게임 진행 방식</h3><p>게임은 <b>낮(Day)</b>과 <b>밤(Night)</b>으로 구분되며, 각 시간대에 따라 플레이어가 수행할 수 있는 행동이 달라집니다.</p><h3>2.1. 낮 (Day)</h3><p>낮에는 생존한 모든 플레이어가 자유롭게 대화하며, 정보를 공유하고 서로의 정체를 추리할 수 있습니다.</p><p>플레이어들은 토론과 심문을 통해 늑대로 의심되는 인물을 찾아내고, 투표를 통해 매일 최대 1명을 처형할 수 있습니다.</p><p><b>① 토론 및 추리</b></p><ul><li>생존한 플레이어는 자유롭게 대화하고 토론할 수 있습니다.</li><li>다른 플레이어에게 질문하거나 자신의 정보를 공개할 수 있습니다.</li><li>각자의 직업, 행동, 발언에서 발견되는 모순을 근거로 늑대의 정체를 추리합니다.</li></ul><p><b>② 투표 및 처형</b></p><ul><li>모든 생존 플레이어는 늑대로 의심되는 대상에게 투표할 수 있습니다.</li><li>투표 결과에 따라 하루에 최대 1명의 플레이어를 처형할 수 있습니다.</li><li>투표 과정에서 기권할 수도 있습니다.</li></ul><p><b>③ 낮 시간 및 시간 연장</b></p><ul><li>기본 낮 시간은 <b>2분</b>입니다.</li><li>각 플레이어는 한 턴에 한 번씩 낮 시간 연장 기능을 사용할 수 있으며, 한 번 사용할 때마다 남은 시간이 1분 연장됩니다.</li><li>모든 생존 플레이어가 투표 조기 마감에 동의하면, 남은 시간과 관계없이 낮이 종료되고 10초 뒤 밤으로 전환됩니다.</li><li>투표 조기 마감에 동의하더라도 낮이 실제로 종료되기 전까지는 투표하거나 기권할 수 있습니다. 단, 전원 동의로 낮이 종료되면 아직 행사하지 않은 투표권은 소멸합니다.</li><li>모든 생존 플레이어가 투표를 확정하거나 기권해도 낮이 즉시 종료되고 10초 뒤 밤으로 전환됩니다.</li></ul><p><b>④ 개인 메모 및 공표</b></p><ul><li><b>개인 메모:</b> 플레이어가 게임 중 수집한 정보, 추리 내용, 의심되는 인물 등을 자유롭게 기록할 수 있는 개인 공간입니다.</li><li><b>공표:</b> 각 플레이어가 다른 모든 플레이어에게 공개할 정보를 기록하는 공간입니다.</li><li>공표에 작성된 내용은 모든 플레이어가 확인할 수 있으며, 작성자가 사망한 이후에도 삭제되지 않고 유지됩니다.</li></ul><h3>2.2. 밤 (Night)</h3><p>밤에는 각 플레이어가 자신에게 부여된 직업의 고유 능력을 사용하여 행동합니다.</p><ul><li>플레이어는 자신의 직업에 따라 지정된 특수 능력을 사용할 수 있습니다.</li><li>각 직업의 능력과 사용 조건은 해당 직업의 설명을 따릅니다.</li><li>밤에는 직업별 특수 능력 사용을 제외한 일반적인 행동이 제한됩니다.</li><li>밤에 발생한 사건과 능력 사용 결과는 해당 게임 모드의 규칙에 따라 처리됩니다.</li></ul><h3>3. 승리 조건</h3><h3>3.1. 늑대팀 승리</h3><p>생존한 늑대의 수가 생존한 시민의 수와 같아지면 늑대팀이 승리합니다.</p><p><b>예시:</b> 생존 늑대 2명 / 생존 시민 2명 → 늑대팀 승리</p><h3>3.2. 시민팀 승리</h3><p>모든 늑대를 처형하면 시민팀이 승리합니다. 늑대가 한 명도 남지 않으면 게임은 즉시 종료되며, 시민팀의 승리가 선언됩니다.</p><h3>4. 게임 모드</h3><p>게임 시작 전 다음 세 가지 모드 중 하나를 선택할 수 있습니다.</p><h3>4.1. 기본 모드</h3><p>게임이 시작되면 첫 번째 낮부터 진행됩니다.</p><ul><li>첫 번째 낮에 모든 플레이어가 토론과 추리를 시작합니다.</li><li>낮이 종료되면 첫 번째 밤이 시작됩니다.</li><li>이후 낮과 밤이 번갈아 진행됩니다.</li></ul><h3>4.2. 기본 모드 (2턴제)</h3><p>게임 시작 후 두 번의 밤이 먼저 진행되며, 세 번째 날의 낮부터 본격적인 토론과 투표가 시작됩니다.</p><ul><li>첫 번째 밤과 두 번째 밤에는 각 직업의 특수 능력을 사용할 수 있습니다.</li><li>두 번의 밤이 지나면 세 번째 날의 낮이 시작됩니다.</li><li>이후에는 일반적인 낮과 밤의 순서로 게임이 진행됩니다.</li></ul><h3>4.3. 혼란 모드 (2턴제)</h3><p>기본 모드(2턴제)와 동일한 방식으로 진행되지만, <b>밤에 아무도 사망하지 않았을 경우 그 원인을 공개하지 않는다</b>는 차이점이 있습니다.</p><p>일반적인 게임 모드에서는 다음과 같은 상황이 발생하면 해당 사건의 원인이 다음 날 낮에 공개됩니다.</p><p><b>① 늑대가 공격 대상을 지정하지 않은 경우</b></p><ul><li>늑대가 살인 대상을 선택하지 않아 아무도 사망하지 않은 상황입니다.</li></ul><p><b>② 퇴역군인이 늑대의 습격에서 살아남은 경우</b></p><ul><li>퇴역군인이 늑대의 공격을 받았지만 자신의 특수 능력으로 생존한 상황입니다.</li></ul><p><b>③ 보디가드가 늑대의 공격을 막아낸 경우</b></p><ul><li>보디가드가 보호한 플레이어가 늑대의 습격을 받았지만 보호 능력으로 생존한 상황입니다.</li></ul><p>기본 모드에서는 위와 같은 사건의 발생 원인이 다음 날 낮에 공개되므로, 플레이어들은 이를 추리의 단서로 활용할 수 있습니다.</p><p>그러나 <b>혼란 모드에서는 위 세 가지 상황을 구분하지 않고 모두 동일한 메시지로 표시합니다.</b></p><p><b>“오늘 밤에는 아무도 죽지 않았습니다.”</b></p><p>따라서 시민팀은 아무도 사망하지 않은 이유가 늑대의 공격 포기 때문인지, 퇴역군인의 생존 능력 때문인지, 보디가드의 보호 때문인지 알 수 없습니다.</p><p>이러한 정보의 불확실성은 시민팀의 추리를 더욱 어렵게 만들며, 늑대팀에는 거짓 정보를 제공하거나 다른 직업을 사칭할 기회를 늘려줍니다.</p><p>혼란 모드는 플레이어 간의 심리전과 정보 분석의 중요성을 더욱 높이는 게임 방식입니다.</p>`;
 const helpRoleNames={wolf:'늑대',hench:'똘마니',seer:'예언자',guard:'보디가드',medium:'영매',tracker:'추격자',watcher:'감시자',heir:'후계자',veteran:'퇴역군인',fanatic:'마녀',citizen:'시민'};
@@ -488,7 +388,7 @@ function toggleGameHelp(which){openHelp=openHelp===which?null:which;const panel=
 $('helpWindowClose').onclick=()=>{if(openHelp)toggleGameHelp(openHelp)};
 (()=>{const win=$('gameHelp'),handle=$('helpWindowHeader');let drag=null;handle.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY,left:win.getBoundingClientRect().left,top:win.getBoundingClientRect().top};handle.setPointerCapture(e.pointerId);});handle.addEventListener('pointermove',e=>{if(!drag)return;const x=Math.max(0,Math.min(innerWidth-80,drag.left+e.clientX-drag.x));const y=Math.max(0,Math.min(innerHeight-50,drag.top+e.clientY-drag.y));win.style.left=x+'px';win.style.top=y+'px';win.style.right='auto';win.style.bottom='auto';win.style.transform='none';});const end=()=>drag=null;handle.addEventListener('pointerup',end);handle.addEventListener('pointercancel',end);})();
 $('rulesHelpBtn').onclick=()=>toggleGameHelp('rules');$('rolesHelpBtn').onclick=()=>toggleGameHelp('roles');
-function sendErr(t){$('error').textContent=t;setTimeout(()=>$('error').textContent='',5000)}socket.on('connect',()=>{$('connection').textContent='서버 연결됨';socket.emit('siteName',$('name').value)});socket.on('disconnect',()=>{stopVoice(false);$('connection').textContent='연결 끊김';stopBgm()});socket.on('connect_error',e=>{ $('connection').textContent='연결 오류';sendErr('서버 연결 오류: '+e.message);});socket.on('errorMessage',sendErr);socket.on('joined',d=>{updateRoomButtons(true);$('code').value=d.code; $('roomInfo').classList.remove('hide');$('roomInfo').textContent='방 코드: '+d.code+' · 친구에게 공유하세요.'});socket.on('state',s=>{if(!state){channel='all';$('roomChatTabs').classList.remove('hide');$('siteChatHint').classList.add('hide');document.querySelectorAll('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel==='all'));}if(state&&state.code!==s.code){seenLogs.clear();initializedLogs=false;unread={all:0,wolf:0,whisper:0,ghost:0,web:0}}checkNewLogs(s);state=s;updateRoomButtons(true);voiceUi();render();updateClock();syncBgm()});
+function sendErr(t){$('error').textContent=t;setTimeout(()=>$('error').textContent='',5000)}socket.on('connect',()=>{$('connection').textContent='서버 연결됨';socket.emit('siteName',$('name').value)});socket.on('disconnect',()=>{$('connection').textContent='연결 끊김';stopBgm()});socket.on('connect_error',e=>{ $('connection').textContent='연결 오류';sendErr('서버 연결 오류: '+e.message);});socket.on('errorMessage',sendErr);socket.on('joined',d=>{updateRoomButtons(true);$('code').value=d.code; $('roomInfo').classList.remove('hide');$('roomInfo').textContent='방 코드: '+d.code+' · 친구에게 공유하세요.'});socket.on('state',s=>{if(!state){channel='all';$('roomChatTabs').classList.remove('hide');$('siteChatHint').classList.add('hide');document.querySelectorAll('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel==='all'));}if(state&&state.code!==s.code){seenLogs.clear();initializedLogs=false;unread={all:0,wolf:0,whisper:0,ghost:0,web:0}}checkNewLogs(s);state=s;updateRoomButtons(true);render();updateClock();syncBgm()});
 socket.on('soundEffect',e=>{
  if(e.type==='townWin'||e.type==='wolfWin'){
    stopBgm();
@@ -513,18 +413,18 @@ $('name').addEventListener('change',()=>socket.emit('siteName',$('name').value))
  $('code').title=inRoom?'현재 방 코드 (복사 가능)':'입장할 방 코드를 입력하세요';
 }
 function returnToWebLobby(){
- stopVoice(false);state=null;channel='web';seenLogs.clear();initializedLogs=false;
+ state=null;channel='web';seenLogs.clear();initializedLogs=false;
  unread={all:0,wolf:0,whisper:0,ghost:0,web:0};showUnread();
  $('roomInfo').classList.add('hide');$('hostControls').classList.add('hide');
  $('code').value='';$('chatText').value='';$('siteChatHint').classList.remove('hide');
- $('whisperRow').classList.add('hide');updateRoomButtons(false);voiceUi();
+ $('whisperRow').classList.add('hide');updateRoomButtons(false);
  $('phaseLabel').textContent='THE VILLAGE AWAITS';$('heroTitle').textContent='안개 속의 마을';
  $('hero').classList.remove('night');$('myInfo').textContent='방을 만들거나 입장해 게임을 시작하세요.';
  $('players').innerHTML='';renderSiteChat();syncBgm();
 }
 socket.on('leftRoom',()=>{returnToWebLobby();});
 $('create').onclick=()=>{
- if(state){stopVoice();socket.emit('leaveRoom');return;}
+ if(state){socket.emit('leaveRoom');return;}
  socket.emit('createRoom',{name:$('name').value});
 };
 $('join').onclick=async()=>{
