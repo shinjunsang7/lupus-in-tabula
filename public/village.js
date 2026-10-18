@@ -3,7 +3,10 @@
 (()=>{'use strict';
 const canvas=document.getElementById('villageCanvas');if(!canvas)return;
 const ctx=canvas.getContext('2d'),W=1200,H=550,RENDER_SCALE=Math.min(2,Math.max(1,window.devicePixelRatio||1));canvas.width=Math.round(W*RENDER_SCALE);canvas.height=Math.round(H*RENDER_SCALE);ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);
-const background=new Image();background.src='/village_empty_hd2d.jpg';
+// FINAL 2.5: approved original-resolution lossless scenery, 80% camera, 85% characters, 90% nameplates.
+const CAMERA_ZOOM=.80, CHARACTER_ZOOM=.85, NAMEPLATE_ZOOM=.90;
+const CAMERA_OFFSET_X=W*(1-CAMERA_ZOOM)/2, CAMERA_OFFSET_Y=H*(1-CAMERA_ZOOM)/2;
+const background=new Image();background.src='/village_final25_crisp.png?v=2.5';
 const sprites=new Image();sprites.src='/village_characters_user.png?v=graphics7-original';
 const deathSprites=new Image();deathSprites.src='/village_characters_death.png?v=graphics7-original';
 const actors=new Map(),bubbles=new Map(),seen=new Set(),spotlights=new Map();
@@ -58,17 +61,18 @@ if(typeof socket!=='undefined'){
 }
 canvas.addEventListener('pointerdown',e=>{
  const s=stateNow();if(!s||!['day','lobby'].includes(s.phase)||!s.self?.alive)return;
- const r=canvas.getBoundingClientRect();let x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+ const r=canvas.getBoundingClientRect();let x=((e.clientX-r.left)/r.width*W-CAMERA_OFFSET_X)/(W*CAMERA_ZOOM);
+ let y=((e.clientY-r.top)/r.height*H-CAMERA_OFFSET_Y)/(H*CAMERA_ZOOM);
  const goal=clampGoal(x,y);const a=actors.get(s.self.id);if(!a)return;
  a.tx=goal.x;a.ty=goal.y;a.lastClick=Date.now();
 });
 function drawActor(a,t,night){const x=a.x*W,y=a.y*H,col=a.color;
- ctx.save();ctx.translate(Math.round(x),Math.round(y));
+ ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(CHARACTER_ZOOM/CAMERA_ZOOM,CHARACTER_ZOOM/CAMERA_ZOOM);
  // Glowing ground rings: gold marks yourself, numbered color marks everyone else.
  if(a.alive){ctx.save();ctx.shadowColor=a.isYou?'#ffe47b':col;ctx.shadowBlur=night?(a.isYou?13:7):(a.isYou?27:13);
- ctx.beginPath();ctx.ellipse(0,-2,a.isYou?28:25,9,0,0,Math.PI*2);ctx.strokeStyle=a.isYou?'#ffe27b':col;ctx.lineWidth=night?(a.isYou?3:2):(a.isYou?4:3);ctx.stroke();ctx.restore();}
+ ctx.beginPath();ctx.ellipse(0,9,a.isYou?26:23,9,0,0,Math.PI*2);ctx.strokeStyle=a.isYou?'#ffe27b':col;ctx.lineWidth=night?(a.isYou?3:2):(a.isYou?4:3);ctx.stroke();ctx.restore();}
  else{ctx.fillStyle='#7e1828bb';ctx.beginPath();ctx.ellipse(0,-5,30,12,0,0,Math.PI*2);ctx.fill();}
- if(a.alive){ctx.save();ctx.globalAlpha=.27;ctx.beginPath();ctx.ellipse(2,0,21,6,0,0,Math.PI*2);ctx.fillStyle='#07111b';ctx.fill();ctx.restore();}
+ if(a.alive){ctx.save();ctx.globalAlpha=.27;ctx.beginPath();ctx.ellipse(2,9,19,6,0,0,Math.PI*2);ctx.fillStyle='#07111b';ctx.fill();ctx.restore();}
  const walking=a.alive&&Math.hypot(a.tx-a.x,a.ty-a.y)>.003&&!night;
  if(sprites.complete&&sprites.naturalWidth){
  const direction=a.dir,frame=walking?Math.floor(a.step)%4:0;
@@ -84,12 +88,14 @@ function drawActor(a,t,night){const x=a.x*W,y=a.y*H,col=a.color;
  }else{ctx.translate(0,-8);ctx.rotate(Math.PI/2);ctx.drawImage(sprites,0,sy,96,104,-29,-37,58,80)}ctx.restore();
  }
  }else{box(-12,-56,24,40,5,col,'#22212a');circle(0,-60,13,'#e8b58f')}
- if(a.isYou&&a.alive){ctx.save();ctx.globalAlpha=.17+.08*Math.sin(t/240);circle(0,-52,34,'#ffec94');ctx.restore()}
+ if(a.isYou&&a.alive){ctx.save();ctx.globalAlpha=.17+.08*Math.sin(t/240);circle(0,-51,29,'#ffec94');ctx.restore()}
  ctx.restore();
  // Nameplates are separated from artwork and therefore never remain baked into the scene.
+ // Nameplates are 90% of the original on-screen size, independent of camera zoom.
+ ctx.save();ctx.translate(x,y);ctx.scale(NAMEPLATE_ZOOM/CAMERA_ZOOM,NAMEPLATE_ZOOM/CAMERA_ZOOM);ctx.translate(-x,-y);
  const name=`${a.name}${a.isYou?' (나)':''}`;
  ctx.font='bold 14px system-ui,sans-serif';const width=Math.min(180,Math.max(85,ctx.measureText(name).width+44));
- const ly=y-114; // Nameplate 14px closer to the character
+ const ly=y-94; // Align label with visible head, accounting for transparent sprite-cell top margin
  box(x-width/2,ly,width,25,7,a.alive?(night?'#0a1423f2':'#07111de9'):'#22252ce2',a.isYou?'#e8c778':'#7384998a');
  circle(x-width/2+14,ly+12.5,10,col);
  ctx.fillStyle='#101521';ctx.textAlign='center';ctx.font='bold 12px system-ui';ctx.fillText(a.id,x-width/2+14,ly+16.7);
@@ -97,26 +103,29 @@ function drawActor(a,t,night){const x=a.x*W,y=a.y*H,col=a.color;
  const b=bubbles.get(a.id);
  if(b&&b.until>Date.now()&&a.alive&&!night){
   const raw=String(b.text||'').replace(/\s+/g,' ').trim().slice(0,110);
-  const lines=[];let line='';ctx.font='bold 16px system-ui,sans-serif';
-  for(const ch of [...raw]){if(ctx.measureText(line+ch).width>268&&line){lines.push(line);line=ch}else line+=ch;if(lines.length>=2)break}
+  const lines=[];let line='';ctx.font='bold 13px system-ui,sans-serif';
+  for(const ch of [...raw]){if(ctx.measureText(line+ch).width>218&&line){lines.push(line);line=ch}else line+=ch;if(lines.length>=2)break}
   if(line&&lines.length<3)lines.push(line);
   if(lines.length===3&&raw.length>lines.join('').length)lines[2]=lines[2].slice(0,-1)+'…';
-  const bw=Math.max(132,Math.min(305,Math.max(...lines.map(t=>ctx.measureText(t).width),0)+42));
-  const bh=20+lines.length*23;const bx=Math.max(6,Math.min(W-bw-6,x-bw/2));const by=Math.max(5,ly-bh-18);
+  const bw=Math.max(110,Math.min(250,Math.max(...lines.map(t=>ctx.measureText(t).width),0)+42));
+  const bh=16+lines.length*19;const bx=Math.max(6,Math.min(W-bw-6,x-bw/2));const by=Math.max(5,ly-bh-18);
   ctx.save();ctx.shadowColor='#000b';ctx.shadowBlur=15;ctx.shadowOffsetY=4;
   box(bx,by,bw,bh,12,'#fffdf4','#17233a');ctx.restore();
   ctx.save();ctx.lineWidth=3;ctx.strokeStyle=a.isYou?'#ffcf5b':a.color;ctx.beginPath();ctx.roundRect(bx+2,by+2,bw-4,bh-4,10);ctx.stroke();
   ctx.fillStyle='#fffdf4';ctx.beginPath();const tip=Math.max(bx+14,Math.min(bx+bw-14,x));ctx.moveTo(tip-8,by+bh-2);ctx.lineTo(tip+8,by+bh-2);ctx.lineTo(tip,by+bh+11);ctx.closePath();ctx.fill();
   ctx.strokeStyle='#17233a';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(tip-8,by+bh-2);ctx.lineTo(tip,by+bh+11);ctx.lineTo(tip+8,by+bh-2);ctx.stroke();
-  ctx.fillStyle='#15202f';ctx.textAlign='center';ctx.font='bold 16px system-ui,sans-serif';
-  lines.forEach((text,i)=>ctx.fillText(text,bx+bw/2,by+27+i*23));ctx.restore();
+  ctx.fillStyle='#15202f';ctx.textAlign='center';ctx.font='bold 13px system-ui,sans-serif';
+  lines.forEach((text,i)=>ctx.fillText(text,bx+bw/2,by+22+i*19));ctx.restore();
  }
 
+ ctx.restore();
 }
 function frame(t){const s=stateNow(),night=s?.phase==='night',locked=night||s?.phase==='ended';const dt=Math.min(40,t-lastTick);lastTick=t;
  ctx.clearRect(0,0,W,H);
- if(background.complete&&background.naturalWidth)ctx.drawImage(background,0,0,background.naturalWidth,background.naturalHeight,0,0,W,H);
- else{ctx.fillStyle='#5c5448';ctx.fillRect(0,0,W,H)}
+ // Expanded art fills the entire canvas, without blur or empty margins.
+ if(background.complete&&background.naturalWidth){ctx.drawImage(background,0,0,background.naturalWidth,background.naturalHeight,0,0,W,H)}
+ else{ctx.fillStyle='#302c30';ctx.fillRect(0,0,W,H)}
+ ctx.save();ctx.translate(CAMERA_OFFSET_X,CAMERA_OFFSET_Y);ctx.scale(CAMERA_ZOOM,CAMERA_ZOOM);
  // Subtle scene grading and vignetting, without covering the characters.
  const grad=ctx.createRadialGradient(W*.5,H*.52,H*.12,W*.5,H*.48,W*.69);grad.addColorStop(0,'#00000000');grad.addColorStop(1,'#07101a75');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
  for(const a of actors.values()){
@@ -176,5 +185,5 @@ function frame(t){const s=stateNow(),night=s?.phase==='night',locked=night||s?.p
  if(s?.phase==='ended'&&!lit.length){ctx.fillStyle='#07101b55';ctx.fillRect(0,0,W,H)}
 
 
- requestAnimationFrame(frame)}requestAnimationFrame(frame);
+ ctx.restore();requestAnimationFrame(frame)}requestAnimationFrame(frame);
 })();
