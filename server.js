@@ -311,7 +311,7 @@ io.on('connection',socket=>{
  });
  socket.on('nightAction',data=>nightAction(socket,data));
  socket.on('skipNight',()=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='night'||room.nightResolving||!p.alive)return;if(room.nightActions[p.id]?.done)return socket.emit('errorMessage','이번 밤 행동은 이미 완료했습니다.');room.nightActions[p.id]={done:true};emitRoom(room);if(allNightDone(room))resolveNight(room)});
- socket.on('publish',data=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p)return;
+ socket.on('publish',data=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p)return;if(room.phase!=='day')return socket.emit('errorMessage','공표는 낮 토론 시간에만 작성하거나 수정할 수 있습니다.');
  const value=String(typeof data==='object'&&data!==null?data.text:data||'').trim().slice(0,50);
  if(!value)return;
  const allowedColors=['#f4e9d6','#eecb7b','#b8e2ff','#b8f0c9','#ffb6c1','#e3c5ff'];
