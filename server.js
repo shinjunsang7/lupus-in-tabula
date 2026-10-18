@@ -58,7 +58,7 @@ function wolfAllies(room,p){
 function knownLabel(room,viewer,target){
  if(room.phase==='ended')return ROLE[target.role].name;
  if(viewer.id===target.id)return viewer.role==='heir'&&viewer.inheritedRole?'후계자 - '+ROLE[viewer.inheritedRole].name:(ROLE[target.role]?.name||'');
- if(viewer.role==='hench'&&target.team==='town'&&!target.alive)return ROLE[target.role].name;
+ if(viewer.role==='hench'&&!target.alive)return ROLE[target.role].name;
  if(viewer.role==='wolf'&&target.role==='hench'&&target.foundWolves?.length)return '똘마니 (동맹)';
  if(wolfAllies(room,viewer).includes(target.id))return '늑대 (동맹)';
  return viewer.knownRoles?.[target.id]||'';
@@ -138,6 +138,11 @@ function enterNight(room){
  room.players.forEach(p=>p.protected=false);
  const wolves=living(room).filter(p=>p.role==='wolf');
  if(wolves.length>1){const activeNo=room.night%2===1?1:2;wolves.filter(p=>p.wolfNo!==activeNo).forEach(p=>room.nightActions[p.id]={done:true,skip:true});}
+ // Passive roles have no night target or manual action; mark complete immediately.
+ for(const p of living(room)){
+  const role=activeRole(p);
+  if(['veteran','fanatic','heir','citizen'].includes(role)||(p.role==='hench'&&p.foundWolves?.length))room.nightActions[p.id]={done:true,skip:true};
+ }
  emitRoom(room);playForRoom(room,'night');scheduleNightEnd(room);
 }
 function closeVote(room,timeout=false){
@@ -203,8 +208,8 @@ function nightAction(socket, data){const room=getRoom(socket),p=getPlayer(room,s
  p.knownRoles[target.id]=result;
  log(room,'private',`감시 결과: ${target.id}번은 ${result}.`,p.id);
 }
- else if(p.role==='hench'){if(target.role==='wolf'){p.foundWolves=[...new Set([...p.foundWolves,target.id])];remember(p,room.night,target.id,'늑대인간 발견 · 동맹 합류','탐색');
- for(const w of room.players.filter(x=>x.role==='wolf'))for(const rec of (w.intel||[]).filter(x=>x.kind==='동맹 공격'))if(!p.intel.some(x=>x.kind===rec.kind&&x.night===rec.night&&x.target===rec.target))p.intel.push({...rec});log(room,'private',`찾았습니다! ${target.id}번 ${target.name}은 늑대입니다. 동맹 대화가 열렸습니다.`,p.id);log(room,'wolf',`똘마니 ${p.id}번이 늑대 ${target.id}번을 찾아 동맹에 합류했습니다.`)}else {remember(p,room.night,target.id,'늑대인간 아님','탐색');log(room,'private',`조사 결과: ${target.id}번은 늑대가 아닙니다.`,p.id)}}
+ else if(p.role==='hench'){if(target.role==='wolf'){p.foundWolves=[...new Set([...p.foundWolves,target.id])];remember(p,room.night,target.id,'늑대 발견 · 동맹 합류','탐색');p.knownRoles[target.id]='늑대';
+ for(const w of room.players.filter(x=>x.role==='wolf'))for(const rec of (w.intel||[]).filter(x=>x.kind==='동맹 공격'))if(!p.intel.some(x=>x.kind===rec.kind&&x.night===rec.night&&x.target===rec.target))p.intel.push({...rec});log(room,'private',`찾았습니다! ${target.id}번 ${target.name}은 늑대입니다. 동맹 대화가 열렸습니다.`,p.id);log(room,'wolf',`똘마니 ${p.id}번이 늑대 ${target.id}번을 찾아 동맹에 합류했습니다.`)}else {remember(p,room.night,target.id,'평범한 시민','탐색');p.knownRoles[target.id]='평범한 시민';log(room,'private',`조사 결과: ${target.id}번은 늑대가 아닙니다.`,p.id)}}
  else if(role==='medium'){const category=target.team==='wolf'?(target.role==='hench'?'평범한 시민':'늑대'):(['seer','guard'].includes(target.role)?'예언자/보디가드':'평범한 시민팀');remember(p,room.night,target.id,category,'영매');p.knownRoles[target.id]=category;log(room,'private',`영매 결과: ${target.id}번은 ${category}입니다.`,p.id)}
  else if(role==='tracker'){log(room,'private',`추적 대상: ${target.id}번. 결과는 밤이 끝나면 개인 기록에 남습니다.`,p.id)}
  room.nightActions[p.id]=action;emitRoom(room);if(allNightDone(room)){emitRoom(room);setTimeout(()=>resolveNight(room),700)} }
