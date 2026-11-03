@@ -2,7 +2,7 @@
    Rendering only: voting, role logic, chats and timers remain in the original game. */
 (()=>{'use strict';
 const canvas=document.getElementById('villageCanvas');if(!canvas)return;
-const ctx=canvas.getContext('2d'),W=1200,H=550,RENDER_SCALE=Math.min(3,Math.max(2,window.devicePixelRatio||1));canvas.width=Math.round(W*RENDER_SCALE);canvas.height=Math.round(H*RENDER_SCALE);ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);
+const ctx=canvas.getContext('2d'),W=1200,H=550,RENDER_SCALE=window.matchMedia('(max-width: 820px)').matches?1.5:Math.min(3,Math.max(2,window.devicePixelRatio||1));canvas.width=Math.round(W*RENDER_SCALE);canvas.height=Math.round(H*RENDER_SCALE);ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);
 // FINAL 2.8: keep FINAL 2.6 small actors; draw text overlays at native screen resolution to avoid scaled-font blur.
 const CAMERA_ZOOM=.80, CHARACTER_ZOOM=.68;
 const CAMERA_OFFSET_X=W*(1-CAMERA_ZOOM)/2, CAMERA_OFFSET_Y=H*(1-CAMERA_ZOOM)/2;
@@ -11,6 +11,30 @@ const sprites=new Image();sprites.src='/village_characters_user.png?v=graphics7-
 const deathSprites=new Image();deathSprites.src='/village_characters_death.png?v=graphics7-original';
 const actors=new Map(),bubbles=new Map(),seen=new Set(),spotlights=new Map();
 let currentRoom='',previousPhase='',lastSend=0,lastTick=performance.now(),lastState=null;
+// Mobile-only camera follows the LOCAL player's yellow ground ring.
+// The canvas retains its original world coordinates; only its visual viewport
+// shifts, so sprite feet, collision mask, mouse destinations and server x/y agree.
+let cameraActive=false,cameraX=0,cameraY=0;
+function updateMobileCamera(s,dt){
+ if(!window.matchMedia('(max-width:820px)').matches)return;
+ const stage=canvas.closest('.moon-scene-frame');
+ if(!stage)return;
+ if(stage.classList.contains('moon-map-wide')){cameraActive=false;return;}
+ const vw=stage.clientWidth,vh=stage.clientHeight,cw=canvas.clientWidth,ch=canvas.clientHeight;
+ if(!vw||!vh||!cw||!ch)return;
+ const local=s?.self?.id?actors.get(s.self.id):null;
+ const fx=local?local.x:0.5,fy=local?local.y:0.55;
+ const desiredX=Math.max(vw-cw,Math.min(0,vw*.5-fx*cw));
+ const desiredY=Math.max(vh-ch,Math.min(0,vh*.55-fy*ch));
+ if(!cameraActive){cameraX=desiredX;cameraY=desiredY;cameraActive=true;}
+ else{
+  const smooth=window.matchMedia('(prefers-reduced-motion:reduce)').matches?1:(1-Math.exp(-Math.max(1,dt)/105));
+  cameraX+=(desiredX-cameraX)*smooth;
+  cameraY+=(desiredY-cameraY)*smooth;
+ }
+ canvas.style.setProperty('--moon-cam-x',cameraX.toFixed(2)+'px');
+ canvas.style.setProperty('--moon-cam-y',cameraY.toFixed(2)+'px');
+}
 const fallbackColors=['#e35d6a','#5bb4e8','#b8d75a','#b28ae8','#f0c45a','#75d5c5','#f49b50','#ee78b8','#a7b6c8','#4e88f0','#9d86ee'];
 const starts=[[0.35,0.47],[0.24,0.6],[0.62,0.47],[0.77592,0.58422],[0.85,0.77],[0.35,0.76],[0.64,0.65],[0.48,0.85],[0.60097,0.84217],[0.77538,0.8457],[0.31857,0.82097]];
 function stateNow(){return typeof state!=='undefined'&&state?state:lastState}
@@ -126,7 +150,7 @@ if(typeof socket!=='undefined'){
  // Leaving a room must also clear the independent canvas renderer's cached actors.
  socket.on('leftRoom',()=>{
   actors.clear();bubbles.clear();seen.clear();spotlights.clear();
-  currentRoom='';previousPhase='';lastState=null;lastSend=0;
+  currentRoom='';previousPhase='';lastState=null;lastSend=0;cameraActive=false;
  });
  socket.on('state',ingest);
  socket.on('deathSpotlight',p=>{if(Number.isFinite(p?.id))spotlights.set(p.id,performance.now()+4000)});
@@ -137,6 +161,15 @@ canvas.addEventListener('pointerdown',e=>{
  const r=canvas.getBoundingClientRect();let x=(e.clientX-r.left)/r.width;
  let y=(e.clientY-r.top)/r.height;
  const goal=clampGoal(x,y);const a=actors.get(s.self.id);if(!a)return;
+ setDestination(a,goal);a.lastClick=Date.now();
+});
+// Portrait mobile virtual joystick: move the ground-ring center, not the sprite head.
+window.addEventListener('tabulaMobileMove',e=>{
+ const s=stateNow();if(!navPixels||!s||!['day','lobby'].includes(s.phase)||!s.self?.alive)return;
+ const a=actors.get(s.self.id),d=e.detail;if(!a||!d)return;
+ const m=Math.hypot(d.x,d.y);if(m<.18)return;
+ const stride=.048,goal=clampGoal(a.x+(d.x/m)*stride,a.y+(d.y/m)*stride);
+ if(Math.hypot(goal.x-a.x,goal.y-a.y)<.003)return;
  setDestination(a,goal);a.lastClick=Date.now();
 });
 function drawActor(a,t,night){const x=a.x*W,y=a.y*H,col=a.color;
@@ -271,5 +304,6 @@ function frame(t){const s=stateNow(),night=s?.phase==='night',locked=night||s?.p
  if(night){ctx.save();ctx.fillStyle='rgba(7,20,42,.69)';ctx.fillRect(0,0,W,H);ctx.restore()}
  // Labels are drawn at device-pixel resolution after the scene camera has been restored.
  for(const a of [...actors.values()].sort((a,b)=>a.y-b.y))drawActorOverlay(a,night);
+ updateMobileCamera(s,dt);
  requestAnimationFrame(frame)}requestAnimationFrame(frame);
 })();

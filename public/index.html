@@ -811,7 +811,6 @@ body.lupus-web-lobby>main #hudLeftRail{top:12px!important}
  body>main #hero .herotxt{top:120px!important}
 }
 </style>
-
 <style id="final33Readability">
 /* FINAL 3.3: readable help, game information and private ability records. */
 #gameHelp #helpWindowBody{
@@ -850,7 +849,6 @@ body.lupus-web-lobby>main #hudLeftRail{top:12px!important}
  font-size:15px!important;line-height:1.7!important;
 }
 </style>
-
 <style id="final34PeopleReadability">
 /* Larger, legible player names and statuses, still a single compact row. */
 body>main #hudPeoplePanel{
@@ -899,7 +897,6 @@ body.lupus-web-lobby>main #hero .herotxt{top:67px!important}
  body>main #hero .herotxt{top:133px!important}
 }
 </style>
-
 <style id="final35PlayerStripFix">
 /* Keep the fixed heading OUTSIDE the horizontally scrollable player list. */
 body>main #hudPeoplePanel{justify-content:center!important;overflow:hidden!important}
@@ -936,7 +933,6 @@ body>main #hudPeoplePanel #players>.player.you .sub{color:#f6d797!important}
  body>main #hudPeoplePanel #players{max-width:calc(100vw - 155px)!important}
 }
 </style>
-
 <style id="final36PlayerInfo">
 /* FINAL 3.6: player information box immediately above Game Help, right aligned. */
 body>main #hudPlayerInfo{
@@ -977,7 +973,6 @@ body.lupus-web-lobby>main #hudPlayerInfo{display:none!important}
  body>main #hudPlayerInfo{right:8px!important;bottom:115px!important;width:250px!important}
 }
 </style>
-
 <style id="final37CenteredActions">
 /* Center content in the existing bottom-center action panel, without moving it. */
 body>main #hudActionPanel>.panel,
@@ -1022,7 +1017,6 @@ body>main #hudActionPanel #ripRow label{
 body>main #hudActionPanel #abilityHint,
 body>main #hudActionPanel #closeProgress{margin-left:auto!important;margin-right:auto!important}
 </style>
-
 <style id="final39NightVisibility">
 /* Stronger than the action panel's display:flex !important selectors. */
 body>main #hudActionPanel #ripRow.hide,
@@ -1032,23 +1026,37 @@ body>main #hudActionPanel #nightControls .field.hide{
 }
 body>main #hudActionPanel #nightControls #nightTarget:disabled{opacity:.7}
 </style>
-</head><body><header><div><h1>LUPUS IN TABULA <span style="font-size:.52em;vertical-align:middle;color:#e4c481;white-space:nowrap">v4.3</span></h1><small>타뷸라의 늑대</small></div><div class="top-setup-bar" id="topSetupBar"><aside class="panel"><h2 class="setup-title">방 / 플레이어 설정</h2><div class="setup"><label class="setup-inline-label">내 아이디</label><input id="name" maxlength="16" value="방랑자"/><button id="create" title="방을 만들거나 코드로 입장하세요.">새 방 만들기</button><label class="setup-inline-label">방 코드</label><input id="code" maxlength="6" placeholder="예: A1B2C3"/><button id="join" title="방을 만들거나 코드로 입장하세요.">방 코드로 입장</button><div class="notice hide" id="roomInfo">방을 만들거나 코드로 입장하세요.</div><div class="hide" id="hostControls"><label>게임 규칙</label><select id="rule"><option value="basic">기본</option><option value="basic2">기본 (2턴제)</option><option value="chaos">혼란 (2턴제)</option></select><button id="start" style="width:100%">게임 시작</button><button class="hide" id="rematch" style="width:100%">같은 방에서 다시 게임하기</button></div></div></aside></div><div class="row"><button class="sound-toggle" id="soundToggle" title="효과음 켜기/끄기">🔊 효과음 켜짐</button><details class="presence-dropdown header-presence" id="presenceDropdown"><summary>접속자 <span class="badge" id="sitePresenceCount">0명</span></summary><div class="presence-list" id="sitePresenceList"></div></details><span class="badge" id="connection">서버 연결 중…</span></div><div aria-live="polite" class="error header-join-error" id="error" role="alert"></div></header><main><aside class="left-info-sidebar" id="leftInfoSidebar"><section class="panel left-guide-panel"><h2>게임 도움말</h2><div aria-label="게임 도움말" class="guide-tabs" role="group"><button aria-controls="gameHelp" aria-expanded="false" id="rulesHelpBtn" type="button">게임 규칙</button><button aria-controls="gameHelp" aria-expanded="false" id="rolesHelpBtn" type="button">직업 설명</button></div></section><div class="two"><div class="panel"><h2>나만의 능력 기록</h2><div class="hint">조사 결과와 늑대 동맹 공격 기록은 본인에게만 표시됩니다.</div><div class="hint" id="intelBoard" style="max-height:250px;overflow:auto;margin-top:8px">아직 기록이 없습니다.</div></div><div class="panel"><h2>게임 정보</h2><div class="notice" id="myInfo">직업은 게임 시작 시 비밀 배정됩니다.</div><div class="hint" id="gameInfo">5~11명. 늑대팀은 시민팀과 동수가 되면 승리하고, 시민팀은 늑대를 모두 처형하면 승리합니다.</div></div></div></aside><section class="right"><div id="graphicsStatusHUD" aria-label="중앙 게임 상태">
+<style id="moonMobileRedesign">/* Mobile V2 styles are maintained separately in moonlit-mobile-v2.css. */</style><link href="/moonlit-mobile-v2.css?v=5" rel="stylesheet"/><style id="moonV5NoticeVisibility">#hudPublishOpenButton[hidden]{display:none!important}</style></head><body><header><div><h1>LUPUS IN TABULA <span style="font-size:.52em;vertical-align:middle;color:#e4c481;white-space:nowrap">v4.3 M</span></h1><small>타뷸라의 늑대</small></div><div class="top-setup-bar" id="topSetupBar"><aside class="panel"><h2 class="setup-title">방 / 플레이어 설정</h2><div class="setup"><label class="setup-inline-label">내 아이디</label><input id="name" maxlength="16" value="방랑자"/><button id="create" title="방을 만들거나 코드로 입장하세요.">새 방 만들기</button><label class="setup-inline-label">방 코드</label><input id="code" maxlength="6" placeholder="예: A1B2C3"/><button id="join" title="방을 만들거나 코드로 입장하세요.">방 코드로 입장</button><div class="notice hide" id="roomInfo">방을 만들거나 코드로 입장하세요.</div><div class="hide" id="hostControls"><label>게임 규칙</label><select id="rule"><option value="basic">기본</option><option value="basic2">기본 (2턴제)</option><option value="chaos">혼란 (2턴제)</option></select><button id="start" style="width:100%">게임 시작</button><button class="hide" id="rematch" style="width:100%">같은 방에서 다시 게임하기</button></div></div></aside></div><div class="row"><button class="sound-toggle" id="soundToggle" title="효과음 켜기/끄기">🔊 효과음 켜짐</button><details class="presence-dropdown header-presence" id="presenceDropdown"><summary>접속자 <span class="badge" id="sitePresenceCount">0명</span></summary><div class="presence-list" id="sitePresenceList"></div></details><span class="badge" id="connection">서버 연결 중…</span></div><div aria-live="polite" class="error header-join-error" id="error" role="alert"></div></header><main><aside class="left-info-sidebar" id="leftInfoSidebar"><section class="panel left-guide-panel"><h2>게임 도움말</h2><div aria-label="게임 도움말" class="guide-tabs" role="group"><button aria-controls="gameHelp" aria-expanded="false" id="rulesHelpBtn" type="button">게임 규칙</button><button aria-controls="gameHelp" aria-expanded="false" id="rolesHelpBtn" type="button">직업 설명</button></div></section><div class="two"><div class="panel"><h2>나만의 능력 기록</h2><div class="hint">조사 결과와 늑대 동맹 공격 기록은 본인에게만 표시됩니다.</div><div class="hint" id="intelBoard" style="max-height:250px;overflow:auto;margin-top:8px">아직 기록이 없습니다.</div></div><div class="panel"><h2>게임 정보</h2><div class="notice" id="myInfo">직업은 게임 시작 시 비밀 배정됩니다.</div><div class="hint" id="gameInfo">5~11명. 늑대팀은 시민팀과 동수가 되면 승리하고, 시민팀은 늑대를 모두 처형하면 승리합니다.</div></div></div></aside><section class="right"><div aria-label="중앙 게임 상태" id="graphicsStatusHUD">
 <span id="hudPhase">대기실</span><strong id="hudTimer">--:--</strong><span id="hudAlive">0명 생존</span>
 </div><div class="hero" id="hero"><canvas aria-label="마우스로 클릭해 이동하는 2D 마을" height="520" id="villageCanvas" width="1200"></canvas><div class="herotxt"><div class="phase" id="phaseLabel">THE VILLAGE AWAITS</div><h2 id="heroTitle">안개 속의 마을</h2><p id="heroSub">방을 만들고 다른 플레이어를 초대하세요.</p></div></div><div class="panel"><div class="bar"><h2>마을 사람들</h2><div><span class="badge" id="round">대기실</span> <span class="badge" id="alive">0명 생존</span></div></div><div class="players" id="players"><p class="hint">아직 방에 입장하지 않았습니다.</p></div></div><div class="two"><div class="panel"><div class="bar"><h2>대화</h2><span class="badge" id="chatLabel">웹사이트 전체</span></div><div class="tabs" id="roomChatTabs"><button data-channel="web" id="webLobbyTab" type="button">웹 로비<span class="unread" id="unread-web"></span></button><button class="active" data-channel="all"><span id="allTabLabel">로비</span><span class="unread" id="unread-all"></span></button><button data-channel="wolf">동맹<span class="unread" id="unread-wolf"></span></button><button data-channel="whisper">귓속말<span class="unread" id="unread-whisper"></span></button><button data-channel="ghost">유령<span class="unread" id="unread-ghost"></span></button></div><div class="hint" id="siteChatHint">방에 입장하기 전에는 웹 로비에서 대화할 수 있어요.</div><div class="chatlog" id="chatlog"></div><div class="field hide" id="whisperRow"><label>귓속말 받을 플레이어</label><select id="whisperTarget"></select></div><div class="field"><label>메시지</label><div class="row"><input id="chatText" maxlength="300" placeholder="메시지를 입력하세요"/><button id="send">전송</button></div></div></div><div class="panel"><h2 id="actionTitle">게임 행동</h2><div class="hint" id="notice">방에 입장하면 현재 단계와 가능한 행동이 표시됩니다.</div><div class="hide" id="dayControls"><div class="field"><label>투표 대상</label><select id="voteTarget"></select></div><div class="row"><button id="vote">투표 확정</button><button id="abstain">기권</button><button id="closeVote" title="마감 동의는 투표/기권과 별개입니다. 전원 마감 동의 또는 전원 투표/기권 시 즉시 집계하고 10초 후 밤으로 넘어갑니다. 전원 동의로 낮이 종료되면 미사용 투표권은 소멸합니다.">투표 마감 동의</button></div><div class="hint" id="closeProgress">마감 동의: 0명</div><div class="row" style="margin:8px 0"><button id="extendDay">토론 1분 연장 (오늘 1회)</button><span class="timer" id="timeLeft">02:00</span></div></div><div class="hide" id="nightControls"><div class="hint" id="nightTimerHint" style="display:none"><span class="timer" id="nightTimeLeft">01:00</span></div><div class="field"><label>능력 대상</label><select id="nightTarget"></select></div><div class="field hide" id="ripRow"><label><input id="rip" style="width:auto" type="checkbox"/> 참살 사용 (늑대별 1회)</label></div><div class="row"><button id="act">능력 사용</button><button id="skip">행동 보류 / 완료</button></div><div class="hint" id="abilityHint" style="margin-top:8px"></div></div><div class="hide" id="votePanel" style="margin-top:15px"><div class="bar"><h2>라이브 투표 현황</h2><span class="badge" id="voteStatus">진행 중</span></div><p class="hint">투표 전에도 현재까지 집계된 표를 확인할 수 있습니다.</p><div class="vote-row" id="voteCloseLive" style="margin:8px 0 14px"><span>마감 동의</span><div class="track"><div class="fill" id="voteCloseFill" style="width:0%;background:#d8b96a"></div></div><span id="voteCloseCount">0/0명</span></div><div id="voteRows"></div></div></div></div></section><aside class="right-sidebar" id="sitePresencePanel">
 <div class="panel" id="publicBoardPanel"><div class="bar"><h2 style="margin:0">공표 게시판</h2></div><div class="hint" id="publicBoard">아직 공표가 없습니다.</div></div>
-<div class="panel" id="publishEditorPanel"><h2>내 공표 작성 / 수정</h2><label>내 공표 한 줄 수정 (마지막 내용만 유지)</label><textarea id="pubtext" maxlength="15" placeholder="모두에게 공개 · 공백 포함 최대 15자 · 사망 후에도 유지" rows="3"></textarea><div class="row public-style" style="display:none!important" aria-hidden="true"><label for="pubColor">글 색상</label><select aria-label="공표 글 색상" id="pubColor"><option value="#f4e9d6">밝은 아이보리</option><option value="#eecb7b">금색</option><option value="#b8e2ff">하늘색</option><option value="#b8f0c9">연두색</option><option value="#ffb6c1">분홍색</option><option value="#e3c5ff">보라색</option></select><label for="pubSize">글 크기</label><select aria-label="공표 글 크기" id="pubSize"><option value="16">보통</option><option selected="" value="18">크게</option><option value="20">더 크게</option><option value="22">매우 크게</option></select></div><button id="publish">공표 게시</button></div>
+<div class="panel" id="publishEditorPanel"><h2>내 공표 작성 / 수정</h2><label>내 공표 한 줄 수정 (마지막 내용만 유지)</label><textarea id="pubtext" maxlength="15" placeholder="모두에게 공개 · 공백 포함 최대 15자 · 사망 후에도 유지" rows="3"></textarea><div aria-hidden="true" class="row public-style" style="display:none!important"><label for="pubColor">글 색상</label><select aria-label="공표 글 색상" id="pubColor"><option value="#f4e9d6">밝은 아이보리</option><option value="#eecb7b">금색</option><option value="#b8e2ff">하늘색</option><option value="#b8f0c9">연두색</option><option value="#ffb6c1">분홍색</option><option value="#e3c5ff">보라색</option></select><label for="pubSize">글 크기</label><select aria-label="공표 글 크기" id="pubSize"><option value="16">보통</option><option selected="" value="18">크게</option><option value="20">더 크게</option><option value="22">매우 크게</option></select></div><button id="publish">공표 게시</button></div>
 <div class="panel" id="personalMemoPanel"><h2>개인 메모</h2><textarea id="memo" placeholder="나만 볼 수 있는 메모" rows="4"></textarea></div>
 </aside></main>
 <section aria-label="게임 도움말" aria-live="polite" aria-modal="false" class="game-help hide" id="gameHelp" role="dialog"><div class="help-window-header" id="helpWindowHeader"><span id="helpWindowTitle">게임 도움말</span><button aria-label="닫기" id="helpWindowClose" type="button">✕</button></div><div id="helpWindowBody"></div></section><script>
 // Same-origin browser tabs share this identifier; different browsers/devices do not.
+// A LAN URL (http://192.168.x.x) is not a secure context. crypto.randomUUID()
+// is therefore often undefined on mobile browsers, and must NOT abort game setup.
+function makeLupusBrowserId(){
+ if(typeof crypto!=='undefined' && typeof crypto.randomUUID==='function')return crypto.randomUUID();
+ const bytes=new Uint8Array(16);
+ if(typeof crypto!=='undefined'&&typeof crypto.getRandomValues==='function')crypto.getRandomValues(bytes);
+ else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);
+ bytes[6]=(bytes[6]&0x0f)|0x40;bytes[8]=(bytes[8]&0x3f)|0x80;
+ const h=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+ return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+}
 const browserIdKey='lupus-browser-id';
 const graphicsMultiTest=new URLSearchParams(location.search).get('testMulti')==='1';
+// Allow multiple independent players in tabs on localhost/private LAN test servers.
+// The public site keeps its existing same-browser duplicate protection by default.
+const localWifiTest=/^(?:localhost|127\.0\.0\.1|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})$/.test(location.hostname);
 let browserId;
-try {
- browserId=localStorage.getItem(browserIdKey);
- if(!browserId){browserId=crypto.randomUUID();localStorage.setItem(browserIdKey,browserId);}
-} catch(_){browserId=crypto.randomUUID();}
-if(graphicsMultiTest)browserId=crypto.randomUUID();
+if(localWifiTest||graphicsMultiTest){browserId=makeLupusBrowserId();}
+else{
+ try{browserId=localStorage.getItem(browserIdKey);if(!browserId){browserId=makeLupusBrowserId();localStorage.setItem(browserIdKey,browserId);}}
+ catch(_){browserId=makeLupusBrowserId();}
+}
 const socket=io({auth:{browserId}});let state=null,channel='web';
 let siteChatLogs=[];
 function siteChatVisible(){return !state||state.phase==='lobby'||state.phase==='ended';}
@@ -1272,14 +1280,17 @@ $('chatText').addEventListener('keydown',e=>{
  chatEnterPending=false;
  submitChatOnce();
 });
-function sendChat(){if(!state){const text=$('chatText').value.trim();if(!text)return;socket.emit('siteChat',{text});$('chatText').value='';return;}if(channel==='web'){sendSiteLobbyChat();return;}if(state&&(state.phase==='lobby'||state.phase==='ended')&&channel!=='web')channel='all';const text=$('chatText').value.trim();if(!text)return;let to=null;if(channel==='whisper'){to=$('whisperTarget').value;if(!to)return}socket.emit('chat',{channel,text,to});$('chatText').value=''}$('vote').onclick=()=>socket.emit('vote',+$('voteTarget').value);$('abstain').onclick=()=>socket.emit('vote',0);$('closeVote').onclick=()=>socket.emit('closeVote');$('act').onclick=()=>{if(!state)return;socket.emit('nightAction',{target:+$('nightTarget').value,rip:$('rip').checked})};$('skip').onclick=()=>socket.emit('skipNight');$('publish').onclick=()=>{if(!state||state.phase!=='day')return;const t=$('pubtext').value.trim();if(t){socket.emit('publish',{text:t,color:'#f4e9d6',size:20});$('pubtext').value='';$('publishEditorPanel').closest('.hud-overlay')?.classList.remove('is-open')}};
+function sendChat(){if(!state){const text=$('chatText').value.trim();if(!text)return;socket.emit('siteChat',{text});$('chatText').value='';return;}if(channel==='web'){sendSiteLobbyChat();return;}if(state&&(state.phase==='lobby'||state.phase==='ended')&&channel!=='web')channel='all';const text=$('chatText').value.trim();if(!text)return;let to=null;if(channel==='whisper'){to=$('whisperTarget').value;if(!to)return}socket.emit('chat',{channel,text,to});$('chatText').value=''}$('vote').onclick=()=>socket.emit('vote',+$('voteTarget').value);$('abstain').onclick=()=>socket.emit('vote',0);$('closeVote').onclick=()=>socket.emit('closeVote');$('act').onclick=()=>{if(!state)return;socket.emit('nightAction',{target:+$('nightTarget').value,rip:$('rip').checked})};$('skip').onclick=()=>socket.emit('skipNight');$('publish').onclick=()=>{if(!state||state.phase!=='day'||!state.self?.alive)return;const t=$('pubtext').value.trim();if(t){socket.emit('publish',{text:t,color:'#f4e9d6',size:20});$('pubtext').value='';$('publishEditorPanel').closest('.hud-overlay')?.classList.remove('is-open')}};
 setInterval(()=>{if(!state||state.phase!=='day'||!state.self.alive||state.voteClosed||state.shortDay)return;const wait=Math.max(0,Math.ceil(((state.closeConsentAvailableAt||0)-Date.now())/1000));const btn=$('closeVote');btn.disabled=!state.closeRequested&&wait>0;btn.textContent=state.closeRequested?'마감 동의 취소':wait>0?`마감 동의 (${wait}초 후 가능)`:'투표 마감 동의';},250);
 function detailedRoleHtml(role){const r=detailedRoleInfo[role];return r?`<div class="my-role-details"><b>능력: ${esc(r[0])}</b><ul>${r[1].map(line=>`<li>${esc(line)}</li>`).join('')}</ul></div>`:'';}
-function render(){if(!state){$('publish').disabled=true;$('pubtext').disabled=true;$('pubColor').disabled=true;$('pubSize').disabled=true;$('publish').title='공표는 낮 토론 시간에만 작성할 수 있습니다.';renderSiteChat();return;} if(!siteChatVisible()&&channel==='web'){channel='all';document.querySelectorAll('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel==='all'));} $('roomChatTabs').classList.remove('hide');$('siteChatHint').classList.add('hide');const lobbyChat=state.phase==='lobby'||state.phase==='ended';if(lobbyChat&&channel!=='all'&&channel!=='web'){channel='all';unread.all=0;document.querySelectorAll('[data-channel]').forEach(x=>x.classList.toggle('active',x.dataset.channel==='all'));}document.querySelectorAll('[data-channel]').forEach(x=>{
+function render(){if(!state){$('publish').disabled=true;$('pubtext').disabled=true;$('pubColor').disabled=true;$('pubSize').disabled=true;$('publish').title='공표는 낮 토론 시간에만 작성할 수 있습니다.';const editorOpenButton=$('hudPublishOpenButton');if(editorOpenButton){editorOpenButton.hidden=true;editorOpenButton.disabled=true;}renderSiteChat();return;} if(!siteChatVisible()&&channel==='web'){channel='all';document.querySelectorAll('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel==='all'));} $('roomChatTabs').classList.remove('hide');$('siteChatHint').classList.add('hide');const lobbyChat=state.phase==='lobby'||state.phase==='ended';if(lobbyChat&&channel!=='all'&&channel!=='web'){channel='all';unread.all=0;document.querySelectorAll('[data-channel]').forEach(x=>x.classList.toggle('active',x.dataset.channel==='all'));}document.querySelectorAll('[data-channel]').forEach(x=>{
  const tab=x.dataset.channel;
  x.classList.toggle('hide',tab==='web'?!siteChatVisible():tab==='all'?false:lobbyChat);
  x.classList.toggle('active',tab===channel);
-});$('allTabLabel').textContent=lobbyChat?'게임 로비':'전체';$('chatLabel').textContent=channel==='web'?'웹 로비':lobbyChat?'게임 로비':({all:'전체',web:'웹 로비',wolf:'동맹',whisper:'귓속말',ghost:'유령'}[channel]);$('whisperRow').classList.toggle('hide',lobbyChat||channel!=='whisper');$('chatText').placeholder=channel==='web'?'웹사이트 전체에 메시지 보내기':lobbyChat?'게임 로비에서 대화하세요':'메시지를 입력하세요';const self=state.self,night=state.phase==='night';const canPublish=state.phase==='day';for(const id of ['publish','pubtext','pubColor','pubSize'])$(id).disabled=!canPublish;$('publish').title=canPublish?'공표 작성 또는 수정':'공표는 낮 토론 시간에만 작성할 수 있습니다.';$('hero').classList.toggle('night',night);$('phaseLabel').textContent=state.phase==='lobby'?'THE VILLAGE AWAITS':state.phase==='ended'?'GAME OVER':night?'NIGHTFALL · 비밀 행동':'DAYLIGHT · 공개 토론';$('heroTitle').textContent=state.phase==='lobby'?'안개 속의 마을':state.phase==='ended'?state.winner+' 승리':night?'어둠 속의 마을':'마을 광장';$('heroSub').textContent=state.notice||'';$('round').textContent=state.phase==='lobby'?'대기실':state.phase==='ended'?'게임 종료':night?`${state.night}번째 밤`:`${state.day}일차 낮`;$('alive').textContent=`${state.players.filter(p=>p.alive).length}/${state.players.length}명 생존`;$('roomInfo').classList.remove('hide');$('roomInfo').textContent=`방 코드: ${state.code} · ${state.players.length}/11명 · ${state.phase==='lobby'?'대기 중':'게임 진행 중'}`;$('hostControls').classList.toggle('hide',state.hostId!==socket.id||state.phase!=='lobby');$('start').disabled=state.players.length<5;$('rematch').classList.toggle('hide',!(state.phase==='ended'&&state.hostId===socket.id));$('hostControls').classList.toggle('hide',!(state.hostId===socket.id&&(state.phase==='lobby'||state.phase==='ended')));$('start').classList.toggle('hide',state.phase==='ended');$('rule').classList.toggle('hide',state.phase==='ended');$('rule').value=state.rule;$('myInfo').innerHTML=state.phase==='lobby'?'직업은 게임 시작 시 비밀 배정됩니다.':`<b>${self.id}번 ${esc(self.name)} · ${esc(self.roleName)}</b><br>${self.team==='wolf'?'늑대팀':'시민팀'}<br>${detailedRoleHtml(self.role)}${self.role==='wolf'?`<br><br>동료 늑대: ${state.knownWolves.filter(w=>w.id!==self.id).map(w=>w.id+'번 '+esc(w.name)).join(', ')||'없음'}`:''}${self.baseRole==='hench'?`<br><br>발견한 늑대: ${self.foundWolves.map(id=>{let p=state.players.find(x=>x.id===id);return p?`${id}번 ${esc(p.name)}`:''}).filter(Boolean).join(', ')||'아직 없음'}`:''}`;$('players').innerHTML=state.players.map(p=>`<div class="player ${p.alive?'':'dead'} ${p.isYou?'you':''}"><div><span class="num" style="background:${p.color}">${p.id}</span><span class="pname">${esc(p.name)}${p.isYou?' (나)':''}</span></div><div class="sub">${p.alive?'생존':'유령 · 사망'}${p.knownLabel?' · <span class="clue">('+esc(p.knownLabel)+')</span>':''}${p.hasVoted?' · 투표 완료':''}${p.roleName?' · '+esc(p.roleName):''}</div></div>`).join('');$('dayControls').classList.toggle('hide',state.phase!=='day'||!self.alive||state.voteClosed);$('nightControls').classList.toggle('hide',state.phase!=='night'||!self.alive);$('actionTitle').textContent=state.phase==='night'?'밤 행동':state.phase==='day'?'낮 행동':'게임 상태';$('notice').textContent=state.notice||'';$('votePanel').classList.toggle('hide',state.phase!=='day');$('voteStatus').textContent=state.shortDay?'짧은 낮 · 투표 불가':state.voteClosed?'투표 마감':'진행 중';$('voteTarget').innerHTML=state.players.filter(p=>p.alive&&!p.isYou).map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join('');$('vote').disabled=!self.alive||!!state.players.find(p=>p.isYou&&p.hasVoted)||(state.voteClosed||state.shortDay);$('abstain').disabled=$('vote').disabled;$('extendDay').disabled=state.extendedToday||state.voteClosed||state.shortDay;$('extendDay').textContent=state.extendedToday?'오늘 연장 사용 완료':'토론 1분 연장 (오늘 1회)';const closeWait=Math.max(0,Math.ceil(((state.closeConsentAvailableAt||0)-Date.now())/1000));$('closeVote').disabled=!self.alive||state.voteClosed||state.shortDay||(!state.closeRequested&&closeWait>0);$('closeVote').textContent=state.shortDay?'짧은 낮 · 투표 불가':state.closeRequested?'마감 동의 취소':closeWait>0?`마감 동의 (${closeWait}초 후 가능)`:'투표 마감 동의';$('closeProgress').textContent=`마감 동의: ${state.closeRequests||0}/${state.players.filter(p=>p.alive).length}명 · 전원 동의 시 즉시 집계`; $('voteCloseCount').textContent=`${state.closeRequests||0}/${state.players.filter(p=>p.alive).length}명`; $('voteCloseFill').style.width=`${state.players.filter(p=>p.alive).length?100*(state.closeRequests||0)/state.players.filter(p=>p.alive).length:0}%`; let targets=state.players.filter(p=>p.alive&&!p.isYou);if(self.role==='medium')targets=state.players.filter(p=>!p.alive);if(self.role==='wolf')targets=targets.filter(p=>!state.knownWolves.some(w=>w.id===p.id));$('whisperTarget').innerHTML=state.players.filter(p=>p.alive&&!p.isYou).map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join('');$('nightTarget').innerHTML=targets.length?targets.map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join(''):(self.role==='medium'?'<option value="" disabled selected>아직 아무도 희생당한 시민이 없습니다.</option>':'');const passiveNightRole=['veteran','fanatic','heir','citizen'].includes(self.role)||(self.baseRole==='hench'&&self.henchJoined);
+});$('allTabLabel').textContent=lobbyChat?'게임 로비':'전체';$('chatLabel').textContent=channel==='web'?'웹 로비':lobbyChat?'게임 로비':({all:'전체',web:'웹 로비',wolf:'동맹',whisper:'귓속말',ghost:'유령'}[channel]);$('whisperRow').classList.toggle('hide',lobbyChat||channel!=='whisper');$('chatText').placeholder=channel==='web'?'웹사이트 전체에 메시지 보내기':lobbyChat?'게임 로비에서 대화하세요':'메시지를 입력하세요';const self=state.self,night=state.phase==='night';const canPublish=state.phase==='day'&&self.alive;for(const id of ['publish','pubtext','pubColor','pubSize'])$(id).disabled=!canPublish;
+$('publish').title=canPublish?'공표 작성 또는 수정':!self.alive?'사망한 플레이어는 공표를 작성하거나 수정할 수 없습니다.':'공표는 낮 토론 시간에만 작성할 수 있습니다.';
+const editorOpenButton=$('hudPublishOpenButton');if(editorOpenButton){editorOpenButton.hidden=!self.alive;editorOpenButton.disabled=!canPublish;editorOpenButton.title=$('publish').title;}
+if(!self.alive)$('publishEditorPanel')?.closest('.hud-overlay')?.classList.remove('is-open');$('hero').classList.toggle('night',night);$('phaseLabel').textContent=state.phase==='lobby'?'THE VILLAGE AWAITS':state.phase==='ended'?'GAME OVER':night?'NIGHTFALL · 비밀 행동':'DAYLIGHT · 공개 토론';$('heroTitle').textContent=state.phase==='lobby'?'안개 속의 마을':state.phase==='ended'?state.winner+' 승리':night?'어둠 속의 마을':'마을 광장';$('heroSub').textContent=state.notice||'';$('round').textContent=state.phase==='lobby'?'대기실':state.phase==='ended'?'게임 종료':night?`${state.night}번째 밤`:`${state.day}일차 낮`;$('alive').textContent=`${state.players.filter(p=>p.alive).length}/${state.players.length}명 생존`;$('roomInfo').classList.remove('hide');$('roomInfo').textContent=`방 코드: ${state.code} · ${state.players.length}/11명 · ${state.phase==='lobby'?'대기 중':'게임 진행 중'}`;$('hostControls').classList.toggle('hide',state.hostId!==socket.id||state.phase!=='lobby');$('start').disabled=state.players.length<5;$('rematch').classList.toggle('hide',!(state.phase==='ended'&&state.hostId===socket.id));$('hostControls').classList.toggle('hide',!(state.hostId===socket.id&&(state.phase==='lobby'||state.phase==='ended')));$('start').classList.toggle('hide',state.phase==='ended');$('rule').classList.toggle('hide',state.phase==='ended');$('rule').value=state.rule;$('myInfo').innerHTML=state.phase==='lobby'?'직업은 게임 시작 시 비밀 배정됩니다.':`<b>${self.id}번 ${esc(self.name)} · ${esc(self.roleName)}</b><br>${self.team==='wolf'?'늑대팀':'시민팀'}<br>${detailedRoleHtml(self.role)}${self.role==='wolf'?`<br><br>동료 늑대: ${state.knownWolves.filter(w=>w.id!==self.id).map(w=>w.id+'번 '+esc(w.name)).join(', ')||'없음'}`:''}${self.baseRole==='hench'?`<br><br>발견한 늑대: ${self.foundWolves.map(id=>{let p=state.players.find(x=>x.id===id);return p?`${id}번 ${esc(p.name)}`:''}).filter(Boolean).join(', ')||'아직 없음'}`:''}`;$('players').innerHTML=state.players.map(p=>`<div class="player ${p.alive?'':'dead'} ${p.isYou?'you':''}"><div><span class="num" style="background:${p.color}">${p.id}</span><span class="pname">${esc(p.name)}${p.isYou?' (나)':''}</span></div><div class="sub">${p.alive?'생존':'유령 · 사망'}${p.knownLabel?' · <span class="clue">('+esc(p.knownLabel)+')</span>':''}${p.hasVoted?' · 투표 완료':''}${p.roleName?' · '+esc(p.roleName):''}</div></div>`).join('');$('dayControls').classList.toggle('hide',state.phase!=='day'||!self.alive||state.voteClosed);$('nightControls').classList.toggle('hide',state.phase!=='night'||!self.alive);$('actionTitle').textContent=state.phase==='night'?'밤 행동':state.phase==='day'?'낮 행동':'게임 상태';$('notice').textContent=state.notice||'';$('votePanel').classList.toggle('hide',state.phase!=='day');$('voteStatus').textContent=state.shortDay?'짧은 낮 · 투표 불가':state.voteClosed?'투표 마감':'진행 중';$('voteTarget').innerHTML=state.players.filter(p=>p.alive&&!p.isYou).map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join('');$('vote').disabled=!self.alive||!!state.players.find(p=>p.isYou&&p.hasVoted)||(state.voteClosed||state.shortDay);$('abstain').disabled=$('vote').disabled;$('extendDay').disabled=state.extendedToday||state.voteClosed||state.shortDay;$('extendDay').textContent=state.extendedToday?'오늘 연장 사용 완료':'토론 1분 연장 (오늘 1회)';const closeWait=Math.max(0,Math.ceil(((state.closeConsentAvailableAt||0)-Date.now())/1000));$('closeVote').disabled=!self.alive||state.voteClosed||state.shortDay||(!state.closeRequested&&closeWait>0);$('closeVote').textContent=state.shortDay?'짧은 낮 · 투표 불가':state.closeRequested?'마감 동의 취소':closeWait>0?`마감 동의 (${closeWait}초 후 가능)`:'투표 마감 동의';$('closeProgress').textContent=`마감 동의: ${state.closeRequests||0}/${state.players.filter(p=>p.alive).length}명 · 전원 동의 시 즉시 집계`; $('voteCloseCount').textContent=`${state.closeRequests||0}/${state.players.filter(p=>p.alive).length}명`; $('voteCloseFill').style.width=`${state.players.filter(p=>p.alive).length?100*(state.closeRequests||0)/state.players.filter(p=>p.alive).length:0}%`; let targets=state.players.filter(p=>p.alive&&!p.isYou);if(self.role==='medium')targets=state.players.filter(p=>!p.alive);if(self.role==='wolf')targets=targets.filter(p=>!state.knownWolves.some(w=>w.id===p.id));$('whisperTarget').innerHTML=state.players.filter(p=>p.alive&&!p.isYou).map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join('');$('nightTarget').innerHTML=targets.length?targets.map(p=>`<option value="${p.id}">${p.id}번 · ${esc(p.name)}</option>`).join(''):(self.role==='medium'?'<option value="" disabled selected>아직 아무도 희생당한 시민이 없습니다.</option>':'');const passiveNightRole=['veteran','fanatic','heir','citizen'].includes(self.role)||(self.baseRole==='hench'&&self.henchJoined);
  const nightField=$('nightTarget').closest('.field');
  if(nightField)nightField.classList.toggle('hide',passiveNightRole);
  $('act').classList.toggle('hide',passiveNightRole);
@@ -1334,7 +1345,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(intel){intel.id='hudIntelPanel';popup('hudIntelPanel','나만의 능력 기록','능력 기록',playerInfoButtons);}
  popup('personalMemoPanel','개인 메모','개인 메모',playerInfoButtons);
  const board=$('publicBoardPanel');
- const pubBtn=document.createElement('button');pubBtn.className='hud-open-editor';pubBtn.textContent='✒ 공표 작성 / 수정';
+ const pubBtn=document.createElement('button');pubBtn.className='hud-open-editor';pubBtn.id='hudPublishOpenButton';pubBtn.type='button';pubBtn.textContent='✒ 공표 작성 / 수정';pubBtn.hidden=true;
  board?.append(pubBtn);
  const editor=$('publishEditorPanel');
  if(editor){
@@ -1344,7 +1355,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   close.onclick=()=>overlay.classList.remove('is-open');
   dialog.append(close,editor);overlay.append(dialog);document.body.append(overlay);
   overlay.onclick=e=>{if(e.target===overlay)close.click()};
-  pubBtn.onclick=()=>overlay.classList.add('is-open');
+  pubBtn.onclick=()=>{if(typeof state==='undefined'||!state?.self?.alive||state.phase!=='day')return;overlay.classList.add('is-open');};
  }
  document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.hud-overlay.is-open').forEach(x=>x.classList.remove('is-open'));});
 });
@@ -1548,4 +1559,164 @@ document.addEventListener('DOMContentLoaded',()=>{
  main.append(people);
  const refresh=()=>{const n=players.children.length;people.setAttribute('aria-label','마을 사람들 '+n+'명')};
  new MutationObserver(refresh).observe(players,{childList:true});refresh();
-});</script></body></html>
+});</script><script id="moonMobileShell">/* Moonlit Village 2: mobile-only presentation. One set of live game controls. */
+(()=>{'use strict';
+ const isMobile=()=>window.matchMedia('(max-width:820px)').matches;
+ const by=id=>document.getElementById(id);
+ function boot(){
+  if(!isMobile()||by('mobileMoonShell'))return;
+  const shell=document.createElement('div');shell.id='mobileMoonShell';
+  shell.innerHTML=`
+    <header class="moon-top">
+      <div class="moon-brandline">
+        <div class="moon-emblem" aria-hidden="true">☾</div>
+        <div class="moon-brand"><strong>타뷸라의 늑대</strong><span>LUPUS IN TABULA <b>4.3 MOBILE V5</b></span></div>
+        <div class="moon-toptools" id="moonTopTools"><span class="moon-net" id="moonNet">● 연결 중</span><button type="button" id="moonLeave" class="moon-leave" hidden>나가기</button></div>
+      </div>
+      <div class="moon-statusline"><span class="moon-phase-icon" id="moonPhaseIcon">☾</span><div id="moonStatus"></div></div>
+      
+      <div id="moonErrorSlot"></div>
+    </header>
+    <div class="moon-roster" id="moonRoster"><div id="moonPeople"></div></div>
+    <main class="moon-main">
+      <div class="moon-scene-frame"><div class="moon-stage" id="moonStage"></div>
+        <div class="moon-scene-gradient" aria-hidden="true"></div>
+        
+        <button type="button" id="moonMapView" class="moon-mapview" aria-label="지도를 전체 보기로 전환">전체 지도</button>
+        <div id="moonJoyBase" class="moon-joy" aria-label="이동 조이스틱" role="group"><span class="moon-joy-ring"></span><span id="moonJoyKnob" class="moon-joy-knob"></span></div>
+      </div>
+      <section id="moonSetup" class="moon-setup-area"></section>
+      
+    </main>
+    <div id="moonDrawerShade" class="moon-drawer-shade" hidden></div>
+    <section id="moonDrawer" class="moon-drawer" aria-label="게임 메뉴" aria-hidden="true">
+      <div class="moon-drawer-top"><div><small id="moonSheetEyebrow">VILLAGE RECORDS</small><strong id="moonSheetTitle">대화</strong></div>
+        <button type="button" class="moon-drawer-close" id="moonDrawerClose" aria-label="메뉴 닫기">✕</button></div>
+      <div class="moon-drawer-content">
+        <section class="moon-page" data-page="chat"><div id="moonChat"></div></section>
+        <section class="moon-page" data-page="vote"><div id="moonVote"></div><p class="moon-note">현재 진행 중인 투표 결과를 확인하세요.</p></section>
+        <section class="moon-page" data-page="action"><div id="moonAction"></div></section>
+        <section class="moon-page" data-page="board"><div id="moonBoard"></div></section>
+        <section class="moon-page" data-page="intel"><div id="moonIntel"></div></section>
+      </div>
+    </section>
+    <nav class="moon-bottom" aria-label="모바일 메뉴">
+      <button type="button" class="moon-tab" data-tab="chat"><span class="moon-ico">☏</span><span>채팅</span><i class="moon-unread" aria-hidden="true"></i></button>
+      <button type="button" class="moon-tab" data-tab="vote"><span class="moon-ico">✓</span><span>투표</span></button>
+      <button type="button" class="moon-tab" data-tab="action"><span class="moon-ico">✦</span><span>행동</span></button>
+      <button type="button" class="moon-tab" data-tab="board"><span class="moon-ico">▤</span><span>공표</span></button>
+      <button type="button" class="moon-tab" data-tab="intel"><span class="moon-ico">▣</span><span>정보</span></button>
+    </nav>`;
+  document.body.append(shell);
+  function move(id,to){let a=by(id),b=by(to);if(a&&b)b.append(a);return !!a}
+  move('graphicsStatusHUD','moonStatus');
+  const mainHeader=document.querySelector('body>header');
+  move('connection','moonTopTools');move('soundToggle','moonTopTools');
+  const soundButton=by('soundToggle');
+  function syncSoundIcon(){
+   if(!soundButton)return;
+   const on=!/꺼짐|🔇/.test(soundButton.textContent||'');
+   soundButton.dataset.sound=on?'on':'off';
+   const label=on?'효과음 켜짐 · 눌러서 끄기':'효과음 꺼짐 · 눌러서 켜기';
+   soundButton.setAttribute('aria-label',label);soundButton.title=label;
+  }
+  if(soundButton){new MutationObserver(syncSoundIcon).observe(soundButton,{childList:true,characterData:true,subtree:true});syncSoundIcon();}
+  move('error','moonErrorSlot');move('hudPeoplePanel','moonPeople');
+  // The same live roster is reused; add a readable status count in its header.
+  const rosterHeader=by('hudPeoplePanel')?.querySelector(':scope > .bar');
+  const rosterList=by('players');
+  if(rosterHeader&&rosterList){
+    const count=document.createElement('span');count.id='moonRosterCount';
+    count.className='moon-roster-count';count.setAttribute('aria-live','off');
+    const toggle=by('hudPeopleToggle');
+    if(toggle)rosterHeader.insertBefore(count,toggle);
+    else rosterHeader.append(count);
+    const updateRosterCount=()=>{
+      const n=rosterList.children.length;
+      const living=rosterList.querySelectorAll('.player:not(.dead)').length;
+      count.textContent=n?`${living}/${n} 생존`:'0명';
+    };
+    new MutationObserver(updateRosterCount).observe(rosterList,{childList:true,subtree:false});
+    updateRosterCount();
+  }
+  move('hero','moonStage');move('topSetupBar','moonSetup');
+  move('hudChatPanel','moonChat');move('hudVotePanel','moonVote');
+  move('hudActionPanel','moonAction');move('hudTimerControls','moonAction');move('sitePresencePanel','moonBoard');
+  move('hudPlayerInfo','moonIntel');move('hudFloatingTools','moonIntel');move('leftInfoSidebar','moonIntel');
+  // Move live elements instead of cloning. Existing button handlers still work.
+  document.body.classList.add('mobile-redesign');
+  let active='';let previousRoom='';
+  const titles={chat:['대화','VILLAGE CHAT'],vote:['라이브 투표 현황','THE VOTE'],action:['게임 행동','YOUR ACTION'],board:['공표 게시판','PUBLIC NOTICE'],intel:['플레이어 정보','PERSONAL JOURNAL']};
+  function showTab(tab,focus=false){
+   if(!titles[tab])return;
+   active=tab;shell.classList.add('moon-sheet-open');
+   by('moonDrawer').setAttribute('aria-hidden','false');
+   by('moonSheetTitle').textContent=titles[tab][0];by('moonSheetEyebrow').textContent=titles[tab][1];
+   shell.querySelectorAll('.moon-page').forEach(x=>x.classList.toggle('moon-active',x.dataset.page===tab));
+   shell.querySelectorAll('.moon-tab').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab===tab)));
+   if(tab==='chat'){
+    const panel=by('hudChatPanel');panel?.classList.remove('is-collapsed');
+    by('hudChatToggle')?.setAttribute('aria-expanded','true');
+    if(focus)setTimeout(()=>by('chatText')?.focus({preventScroll:true}),100);
+   }
+   if(tab==='vote')by('hudVotePanel')?.classList.remove('is-collapsed');
+   if(tab==='board')by('publicBoardPanel')?.classList.remove('is-collapsed');
+  }
+  function closeTab(){active='';shell.classList.remove('moon-sheet-open');by('moonDrawer').setAttribute('aria-hidden','true');
+   shell.querySelectorAll('.moon-tab').forEach(x=>x.setAttribute('aria-selected','false'));
+  }
+  shell.querySelector('.moon-bottom').addEventListener('click',ev=>{let b=ev.target.closest('[data-tab]');if(!b)return;
+   if(active===b.dataset.tab)closeTab();else showTab(b.dataset.tab,false);});
+  by('moonDrawerClose').addEventListener('click',closeTab);
+  by('moonLeave').addEventListener('click',()=>by('create')?.click());
+  by('moonDrawerShade').addEventListener('click',closeTab);
+  // 8-way touch joystick: the existing village renderer handles the map collision.
+  const joy=by('moonJoyBase'),knob=by('moonJoyKnob');let joyPointer=null,joyVec={x:0,y:0},joyTick=null;
+  function updateJoy(ev){
+   const r=joy.getBoundingClientRect(),dx=ev.clientX-(r.left+r.width/2),dy=ev.clientY-(r.top+r.height/2),len=Math.hypot(dx,dy),size=Math.max(1,r.width*.29);
+   const k=Math.min(size,len),x=len?dx/len:0,y=len?dy/len:0;
+   knob.style.transform=`translate(${x*k}px,${y*k}px)`;joyVec={x:x*k/size,y:y*k/size};
+  }
+  function emitJoy(){if(joyPointer!==null&&Math.hypot(joyVec.x,joyVec.y)>.2)window.dispatchEvent(new CustomEvent('tabulaMobileMove',{detail:joyVec}));}
+  function stopJoy(){joyPointer=null;joy.classList.remove('moon-joy-active');knob.style.transform='translate(0,0)';joyVec={x:0,y:0};if(joyTick!==null){clearInterval(joyTick);joyTick=null}}
+  joy.addEventListener('pointerdown',ev=>{if(joyPointer!==null)return;ev.preventDefault();joyPointer=ev.pointerId;joy.setPointerCapture(ev.pointerId);joy.classList.add('moon-joy-active');updateJoy(ev);emitJoy();joyTick=setInterval(emitJoy,170)});
+  joy.addEventListener('pointermove',ev=>{if(joyPointer!==ev.pointerId)return;ev.preventDefault();updateJoy(ev)});
+  joy.addEventListener('pointerup',ev=>{if(joyPointer===ev.pointerId)stopJoy()});
+  joy.addEventListener('pointercancel',ev=>{if(joyPointer===ev.pointerId)stopJoy()});
+  joy.addEventListener('lostpointercapture',stopJoy);
+  by('moonMapView').addEventListener('click',()=>{
+   const scene=shell.querySelector('.moon-scene-frame');scene.classList.toggle('moon-map-wide');
+   const wide=scene.classList.contains('moon-map-wide');
+   by('moonMapView').textContent=wide?'내 캐릭터 따라가기':'전체 지도';
+   by('moonMapView').setAttribute('aria-label',wide?'확대된 카메라로 돌아가기':'전체 지도 보기');
+  });
+  function update(){
+   const room=typeof state!=='undefined'?state:null;
+   const phase=room?.phase||'web';const isDay=phase==='day',isNight=phase==='night';
+   by('moonPhaseIcon').textContent=isDay?'☀':isNight?'☾':'✦';
+   
+   shell.classList.toggle('moon-in-room',!!room);shell.classList.toggle('moon-is-night',isNight);
+   by('moonSetup').classList.toggle('moon-setup-game',isDay||isNight);
+   const conn=by('connection')?.textContent||'';
+   by('moonNet').textContent=/연결됨/.test(conn)?'● 연결됨':/끊김|오류/.test(conn)?'● 연결 오류':'● 연결 중';
+   by('moonNet').classList.toggle('moon-offline',/끊김|오류/.test(conn));
+   by('moonLeave').hidden=!room;
+   const roomKey=room?.code||'';
+   if(roomKey&&roomKey!==previousRoom){previousRoom=roomKey;closeTab();}
+   if(!room){previousRoom='';}
+  }
+  window.__moonMobileShowTab=showTab;
+  window.addEventListener('lupusRoomPresenceChanged',update);
+  // Existing Socket.IO state events are also reflected here, without emitting extra commands.
+  if(typeof socket!=='undefined'){socket.on('state',update);socket.on('connect',update);socket.on('disconnect',update);socket.on('leftRoom',()=>{closeTab();setTimeout(update,0)})}
+  document.addEventListener('keydown',ev=>{if(isMobile()&&ev.key==='Escape'&&active)closeTab();});
+  // Window capture fires before legacy document handlers: Enter opens visible chat.
+  window.addEventListener('keydown',ev=>{
+   if(!isMobile()||ev.key!=='Enter'||ev.isComposing||ev.keyCode===229||ev.ctrlKey||ev.altKey||ev.metaKey)return;
+   if(document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'))return;
+   ev.preventDefault();ev.stopImmediatePropagation();showTab('chat',true);
+  },true);
+  update();
+ }
+ document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,0));
+})();</script></body></html>
