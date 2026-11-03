@@ -330,7 +330,7 @@ io.on('connection',socket=>{
  });
  socket.on('nightAction',data=>nightAction(socket,data));
  socket.on('skipNight',()=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p||room.phase!=='night'||room.nightResolving||!p.alive)return;if(room.nightActions[p.id]?.done)return socket.emit('errorMessage','이번 밤 행동은 이미 완료했습니다.');room.nightActions[p.id]={done:true};emitRoom(room);if(allNightDone(room))resolveNight(room)});
- socket.on('publish',data=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p)return;if(room.phase!=='day')return socket.emit('errorMessage','공표는 낮 토론 시간에만 작성하거나 수정할 수 있습니다.');
+ socket.on('publish',data=>{const room=getRoom(socket),p=getPlayer(room,socket);if(!room||!p)return;if(!p.alive)return socket.emit('errorMessage','사망한 플레이어는 공표를 작성하거나 수정할 수 없습니다.');if(room.phase!=='day')return socket.emit('errorMessage','공표는 낮 토론 시간에만 작성하거나 수정할 수 있습니다.');
  const value=String(typeof data==='object'&&data!==null?data.text:data||'').trim().slice(0,15);
  if(!value)return;
  const color='#f4e9d6';
