@@ -289,3 +289,134 @@
 @media(max-width:820px){
  #mobileMoonShell.moon-in-room .moon-scene-frame{height:clamp(305px,calc(63dvh - 52px),620px)!important}
 }
+
+/* V6: always-readable timer & roster, even with vote/action/board/info drawers open. */
+@media (max-width:820px){
+  #mobileMoonShell .moon-top{position:sticky!important;top:0!important;z-index:92!important}
+  #mobileMoonShell .moon-roster{position:sticky!important;top:var(--moon-header-height,0px)!important;z-index:91!important}
+  #mobileMoonShell .moon-drawer-shade{top:var(--moon-pinned-edge,0px)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(2,6,17,.13)!important}
+  #mobileMoonShell .moon-drawer{max-height:calc(100dvh - var(--moon-pinned-edge,210px) - 74px - env(safe-area-inset-bottom))!important;height:min(57dvh,calc(100dvh - var(--moon-pinned-edge,210px) - 74px - env(safe-area-inset-bottom)))!important;min-height:0!important}
+  #mobileMoonShell:has(.moon-page[data-page="chat"].moon-active).moon-sheet-open .moon-drawer{height:min(75dvh,calc(100dvh - var(--moon-pinned-edge,210px) - 74px - env(safe-area-inset-bottom)))!important}
+  #mobileMoonShell .moon-mini-chat{position:absolute;z-index:6;bottom:108px;left:9px;right:9px;display:flex;flex-direction:column;gap:4px;min-height:94px;max-height:110px;padding:7px 9px 8px;border:1px solid #e1bb7f9e;border-radius:10px;background:linear-gradient(160deg,rgba(8,19,34,.82),rgba(14,27,45,.76));box-shadow:0 5px 18px #0009;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);pointer-events:auto}
+  #mobileMoonShell.moon-sheet-open .moon-mini-chat{display:none!important}
+  #mobileMoonShell .moon-mini-head{display:flex;flex-direction:row;justify-content:space-between;align-items:center;gap:6px;min-height:17px;color:#efd39c;font-size:11px;line-height:1.2;font-weight:600}
+  #mobileMoonShell .moon-mini-head span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  #mobileMoonShell #moonMiniOpen{min-height:23px!important;height:23px!important;padding:2px 6px!important;font-size:10px!important;background:#283e58!important;border-color:#7d8e9f!important;white-space:nowrap!important;flex:0 0 auto!important}
+  #mobileMoonShell .moon-mini-lines{display:flex;flex-direction:column;gap:1px;min-height:31px;overflow:hidden;justify-content:flex-end;line-height:1.24;color:#e5f0ff}
+  #mobileMoonShell .moon-mini-line{display:flex;align-items:baseline;gap:5px;min-width:0;overflow:hidden;font-size:11px;white-space:nowrap}
+  #mobileMoonShell .moon-mini-line strong{flex:0 0 auto;max-width:36%;overflow:hidden;text-overflow:ellipsis;color:#8cddff}
+  #mobileMoonShell .moon-mini-line span{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f0f3fd}
+  #mobileMoonShell .moon-mini-empty{color:#adbdd1;font-size:11px;line-height:28px}
+  #mobileMoonShell .moon-mini-form{display:flex;align-items:center;gap:6px;min-height:30px;margin:0}
+  #mobileMoonShell #moonMiniInput{flex:1;min-width:0!important;width:100%!important;height:33px!important;min-height:33px!important;padding:6px 8px!important;font-size:16px!important;border:1px solid #667d97!important;border-radius:7px!important;background:rgba(9,20,36,.9)!important;color:#fff!important}
+  #mobileMoonShell #moonMiniSend{width:37px!important;min-width:37px!important;height:33px!important;min-height:33px!important;padding:0!important;border:1px solid #f0d6a0!important;border-radius:7px!important;background:linear-gradient(#f0d394,#b78b52)!important;color:#132037!important;font-size:18px!important;font-weight:900!important}
+  @media(max-height:690px){#mobileMoonShell .moon-mini-chat{bottom:101px;max-height:94px;padding:5px 7px}}
+}
+
+
+/* Mobile V7: restore the full-height chat drawer while leaving other tabs'
+   timer and player roster pinned and sharp. The chat drawer may cover these
+   panels, as requested, to prioritize reading and typing long discussions. */
+@media (max-width: 820px) {
+  #mobileMoonShell.moon-sheet-open:has(.moon-page[data-page="chat"].moon-active) .moon-drawer {
+    height: min(75dvh,730px) !important;
+    max-height: calc(100dvh - 76px - env(safe-area-inset-bottom)) !important;
+    min-height: 0 !important;
+    z-index: 95 !important;
+  }
+
+  /* Mini chat belongs NEXT TO the joystick, not over the middle of the map.
+     Keep the overlay physically transparent: only text, input box, and glyphs. */
+  #mobileMoonShell .moon-scene-frame .moon-mini-chat {
+    position: absolute !important;
+    left: 103px !important; /* 12px joystick offset + 82px width + 9px gap */
+    right: 8px !important;
+    bottom: 12px !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    isolation: auto !important;
+    gap: 3px !important;
+  }
+  #mobileMoonShell .moon-mini-head,
+  #mobileMoonShell .moon-mini-lines,
+  #mobileMoonShell .moon-mini-form,
+  #mobileMoonShell .moon-mini-line,
+  #mobileMoonShell .moon-mini-empty {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  #mobileMoonShell .moon-mini-head {
+    color: #fff0bb !important;
+    font-size: 11px !important;
+    text-shadow: 0 1px 4px #000, 0 2px 7px #000 !important;
+    gap: 2px !important;
+  }
+  #mobileMoonShell .moon-mini-lines {
+    min-height: 33px !important;
+    line-height: 1.25 !important;
+  }
+  #mobileMoonShell .moon-mini-line {font-size: 11.5px !important;
+    text-shadow: 0 1px 3px #000, 0 2px 6px #000 !important;}
+  #mobileMoonShell .moon-mini-line strong {
+    max-width: 42% !important;
+    color: #a6e6ff !important;
+  }
+  #mobileMoonShell .moon-mini-line span {color: #fff !important;}
+  #mobileMoonShell .moon-mini-empty {text-shadow: 0 1px 4px #000, 0 2px 7px #000 !important;}
+  #mobileMoonShell #moonMiniOpen {
+    min-height: 20px !important;
+    height: 20px !important;
+    padding: 0 2px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #ffdfa1 !important;
+    font-size: 10.5px !important;
+    text-shadow: 0 1px 3px #000,0 2px 6px #000 !important;
+  }
+  #mobileMoonShell #moonMiniInput {
+    /* The input itself remains legible and tappable against the detailed map. */
+    height: 35px !important;
+    min-height: 35px !important;
+    background: rgba(8, 17, 33, 0.75) !important;
+    border: 1px solid #d5ba85 !important;
+    border-radius: 7px !important;
+    box-shadow: none !important;
+    font-size: 16px !important;
+    padding: 6px 7px !important;
+  }
+  #mobileMoonShell #moonMiniSend {
+    flex: 0 0 29px !important;
+    width: 29px !important;
+    min-width: 29px !important;
+    min-height: 35px !important;
+    height: 35px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #ffe2a8 !important;
+    font-size: 22px !important;
+    text-shadow: 0 1px 3px #000, 0 2px 7px #000 !important;
+  }
+  #mobileMoonShell .moon-mini-form {gap: 2px !important;}
+}
